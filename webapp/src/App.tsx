@@ -1,25 +1,40 @@
+// import SWRDevtools, { Cache } from '@jjordy/swr-devtools';
 import React from 'react';
-import logo from './logo.svg';
+import { Route, Switch } from 'react-router-dom';
+import { SWRConfig } from 'swr';
 import './App.css';
+import AppLayout from './components/AppLayout';
+import Header from './components/Header';
+import Home from './pages/Home';
+import OthelloMain from './pages/OthelloMain';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <SWRConfig
+      value={{
+        errorRetryCount: 3,
+        dedupingInterval: 5000,
+        errorRetryInterval: 5000,
+        // provider: () => new Cache(),
+      }}
+    >
+      {/* {process.env.NODE_ENV === 'production' ? null : <SWRDevtools />} */}
+      <AppLayout>
+        <AppLayout.Head>
+          <Header />
+        </AppLayout.Head>
+        <AppLayout.Main>
+          <Switch>
+            <Route exact path="/">
+              <Home />
+            </Route>
+            <Route exact path="/othello">
+              <OthelloMain />
+            </Route>
+          </Switch>
+        </AppLayout.Main>
+      </AppLayout>
+    </SWRConfig>
   );
 }
 

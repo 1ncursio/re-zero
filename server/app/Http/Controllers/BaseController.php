@@ -15,7 +15,7 @@ class BaseController extends Controller
     {
         $response = [
             'success' => true,
-            'data' => $result,
+            'payload' => $result,
             'message' => $message,
         ];
 
