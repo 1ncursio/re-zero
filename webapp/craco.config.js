@@ -7,5 +7,6 @@ module.exports = {
   },
   babel: {
     plugins: ['macros'],
+    presets: ['@emotion/babel-preset-css-prop'],
   },
 };

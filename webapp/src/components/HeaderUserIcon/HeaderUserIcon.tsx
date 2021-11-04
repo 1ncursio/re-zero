@@ -13,7 +13,7 @@ const HeaderUserIcon: FC<HeaderUserIconProps> = ({ onClick }) => {
   return (
     <button
       onClick={onClick}
-      className="cursor-pointer rounded-full shadow"
+      className="cursor-pointer rounded-full"
       type="button"
     >
       <img

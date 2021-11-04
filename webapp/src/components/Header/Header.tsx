@@ -1,6 +1,6 @@
-import { css } from '@emotion/react';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import tw from 'twin.macro';
 import useUserSWR from '../../hooks/swr/useUserSWR';
 import useToggle from '../../hooks/useToggle';
 import HeaderUserIcon from '../HeaderUserIcon';
@@ -27,35 +27,25 @@ const Header = () => {
   );
 
   return (
-    <div className="w-full flex justify-between items-center">
+    <div className="w-lg mx-auto flex justify-between items-center">
       <div className="flex items-center gap-16">
         <div>
           <Link to="/">
             <h1 className="text-xl font-bold text-blueGray-600">Lathello</h1>
           </Link>
         </div>
-        <div className="text-blueGray-500 position-relative">
+        <div className="flex gap-8">
           <Link
             to="/othello"
-            className="
-              relative
-              before:content-['']
-              before:absolute
-              before:block
-              before:w-full
-              before:h-[1px]
-              before:bottom-0
-              before:left-0
-              before:origin-top-left
-            before:bg-blueGray-500
-              before:transform
-              before:transition
-              before:duration-200
-              before:scale-0
-              hover:before:scale-100  
-            "
+            className="text-blueGray-400 hover:text-blueGray-600 transition link-underline"
           >
-            Othello
+            오셀로 게임
+          </Link>
+          <Link
+            to="/"
+            className="text-blueGray-400 hover:text-blueGray-600 transition link-underline"
+          >
+            커뮤니티
           </Link>
         </div>
       </div>
@@ -72,26 +62,5 @@ const Header = () => {
     </div>
   );
 };
-
-const linkStyle = css`
-  position: relative;
-
-  /* a::before {
-    content: '';
-    position: absolute;
-    display: block;
-    width: 100%;
-    height: 2px;
-    bottom: 0;
-    left: 0;
-    background-color: #000;
-    transform: scaleX(0);
-    transition: transform 0.3s ease;
-  }
-
-  a:hover::before {
-    transform: scaleX(1);
-  } */
-`;
 
 export default Header;

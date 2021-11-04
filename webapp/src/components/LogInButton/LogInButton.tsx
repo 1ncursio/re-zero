@@ -17,7 +17,7 @@ const LogInButton = () => {
     <>
       <button
         onClick={openModal}
-        className="font-medium text-lg text-white"
+        className="font-medium text-lg text-blueGray-500"
         type="button"
       >
         로그인

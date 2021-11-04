@@ -1,29 +1,31 @@
 import React from 'react';
 import Icon, { IconType } from '../Icon/Icon';
 
-export type IconButtonProps = {
+export type ButtonProps = {
   icon: IconType;
   text?: string;
   onClick(): void;
   className?: string;
+  iconClassName?: string;
 };
 
-const IconButton = ({
+const Button = ({
   icon,
   text,
   onClick,
   className = '',
-}: IconButtonProps) => {
+  iconClassName = '',
+}: ButtonProps) => {
   return (
     <button
       onClick={onClick}
       type="button"
-      className={`rounded-full border-2 border-gray-200 shadow-md ${className}`}
+      className={`rounded-full border-2 border-gray-200 shadow-md ${className} flex justify-center items-center`}
     >
-      {icon && <Icon name={icon} className="w-12 h-12" />}
+      {icon && <Icon name={icon} className={iconClassName} />}
       {text}
     </button>
   );
 };
 
-export default IconButton;
+export default Button;

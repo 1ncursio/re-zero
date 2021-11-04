@@ -7,6 +7,7 @@ import AppLayout from './components/AppLayout';
 import Header from './components/Header';
 import Home from './pages/Home';
 import OthelloMain from './pages/OthelloMain';
+import PvpWaitingRoom from './pages/PvpWaitingRoom';
 
 function App() {
   return (
@@ -30,6 +31,9 @@ function App() {
             </Route>
             <Route exact path="/othello">
               <OthelloMain />
+            </Route>
+            <Route exact path="/othello/pvp">
+              <PvpWaitingRoom />
             </Route>
           </Switch>
         </AppLayout.Main>
