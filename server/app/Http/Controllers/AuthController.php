@@ -23,6 +23,7 @@ class AuthController extends BaseController
             $saved_user = User::firstOrCreate(
                 ['email' => $user->getEmail()],
                 [
+                    'google_id' => $user->getId(),
                     'name' => $user->getNickname(),
                     'email' => $user->getEmail(),
                     'image_url' => $user->getAvatar(),
@@ -36,8 +37,8 @@ class AuthController extends BaseController
             // return $this->sendResponse($success, '로그인 성공');
             return redirect()->away('http://localhost:3000');
         } catch (\Throwable $th) {
-            return $this->sendError('error occured.', ['error' => 'Internal Server Error']);
-            // throw $th;
+            // return $this->sendError('error occured.', ['error' => 'Internal Server Error']);
+            throw $th;
         }
     }
 

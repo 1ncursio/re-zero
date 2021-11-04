@@ -10,7 +10,7 @@ const OthelloMain = () => {
           오셀로 게임
         </h1>
         <p className="text-lg text-blueGray-500">
-          실시간으로 오셀로를 즐겨보세요!
+          실시간으로 오셀로 게임을 즐겨보세요!
         </p>
       </div>
       <div className="my-32 flex gap-16 justify-center text-lg">
