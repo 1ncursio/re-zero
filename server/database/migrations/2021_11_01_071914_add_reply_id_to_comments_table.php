@@ -15,6 +15,7 @@ class AddReplyIdToCommentsTable extends Migration
     {
         Schema::table('comments', function (Blueprint $table) {
             $table->foreignId('reply_id')
+                ->nullable()
                 ->constrained('comments')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');

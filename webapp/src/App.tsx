@@ -5,6 +5,7 @@ import { SWRConfig } from 'swr';
 import './App.css';
 import AppLayout from './components/AppLayout';
 import Header from './components/Header';
+import Community from './pages/Community';
 import Home from './pages/Home';
 import OthelloMain from './pages/OthelloMain';
 import PvpWaitingRoom from './pages/PvpWaitingRoom';
@@ -34,6 +35,9 @@ function App() {
             </Route>
             <Route exact path="/othello/pvp">
               <PvpWaitingRoom />
+            </Route>
+            <Route exact path="/community">
+              <Community />
             </Route>
           </Switch>
         </AppLayout.Main>

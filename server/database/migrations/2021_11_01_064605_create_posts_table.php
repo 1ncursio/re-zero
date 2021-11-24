@@ -16,7 +16,7 @@ class CreatePostsTable extends Migration
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
             $table->string('title', 50);
-            $table->unsignedInteger('views');
+            $table->unsignedInteger('views')->default(0);
             $table->text('content');
             $table->foreignId('user_id')
                 ->constrained()

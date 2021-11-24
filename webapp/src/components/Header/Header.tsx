@@ -42,7 +42,7 @@ const Header = () => {
             오셀로 게임
           </Link>
           <Link
-            to="/"
+            to="/community"
             className="text-blueGray-400 hover:text-blueGray-600 transition link-underline"
           >
             커뮤니티
