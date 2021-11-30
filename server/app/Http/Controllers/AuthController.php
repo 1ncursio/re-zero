@@ -34,7 +34,6 @@ class AuthController extends BaseController
             Auth::login($saved_user);
 
             $success['user'] = $saved_user;
-            // return $this->sendResponse($success, '로그인 성공');
             return redirect()->away('http://localhost:3000');
         } catch (\Throwable $th) {
             // return $this->sendError('error occured.', ['error' => 'Internal Server Error']);

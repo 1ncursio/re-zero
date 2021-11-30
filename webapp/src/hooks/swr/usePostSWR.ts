@@ -1,13 +1,18 @@
 import useSWR, { SWRConfiguration, SWRResponse } from 'swr';
 import fetcher from '../../lib/api/fetcher';
-import { User } from '../../typings/user';
+import { Post } from '../../typings/post';
 
 export default function usePostSWR(
+  postId: string,
   options: SWRConfiguration = {},
-): SWRResponse<User, any> {
-  const response = useSWR<User>('/api/posts', (url) => fetcher(url, true), {
-    ...options,
-  });
+): SWRResponse<Post, any> {
+  const response = useSWR<Post>(
+    postId ? `/api/posts/${postId}` : null,
+    fetcher,
+    {
+      ...options,
+    },
+  );
 
   return response;
 }

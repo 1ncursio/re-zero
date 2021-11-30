@@ -6,6 +6,7 @@ import './App.css';
 import AppLayout from './components/AppLayout';
 import Header from './components/Header';
 import Community from './pages/Community';
+import CommunityPost from './pages/Community/CommunityPost';
 import Home from './pages/Home';
 import OthelloMain from './pages/OthelloMain';
 import PvpWaitingRoom from './pages/PvpWaitingRoom';
@@ -38,6 +39,9 @@ function App() {
             </Route>
             <Route exact path="/community">
               <Community />
+            </Route>
+            <Route exact path="/community/:postId">
+              <CommunityPost />
             </Route>
           </Switch>
         </AppLayout.Main>

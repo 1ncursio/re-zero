@@ -1,10 +1,10 @@
 export interface User {
-  id: string;
-  email: string | null;
+  id: number;
   name: string;
-  image_url: string | null;
-  google_id: string;
+  email: string;
+  email_verified_at: Date | null;
   created_at: Date;
   updated_at: Date;
-  email_verified_at: Date | null;
+  google_id: string;
+  image_url: string | null;
 }

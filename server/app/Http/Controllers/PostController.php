@@ -19,25 +19,18 @@ class PostController extends BaseController
         $key = "posts";
         $ttl = now()->addMinutes(5);
 
-        $posts = Cache::has($key) ? Cache::get($key) : Cache::remember(
-            $key,
-            $ttl,
-            fn () =>
-            Post::latest()->paginate(10)
-        );
+        $posts = Post::latest()->paginate(12);
+
+        // $posts = Cache::has($key) ? Cache::get($key) : Cache::remember(
+        //     $key,
+        //     $ttl,
+        //     fn () =>
+        //     Post::latest()->paginate(12)
+        // );
 
         return $this->sendResponse($posts, 'Posts retrieved successfully.');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -55,7 +48,8 @@ class PostController extends BaseController
 
         $post = Post::create([
             'title' => $request->title,
-            'content' => $request->content
+            'content' => $request->content,
+            'user_id' => auth()->id(),
         ]);
 
         return $this->sendResponse($post, 'Post created successfully.');
@@ -72,16 +66,6 @@ class PostController extends BaseController
         return $this->sendResponse($post, 'Post retrieved successfully.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Post $post)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -118,5 +102,23 @@ class PostController extends BaseController
         $post->delete();
 
         return $this->sendResponse($post, 'Post deleted successfully.');
+    }
+
+    public function like(Post $post)
+    {
+        // like a post
+        $post->likes()->create([
+            'user_id' => auth()->id()
+        ]);
+
+        return $this->sendResponse($post, 'Post liked successfully.');
+    }
+
+    public function unlike(Post $post)
+    {
+        // unlike a post
+        $post->likes()->where('user_id', auth()->id())->delete();
+
+        return $this->sendResponse($post, 'Post unliked successfully.');
     }
 }

@@ -9,7 +9,8 @@ class Comment extends Model
 {
     use HasFactory;
 
-    protected $with = ['user', 'post'];
+    protected $with = ['user'];
+    protected $fillable = ['content', 'post_id', 'user_id'];
 
     public function user()
     {
@@ -19,5 +20,17 @@ class Comment extends Model
     public function post()
     {
         return $this->belongsTo(Post::class);
+    }
+
+    // return users liked this comment
+    public function likedUsers()
+    {
+        return $this->belongsToMany(User::class, 'comment_like');
+    }
+
+    // replies
+    public function replies()
+    {
+        return $this->hasMany(Comment::class, 'reply_id');
     }
 }
