@@ -95,19 +95,49 @@ class CommentController extends BaseController
         return $this->sendResponse($comment, 'Comment deleted successfully.');
     }
 
-    public function like(Comment $comment)
+    public function toggleLike(Post $post, Comment $comment)
     {
-        $comment->likes()->create([
-            'user_id' => auth()->id(),
-        ]);
+        $comment->likes()->toggle(auth()->id());
 
-        return $this->sendResponse($comment, 'Comment liked successfully.');
+        return $this->sendResponse($comment, 'Comment liked(unliked) successfully.');
     }
 
-    public function unlike(Comment $comment)
+    // store reply
+    public function storeReply(Request $request, Post $post, Comment $comment)
     {
-        $comment->likes()->where('user_id', auth()->id())->delete();
+        // store a reply after validating request data
+        $this->validate($request, [
+            'content' => 'required|string|max:200',
+        ]);
 
-        return $this->sendResponse($comment, 'Comment unliked successfully.');
+        $reply = Comment::create([
+            'content' => $request->content,
+            'post_id' => $post->id,
+            'user_id' => auth()->id(),
+            'reply_id' => $comment->id,
+        ]);
+
+        return $this->sendResponse($reply, 'Reply created successfully.');
+    }
+
+    // update reply
+    public function updateReply(Request $request, Post $post, Comment $comment, Comment $reply)
+    {
+        // update a reply after validating request data
+        $this->validate($request, [
+            'content' => 'required|string|max:200',
+        ]);
+
+        $reply->update($request->only(['content']));
+
+        return $this->sendResponse($reply, 'Reply updated successfully.');
+    }
+
+    // delete reply
+    public function destroyReply(Post $post, Comment $comment, Comment $reply)
+    {
+        $reply->delete();
+
+        return $this->sendResponse($reply, 'Reply deleted successfully.');
     }
 }

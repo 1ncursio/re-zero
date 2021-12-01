@@ -1,7 +1,7 @@
 import { User } from '../user';
 
 export interface Comment {
-  id?: number;
+  id: number;
   content: string;
   user_id: number;
   post_id: number;
@@ -9,4 +9,5 @@ export interface Comment {
   updated_at?: Date;
   reply_id?: null;
   user: User;
+  likes: User[];
 }

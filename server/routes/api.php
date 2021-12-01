@@ -37,11 +37,11 @@ Route::prefix('posts')->group(function () {
     Route::middleware('auth:sanctum')->post('/{post}/likes', [PostController::class, 'like']);
     Route::middleware('auth:sanctum')->delete('/{post}/likes', [PostController::class, 'unlike']);
 
-    Route::middleware('auth:sanctum')->post('/{post}/comments/{comment}/likes', [CommentController::class, 'like']);
-    Route::middleware('auth:sanctum')->delete('/{post}/comments/{comment}/likes', [CommentController::class, 'unlike']);
+    Route::middleware('auth:sanctum')->post('/{post}/comments/{comment}/likes', [CommentController::class, 'toggleLike']);
 
-    Route::middleware('auth:sanctum')->post('/{post}/comments/{comment}/replies', [CommentController::class, 'reply']);
-    Route::middleware('auth:sanctum')->delete('/{post}/comments/{comment}/replies/{reply}', [CommentController::class, 'unreply']);
+    Route::middleware('auth:sanctum')->post('/{post}/comments/{comment}/replies', [CommentController::class, 'storeReply']);
+    Route::middleware('auth:sanctum')->put('/{post}/comments/{comment}/replies/{reply}', [CommentController::class, 'updateReply']);
+    Route::middleware('auth:sanctum')->delete('/{post}/comments/{comment}/replies/{reply}', [CommentController::class, 'destoryReply']);
 
     Route::middleware('auth:sanctum')->post('/{post}/comments/{comment}/replies/{reply}/likes', [CommentController::class, 'like']);
     Route::middleware('auth:sanctum')->delete('/{post}/comments/{comment}/replies/{reply}/likes', [CommentController::class, 'unlike']);

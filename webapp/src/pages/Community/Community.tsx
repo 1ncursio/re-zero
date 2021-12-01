@@ -1,12 +1,13 @@
 import dayjs from 'dayjs';
+import 'dayjs/locale/ko';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import React, { useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { Link } from 'react-router-dom';
 import { userThumbnail } from '../../assets/images';
 import usePostsSWR from '../../hooks/swr/usePostsSWR';
 import optimizeImage from '../../lib/optimizeImage';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import 'dayjs/locale/ko';
-import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import relativeCreatedAt from '../../lib/relativeCreatedAt';
 
 dayjs.extend(relativeTime);
 dayjs.locale('ko');
@@ -32,9 +33,7 @@ const Community = () => {
               </Link>
               <span className="text-xs text-blueGray-500">
                 {/* Display relative time if it was posted today. If not, display formatted date-time */}
-                {dayjs(post.created_at).isSame(dayjs(), 'day')
-                  ? dayjs(post.created_at).fromNow()
-                  : dayjs(post.created_at).format('YYYY/MM/DD')}
+                {relativeCreatedAt(post.created_at)}
               </span>
             </div>
             <p className="m-2 text-sm text-blueGray-600 line-clamp-2">
@@ -44,7 +43,7 @@ const Community = () => {
               <img
                 src={optimizeImage(post.user?.image_url ?? userThumbnail)}
                 alt="user"
-                className="w-6 h-6 rounded-full"
+                className="w-8 h-8 rounded-full"
               />
               <span className="text-xs text-blueGray-600">
                 {post.user.name}
