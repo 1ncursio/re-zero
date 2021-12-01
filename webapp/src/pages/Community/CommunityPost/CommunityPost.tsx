@@ -1,19 +1,16 @@
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import 'react-popper-tooltip/dist/styles.css';
-import { useLocation, useParams } from 'react-router';
-import { useSWRConfig } from 'swr';
+import { useParams } from 'react-router';
 import { userThumbnail } from '../../../assets/images';
 import CommentForm from '../../../components/CommentForm';
-import CommentItem from '../../../components/CommentItem';
+import CommentList from '../../../components/CommentList';
 import useCommentsSWR from '../../../hooks/swr/useCommentsSWR';
 import usePostSWR from '../../../hooks/swr/usePostSWR';
-import useUserSWR from '../../../hooks/swr/useUserSWR';
 import useQuery from '../../../hooks/useQuery';
-import createComment from '../../../lib/api/comments/createComment';
 import optimizeImage from '../../../lib/optimizeImage';
 import relativeCreatedAt from '../../../lib/relativeCreatedAt';
 
@@ -63,11 +60,7 @@ const CommunityPost = () => {
         </section>
         <footer className="p-4">
           <CommentForm />
-          <div className="flex flex-col gap-6">
-            {commentsData?.map((comment) => (
-              <CommentItem comment={comment} key={comment.id} />
-            ))}
-          </div>
+          {commentsData && <CommentList comments={commentsData} />}
         </footer>
       </div>
     </div>

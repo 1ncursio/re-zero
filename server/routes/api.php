@@ -39,10 +39,10 @@ Route::prefix('posts')->group(function () {
 
     Route::middleware('auth:sanctum')->post('/{post}/comments/{comment}/likes', [CommentController::class, 'toggleLike']);
 
+    Route::get('/{post}/comments/{comment}/replies', [CommentController::class, 'replies']);
     Route::middleware('auth:sanctum')->post('/{post}/comments/{comment}/replies', [CommentController::class, 'storeReply']);
     Route::middleware('auth:sanctum')->put('/{post}/comments/{comment}/replies/{reply}', [CommentController::class, 'updateReply']);
     Route::middleware('auth:sanctum')->delete('/{post}/comments/{comment}/replies/{reply}', [CommentController::class, 'destoryReply']);
 
-    Route::middleware('auth:sanctum')->post('/{post}/comments/{comment}/replies/{reply}/likes', [CommentController::class, 'like']);
-    Route::middleware('auth:sanctum')->delete('/{post}/comments/{comment}/replies/{reply}/likes', [CommentController::class, 'unlike']);
+    Route::middleware('auth:sanctum')->post('/{post}/comments/{comment}/replies/{reply}/likes', [CommentController::class, 'toggleLikeReply']);
 });

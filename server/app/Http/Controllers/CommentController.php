@@ -27,7 +27,7 @@ class CommentController extends BaseController
         //     $post->comments()->latest()->paginate(12)
         // );
 
-        $comments = $post->comments()->oldest()->paginate(12);
+        $comments = $post->comments()->where('reply_id', null)->oldest()->paginate(12);
 
         return $this->sendResponse($comments, 'Comments retrieved successfully.');
     }
@@ -117,6 +117,8 @@ class CommentController extends BaseController
             'reply_id' => $comment->id,
         ]);
 
+        error_log($reply);
+
         return $this->sendResponse($reply, 'Reply created successfully.');
     }
 
@@ -139,5 +141,13 @@ class CommentController extends BaseController
         $reply->delete();
 
         return $this->sendResponse($reply, 'Reply deleted successfully.');
+    }
+
+    // replies
+    public function replies(Post $post, Comment $comment)
+    {
+        $replies = $comment->replies()->oldest()->paginate(12);
+
+        return $this->sendResponse($replies, 'Replies retrieved successfully.');
     }
 }

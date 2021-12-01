@@ -6,12 +6,16 @@ export type IconProps = {
   name: IconType;
   className?: string;
   style?: React.CSSProperties;
+  fill?: string;
+  stroke?: string;
 };
 
-const Icon = ({ name, className, style }: IconProps) => {
+const Icon = ({ name, className, style, fill, stroke }: IconProps) => {
   return React.createElement(svg[name], {
     className,
     style,
+    fill,
+    stroke,
   });
 };
 

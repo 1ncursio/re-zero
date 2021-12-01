@@ -10,4 +10,5 @@ export interface Comment {
   reply_id?: null;
   user: User;
   likes: User[];
+  reply_count: number;
 }

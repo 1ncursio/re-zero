@@ -23,6 +23,9 @@ module.exports = {
         10: '0 0 10px -3px rgba(0, 0, 0, 0.1), 0 0px 6px -2px rgba(0, 0, 0, 0.05)',
         20: 'rgba(100, 100, 111, 0.2) 0px 7px 29px 0px',
       },
+      zIndex: {
+        '-10': '-10',
+      },
       colors: {
         transparent: 'transparent',
         current: 'currentColor',
@@ -36,6 +39,9 @@ module.exports = {
         cyan: colors.cyan,
         white: colors.white,
         black: colors.black,
+      },
+      animation: {
+        'ping-once': 'ping 0.3s cubic-bezier(0, 0, 0.2, 1);',
       },
     },
   },

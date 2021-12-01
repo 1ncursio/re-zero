@@ -10,7 +10,8 @@ class Comment extends Model
     use HasFactory;
 
     protected $with = ['user', 'likes'];
-    protected $fillable = ['content', 'post_id', 'user_id'];
+    protected $fillable = ['content', 'post_id', 'user_id', 'reply_id'];
+    protected $appends = ['reply_count'];
 
     public function user()
     {
@@ -32,5 +33,17 @@ class Comment extends Model
     public function replies()
     {
         return $this->hasMany(Comment::class, 'reply_id');
+    }
+
+    // has reply
+    public function hasReplies()
+    {
+        return $this->replies()->exists();
+    }
+
+    // reply count
+    public function getReplyCountAttribute()
+    {
+        return $this->replies()->count();
     }
 }
