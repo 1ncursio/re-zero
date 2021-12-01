@@ -1,5 +1,5 @@
 import produce from 'immer';
-import { SetStateAction, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import createComment from '../lib/api/comments/createComment';
 import likeComment from '../lib/api/comments/likeComment';
 import { Comment } from '../typings/comment';
@@ -35,38 +35,31 @@ export default function useComment({
   }, [comment, userData]);
 
   const submitComment = useCallback(
-    ({
-        content,
-        setContent,
-      }: {
-        content: string;
-        setContent: (value: SetStateAction<string>) => void;
-      }) =>
-      async (e: any) => {
-        e.preventDefault();
-        if (!content || !userData) return;
+    async (content: string) => {
+      console.log('a');
+      if (!content || !userData) return;
+      console.log('b');
 
-        mutateComments(
-          produce((comments?: Comment[] | any) => {
-            comments?.push({
-              id: Math.floor(Math.random() * 100000),
-              content,
-              user: userData,
-              likes: [],
-            });
-          }),
-          false,
-        );
+      mutateComments(
+        produce((comments?: Comment[] | any) => {
+          comments?.push({
+            id: Math.floor(Math.random() * 100000),
+            content,
+            user: userData,
+            likes: [],
+          });
+        }),
+        false,
+      );
 
-        try {
-          await createComment({ postId, content });
-          setContent('');
-        } catch (e) {
-          console.error(e);
-        }
+      try {
+        await createComment({ postId, content });
+      } catch (e) {
+        console.error(e);
+      }
 
-        mutateComments();
-      },
+      mutateComments();
+    },
     [postId, userData, mutateComments],
   );
 

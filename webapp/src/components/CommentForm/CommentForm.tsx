@@ -1,12 +1,5 @@
-import React, {
-  ChangeEvent,
-  FC,
-  ForwardedRef,
-  forwardRef,
-  ReactNode,
-  useCallback,
-  useState,
-} from 'react';
+import React, { forwardRef, useCallback } from 'react';
+import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router';
 import { userThumbnail } from '../../assets/images';
 import useUserSWR from '../../hooks/swr/useUserSWR';
@@ -20,26 +13,38 @@ type CommentFormProps = {
 // eslint-disable-next-line no-undef
 const CommentForm = forwardRef<HTMLInputElement, CommentFormProps>(
   ({ isReply }, ref) => {
-    const [content, setContent] = useState('');
+    const {
+      register,
+      handleSubmit,
+      reset,
+      formState: { errors },
+    } = useForm();
+    // const [content, onChangeContent] = useInput('');
     const { postId } = useParams<{ postId: string }>();
 
     const { data: userData } = useUserSWR();
 
     const { submitComment } = useComment({ postId });
 
-    const onChangeContent = useCallback(
-      // eslint-disable-next-line no-undef
-      (e: ChangeEvent<HTMLInputElement>) => {
-        setContent(e.target.value);
+    const onSubmitComment = useCallback(
+      async (data) => {
+        console.log({ data });
+        const { content } = data;
+        // console.log({ content });
+        try {
+          await submitComment(content);
+          reset({ content: '' });
+        } catch (error) {
+          console.error(error);
+        }
       },
-      [setContent],
+      [submitComment, postId, reset],
     );
 
+    const test = (data: any) => console.log({ data });
+
     return (
-      <form
-        onSubmit={submitComment({ content, setContent })}
-        className="flex gap-2 mb-6"
-      >
+      <form onSubmit={handleSubmit(test)} className="flex gap-2 mb-6">
         <img
           src={optimizeImage(userData?.image_url ?? userThumbnail)}
           alt="user"
@@ -49,9 +54,9 @@ const CommentForm = forwardRef<HTMLInputElement, CommentFormProps>(
         />
         <input
           type="text"
-          placeholder="댓글 추가"
-          value={content}
-          onChange={onChangeContent}
+          placeholder={isReply ? '답글 추가' : '댓글 추가'}
+          {...register('content', { required: true, maxLength: 200 })}
+          id="content"
           className="w-full border-b border-blueGray-200 text-sm focus:outline-none focus:border-blueGray-400"
           ref={ref}
         />
