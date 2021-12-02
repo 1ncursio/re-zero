@@ -1,60 +1,62 @@
-import React, { FC, useCallback } from 'react';
-import { usePopperTooltip } from 'react-popper-tooltip';
+import React, { FC } from 'react';
 import { useParams } from 'react-router';
 import { userThumbnail } from '../../assets/images';
+import useRepliesSWR from '../../hooks/swr/useRepliesSWR';
 import useBoolean from '../../hooks/useBoolean';
 import useComment from '../../hooks/useComment';
 import useReply from '../../hooks/useReply';
+import useToggle from '../../hooks/useToggle';
 import optimizeImage from '../../lib/optimizeImage';
 import relativeCreatedAt from '../../lib/relativeCreatedAt';
 import { Comment } from '../../typings/comment';
 import CommentForm from '../CommentForm';
-import CommentList from '../CommentList';
+import CommentLikeButton from '../CommentLikeButton';
 import Icon from '../Icon';
+import ReplyList from '../ReplyList';
 
 type CommentItemProps = {
   comment: Comment;
 };
 
 const CommentItem: FC<CommentItemProps> = ({ comment }) => {
+  const [isOpenReply, toggleReply] = useToggle(false);
   const [isOpenReplyForm, openReplyForm] = useBoolean(false);
-  const [isClickedLike, onClickedLike, offClickedLike] = useBoolean(false);
   const { postId } = useParams<{ postId: string }>();
 
-  const {
-    getArrowProps,
-    getTooltipProps,
-    setTooltipRef,
-    setTriggerRef,
-    visible,
-  } = usePopperTooltip();
+  // const { data: repliesData } = useRepliesSWR({
+  //   shouldFetch: isOpenReply,
+  //   postId,
+  //   commentId: comment.id,
+  //   page: 1,
+  // });
 
   const { isAlreadyLikedComment, toggleLikeComment } = useComment({
     postId,
     commentId: comment.id,
   });
-  const { repliesData, fetchReplies, toggleReply, shouldFetch } = useReply({
+  const { shouldFetch, repliesData } = useReply({
     postId,
     commentId: comment.id,
+    isOpenReply,
   });
 
   // const onClickViewReplies = useCallback(() => {
   //   fetchReplies();
   // }, [fetchReplies]);
 
-  const handleClickLike = useCallback(() => {
-    toggleLikeComment();
+  // const handleClickLike = useCallback(() => {
+  //   toggleLikeComment();
 
-    if (isClickedLike) {
-      offClickedLike();
-    }
+  //   if (isClickedLike) {
+  //     offClickedLike();
+  //   }
 
-    onClickedLike();
+  //   onClickedLike();
 
-    setTimeout(() => {
-      offClickedLike();
-    }, 300);
-  }, [toggleLikeComment, onClickedLike, offClickedLike, isClickedLike]);
+  //   setTimeout(() => {
+  //     offClickedLike();
+  //   }, 300);
+  // }, [toggleLikeComment, onClickedLike, offClickedLike, isClickedLike]);
 
   return (
     <div key={comment.id} className="flex gap-2">
@@ -72,32 +74,11 @@ const CommentItem: FC<CommentItemProps> = ({ comment }) => {
         </div>
         <p className="text-sm text-blueGray-600 mb-2">{comment.content}</p>
         <div className="flex gap-4 items-center mb-2">
-          <div className="flex gap-1 items-center">
-            <button type="button" ref={setTriggerRef} onClick={handleClickLike}>
-              {isAlreadyLikedComment ? (
-                <Icon name="filledLike" className="w-4 h-4" />
-              ) : (
-                <Icon name="outlinedLike" className="w-4 h-4" />
-              )}
-              {visible && (
-                <div
-                  ref={setTooltipRef}
-                  {...getTooltipProps({ className: 'tooltip-container' })}
-                >
-                  <div {...getArrowProps({ className: 'tooltip-arrow' })} />
-                  <span className="text-xs">
-                    {isAlreadyLikedComment ? '좋아요 취소' : '좋아요'}
-                  </span>
-                </div>
-              )}
-            </button>
-            {isClickedLike && (
-              <span className="animate-ping-once absolute -z-10 inline-flex h-4 w-4 rounded-full bg-blueGray-400 opacity-75" />
-            )}
-            <span className="text-xs text-blueGray-600">
-              {comment.likes.length}
-            </span>
-          </div>
+          <CommentLikeButton
+            isAlreadyLiked={isAlreadyLikedComment}
+            toggleLikeComment={toggleLikeComment}
+            comment={comment}
+          />
           {!comment.reply_id && (
             <button
               type="button"
@@ -138,7 +119,7 @@ const CommentItem: FC<CommentItemProps> = ({ comment }) => {
           </button>
         )}
         {shouldFetch && repliesData && (
-          <CommentList comments={repliesData} isReply />
+          <ReplyList replies={repliesData} commentId={comment.id} />
         )}
         {shouldFetch && (
           <button

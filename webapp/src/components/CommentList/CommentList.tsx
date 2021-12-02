@@ -4,12 +4,11 @@ import CommentItem from '../CommentItem';
 
 type CommentListProps = {
   comments: Comment[];
-  isReply?: boolean;
 };
 
-const CommentList: FC<CommentListProps> = ({ comments, isReply }) => {
+const CommentList: FC<CommentListProps> = ({ comments }) => {
   return (
-    <div className={isReply ? 'flex flex-col gap-2' : 'flex flex-col gap-6'}>
+    <div className="flex flex-col gap-6">
       {comments?.map((comment) => (
         <CommentItem comment={comment} key={comment.id} />
       ))}
