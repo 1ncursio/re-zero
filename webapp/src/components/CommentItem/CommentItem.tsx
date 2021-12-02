@@ -89,7 +89,7 @@ const CommentItem: FC<CommentItemProps> = ({ comment }) => {
             </button>
           )}
         </div>
-        {isOpenReplyForm && <CommentForm isReply commentId={comment.id} />}
+        {isOpenReplyForm && <CommentForm />}
         {comment.reply_count > 0 && (
           <button
             type="button"

@@ -41,8 +41,8 @@ const ReplyItem: FC<ReplyItemProps> = ({ reply, commentId }) => {
         <p className="text-sm text-blueGray-600 mb-2">{reply.content}</p>
         <div className="flex gap-4 items-center mb-2">
           <ReplyLikeButton
-            isAlreadyLiked={isAlreadyLikedReply(reply.id)}
-            toggleLikeReply={toggleLikeReply(reply.id)}
+            isAlreadyLiked={isAlreadyLikedReply}
+            toggleLikeReply={toggleLikeReply}
             reply={reply}
           />
           {!reply.reply_id && (

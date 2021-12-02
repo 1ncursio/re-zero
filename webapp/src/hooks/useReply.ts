@@ -1,5 +1,5 @@
 import produce from 'immer';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import likeComment from '../lib/api/comments/likeComment';
 import createReply from '../lib/api/replies/createReply';
 import { Comment } from '../typings/comment';
@@ -26,23 +26,24 @@ export default function useReply({
     page: 1,
   });
 
-  const reply = useMemo(() => {
-    console.log({ repliesData, commentId, replyId });
-    if (!repliesData || !commentId || !replyId) return undefined;
+  // const reply = useMemo(() => {
+  //   console.log({ repliesData, commentId, replyId });
+  //   if (!repliesData || !commentId || !replyId) return undefined;
 
-    return repliesData.find((c) => c.id === replyId);
-  }, [repliesData, commentId, replyId]);
+  //   return repliesData.find((c) => c.id === replyId);
+  // }, [repliesData, commentId, replyId]);
 
-  const isAlreadyLikedReply = (replyId: number) => {
+  const isAlreadyLikedReply = useMemo(() => {
     console.log(replyId);
-    console.log({ reply });
-    if (!userData || !reply || !repliesData) return false;
+    // console.log({ reply });
+    if (!userData || !repliesData) return false;
 
-    return repliesData
-      .find((c) => c.id === replyId)
-      .likes.some((likedUser) => likedUser.id === userData.id);
+    const reply = repliesData.find((c) => c.id === replyId);
+    if (!reply) return false;
+
+    return reply.likes.some((likedUser) => likedUser.id === userData.id);
     // return reply.likes.some((likedUser) => likedUser.id === userData.id);
-  };
+  }, [userData, repliesData, replyId]);
 
   const fetchReplies = useCallback(async () => {
     mutateReplies();
@@ -80,17 +81,46 @@ export default function useReply({
     [postId, userData, mutateReplies, commentId],
   );
 
-  const toggleLikeReply = useCallback(
-    (replyId: number) => async () => {
-      if (!userData || !replyId) return;
+  const toggleLikeReply = useCallback(async () => {
+    if (!userData || !replyId) return;
 
-      const isLiked = isAlreadyLikedReply(replyId);
+    if (isAlreadyLikedReply) {
+      mutateReplies(
+        produce((replies?: Comment[]) => {
+          if (!replies) return;
 
-      if (isLiked) {
+          const replyIndex = replies.findIndex(
+            (c: Comment) => c.id === replyId,
+          );
+          if (replyIndex === -1) return;
+          // eslint-disable-next-line no-param-reassign
+          replies[replyIndex].likes = replies[replyIndex].likes.filter(
+            (likedUser: User) => likedUser.id !== userData.id,
+          );
+        }),
+        false,
+      );
+    } else {
+      mutateReplies(
+        produce((replies?: Comment[]) => {
+          if (!replies) return;
+
+          const replyIndex = replies.findIndex(
+            (c: Comment) => c.id === replyId,
+          );
+          if (replyIndex === -1) return;
+          replies[replyIndex].likes.push(userData);
+        }),
+        false,
+      );
+    }
+
+    try {
+      await likeComment({ postId, commentId: replyId.toString() });
+    } catch (e) {
+      if (!isAlreadyLikedReply) {
         mutateReplies(
-          produce((replies?: Comment[]) => {
-            if (!replies) return;
-
+          produce((replies: any) => {
             const replyIndex = replies.findIndex(
               (c: Comment) => c.id === replyId,
             );
@@ -104,9 +134,7 @@ export default function useReply({
         );
       } else {
         mutateReplies(
-          produce((replies?: Comment[]) => {
-            if (!replies) return;
-
+          produce((replies: any) => {
             const replyIndex = replies.findIndex(
               (c: Comment) => c.id === replyId,
             );
@@ -116,40 +144,8 @@ export default function useReply({
           false,
         );
       }
-
-      try {
-        await likeComment({ postId, commentId: replyId.toString() });
-      } catch (e) {
-        if (!isLiked) {
-          mutateReplies(
-            produce((replies: any) => {
-              const replyIndex = replies.findIndex(
-                (c: Comment) => c.id === replyId,
-              );
-              if (replyIndex === -1) return;
-              // eslint-disable-next-line no-param-reassign
-              replies[replyIndex].likes = replies[replyIndex].likes.filter(
-                (likedUser: User) => likedUser.id !== userData.id,
-              );
-            }),
-            false,
-          );
-        } else {
-          mutateReplies(
-            produce((replies: any) => {
-              const replyIndex = replies.findIndex(
-                (c: Comment) => c.id === replyId,
-              );
-              if (replyIndex === -1) return;
-              replies[replyIndex].likes.push(userData);
-            }),
-            false,
-          );
-        }
-      }
-    },
-    [isAlreadyLikedReply, mutateReplies, postId, userData],
-  );
+    }
+  }, [isAlreadyLikedReply, mutateReplies, postId, userData]);
 
   return {
     repliesData,

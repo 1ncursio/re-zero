@@ -1,19 +1,13 @@
-import React, { FC, forwardRef, useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, VFC } from 'react';
 import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router';
 import { userThumbnail } from '../../assets/images';
 import useUserSWR from '../../hooks/swr/useUserSWR';
 import useComment from '../../hooks/useComment';
-import useReply from '../../hooks/useReply';
 import optimizeImage from '../../lib/optimizeImage';
 
-type CommentFormProps = {
-  isReply?: boolean;
-  commentId?: number;
-};
-
 // eslint-disable-next-line no-undef
-const CommentForm: FC<CommentFormProps> = ({ isReply, commentId = -1 }) => {
+const CommentForm: VFC = () => {
   const {
     register,
     handleSubmit,
@@ -26,7 +20,6 @@ const CommentForm: FC<CommentFormProps> = ({ isReply, commentId = -1 }) => {
   const { data: userData } = useUserSWR();
 
   const { submitComment } = useComment({ postId });
-  const { submitReply } = useReply({ postId, commentId });
 
   const onSubmitComment = useCallback(
     async (content: string) => {
@@ -40,33 +33,15 @@ const CommentForm: FC<CommentFormProps> = ({ isReply, commentId = -1 }) => {
     [submitComment, postId, reset],
   );
 
-  const onSubmitReply = useCallback(
-    async (content: string) => {
-      try {
-        await submitReply(content);
-        reset({ content: '' });
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    [submitReply, postId, reset],
-  );
-
   const onSubmit = useCallback(
     async ({ content }: { content: string }) => {
-      if (isReply) {
-        onSubmitReply(content);
-      } else {
-        onSubmitComment(content);
-      }
+      onSubmitComment(content);
     },
-    [isReply, submitComment, submitReply],
+    [onSubmitComment],
   );
 
   useEffect(() => {
-    if (isReply) {
-      setFocus('content');
-    }
+    setFocus('content');
   }, []);
 
   return (
@@ -74,12 +49,10 @@ const CommentForm: FC<CommentFormProps> = ({ isReply, commentId = -1 }) => {
       <img
         src={optimizeImage(userData?.image_url ?? userThumbnail)}
         alt="user"
-        className={
-          isReply ? 'w-6 h-6 rounded-full' : 'w-8 h-8 rounded-full mr-1'
-        }
+        className="w-8 h-8 rounded-full mr-1"
       />
       <input
-        placeholder={isReply ? '답글 추가' : '댓글 추가'}
+        placeholder="댓글 추가"
         {...register('content', { required: true, maxLength: 200 })}
         className="w-full border-b border-blueGray-200 text-sm focus:outline-none focus:border-blueGray-400"
       />
