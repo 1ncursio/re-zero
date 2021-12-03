@@ -18,7 +18,7 @@ const ReplyItem: FC<ReplyItemProps> = ({ reply, commentId }) => {
   const [isOpenReplyForm, openReplyForm] = useBoolean(false);
   const { postId } = useParams<{ postId: string }>();
 
-  const { isAlreadyLikedReply, toggleLikeReply } = useReply({
+  const { toggleLikeReply } = useReply({
     postId,
     commentId,
     replyId: reply.id,
@@ -40,11 +40,7 @@ const ReplyItem: FC<ReplyItemProps> = ({ reply, commentId }) => {
         </div>
         <p className="text-sm text-blueGray-600 mb-2">{reply.content}</p>
         <div className="flex gap-4 items-center mb-2">
-          <ReplyLikeButton
-            isAlreadyLiked={isAlreadyLikedReply}
-            toggleLikeReply={toggleLikeReply}
-            reply={reply}
-          />
+          <ReplyLikeButton toggleLikeReply={toggleLikeReply} reply={reply} />
           {!reply.reply_id && (
             <button
               type="button"

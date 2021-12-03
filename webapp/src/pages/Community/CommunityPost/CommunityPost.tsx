@@ -6,11 +6,8 @@ import { Helmet } from 'react-helmet-async';
 import 'react-popper-tooltip/dist/styles.css';
 import { useParams } from 'react-router';
 import { userThumbnail } from '../../../assets/images';
-import CommentForm from '../../../components/CommentForm';
-import CommentList from '../../../components/CommentList';
-import useCommentsSWR from '../../../hooks/swr/useCommentsSWR';
+import CommentContainer from '../../../components/CommentContainer';
 import usePostSWR from '../../../hooks/swr/usePostSWR';
-import useQuery from '../../../hooks/useQuery';
 import optimizeImage from '../../../lib/optimizeImage';
 import relativeCreatedAt from '../../../lib/relativeCreatedAt';
 
@@ -20,13 +17,8 @@ dayjs.locale('ko');
 const CommunityPost = () => {
   // extract postId from url using react router
   const { postId } = useParams<{ postId: string }>();
-  const query = useQuery();
 
   const { data: postData } = usePostSWR(postId);
-  const { data: commentsData } = useCommentsSWR({
-    postId,
-    page: query.get('page') ?? 1,
-  });
 
   if (!postData) {
     return null;
@@ -59,8 +51,7 @@ const CommunityPost = () => {
           <p className="text-sm text-blueGray-600">{postData.content}</p>
         </section>
         <footer className="p-4">
-          <CommentForm />
-          {commentsData && <CommentList comments={commentsData} />}
+          <CommentContainer />
         </footer>
       </div>
     </div>

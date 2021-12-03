@@ -7,8 +7,12 @@ export interface Comment {
   post_id: number;
   created_at: Date;
   updated_at?: Date;
-  reply_id?: null;
+  reply_id: number | null;
   user: User;
   likes: User[];
   reply_count: number;
+
+  // custom fields for the frontend
+  isLiked: boolean;
+  isMine: boolean;
 }

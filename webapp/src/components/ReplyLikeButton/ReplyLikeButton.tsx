@@ -1,17 +1,16 @@
-import React, { FC, useCallback } from 'react';
+import React, { FC, useCallback, useEffect, useMemo } from 'react';
 import { usePopperTooltip } from 'react-popper-tooltip';
+import useUserSWR from '../../hooks/swr/useUserSWR';
 import useBoolean from '../../hooks/useBoolean';
 import { Comment } from '../../typings/comment';
 import Icon from '../Icon';
 
 type ReplyLikeButtonProps = {
-  isAlreadyLiked: boolean;
-  toggleLikeReply: (replyId: number) => void;
+  toggleLikeReply: () => void;
   reply: Comment;
 };
 
 const ReplyLikeButton: FC<ReplyLikeButtonProps> = ({
-  isAlreadyLiked,
   toggleLikeReply,
   reply,
 }) => {
@@ -22,10 +21,11 @@ const ReplyLikeButton: FC<ReplyLikeButtonProps> = ({
     setTriggerRef,
     visible,
   } = usePopperTooltip();
+  const { data: userData } = useUserSWR();
   const [isClickedLike, onClickedLike, offClickedLike] = useBoolean(false);
 
   const handleClickLike = useCallback(() => {
-    toggleLikeReply(reply.id);
+    toggleLikeReply();
 
     if (isClickedLike) {
       offClickedLike();
@@ -38,10 +38,14 @@ const ReplyLikeButton: FC<ReplyLikeButtonProps> = ({
     }, 300);
   }, [onClickedLike, offClickedLike, isClickedLike, toggleLikeReply]);
 
+  useEffect(() => {
+    console.log({ reply });
+  }, []);
+
   return (
     <div className="flex gap-1 items-center">
       <button type="button" ref={setTriggerRef} onClick={handleClickLike}>
-        {isAlreadyLiked ? (
+        {reply.isLiked ? (
           <Icon name="filledLike" className="w-4 h-4" />
         ) : (
           <Icon name="outlinedLike" className="w-4 h-4" />
@@ -53,7 +57,7 @@ const ReplyLikeButton: FC<ReplyLikeButtonProps> = ({
           >
             <div {...getArrowProps({ className: 'tooltip-arrow' })} />
             <span className="text-xs">
-              {isAlreadyLiked ? '좋아요 취소' : '좋아요'}
+              {reply.isLiked ? '좋아요 취소' : '좋아요'}
             </span>
           </div>
         )}

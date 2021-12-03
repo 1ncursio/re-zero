@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
 import { useParams } from 'react-router';
 import { userThumbnail } from '../../assets/images';
-import useRepliesSWR from '../../hooks/swr/useRepliesSWR';
 import useBoolean from '../../hooks/useBoolean';
 import useComment from '../../hooks/useComment';
 import useReply from '../../hooks/useReply';
@@ -9,9 +8,9 @@ import useToggle from '../../hooks/useToggle';
 import optimizeImage from '../../lib/optimizeImage';
 import relativeCreatedAt from '../../lib/relativeCreatedAt';
 import { Comment } from '../../typings/comment';
-import CommentForm from '../CommentForm';
 import CommentLikeButton from '../CommentLikeButton';
 import Icon from '../Icon';
+import ReplyForm from '../ReplyForm';
 import ReplyList from '../ReplyList';
 
 type CommentItemProps = {
@@ -23,14 +22,7 @@ const CommentItem: FC<CommentItemProps> = ({ comment }) => {
   const [isOpenReplyForm, openReplyForm] = useBoolean(false);
   const { postId } = useParams<{ postId: string }>();
 
-  // const { data: repliesData } = useRepliesSWR({
-  //   shouldFetch: isOpenReply,
-  //   postId,
-  //   commentId: comment.id,
-  //   page: 1,
-  // });
-
-  const { isAlreadyLikedComment, toggleLikeComment } = useComment({
+  const { toggleLikeComment } = useComment({
     postId,
     commentId: comment.id,
   });
@@ -39,24 +31,6 @@ const CommentItem: FC<CommentItemProps> = ({ comment }) => {
     commentId: comment.id,
     isOpenReply,
   });
-
-  // const onClickViewReplies = useCallback(() => {
-  //   fetchReplies();
-  // }, [fetchReplies]);
-
-  // const handleClickLike = useCallback(() => {
-  //   toggleLikeComment();
-
-  //   if (isClickedLike) {
-  //     offClickedLike();
-  //   }
-
-  //   onClickedLike();
-
-  //   setTimeout(() => {
-  //     offClickedLike();
-  //   }, 300);
-  // }, [toggleLikeComment, onClickedLike, offClickedLike, isClickedLike]);
 
   return (
     <div key={comment.id} className="flex gap-2">
@@ -75,7 +49,6 @@ const CommentItem: FC<CommentItemProps> = ({ comment }) => {
         <p className="text-sm text-blueGray-600 mb-2">{comment.content}</p>
         <div className="flex gap-4 items-center mb-2">
           <CommentLikeButton
-            isAlreadyLiked={isAlreadyLikedComment}
             toggleLikeComment={toggleLikeComment}
             comment={comment}
           />
@@ -89,7 +62,7 @@ const CommentItem: FC<CommentItemProps> = ({ comment }) => {
             </button>
           )}
         </div>
-        {isOpenReplyForm && <CommentForm />}
+        {isOpenReplyForm && <ReplyForm replyId={comment.id} />}
         {comment.reply_count > 0 && (
           <button
             type="button"

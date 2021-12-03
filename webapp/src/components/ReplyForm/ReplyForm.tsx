@@ -6,12 +6,12 @@ import useUserSWR from '../../hooks/swr/useUserSWR';
 import useReply from '../../hooks/useReply';
 import optimizeImage from '../../lib/optimizeImage';
 
-type CommentFormProps = {
+type ReplyFormProps = {
   replyId: number;
 };
 
 // eslint-disable-next-line no-undef
-const CommentForm: FC<CommentFormProps> = ({ replyId }) => {
+const ReplyForm: FC<ReplyFormProps> = ({ replyId }) => {
   const {
     register,
     handleSubmit,
@@ -65,4 +65,4 @@ const CommentForm: FC<CommentFormProps> = ({ replyId }) => {
   );
 };
 
-export default CommentForm;
+export default ReplyForm;

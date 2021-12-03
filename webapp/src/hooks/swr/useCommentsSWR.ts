@@ -1,6 +1,7 @@
 import useSWR, { SWRConfiguration, SWRResponse } from 'swr';
 import fetcher from '../../lib/api/fetcher';
 import { Comment } from '../../typings/comment';
+import useUserSWR from './useUserSWR';
 
 export default function useCommentsSWR(
   { postId, page }: { postId: string; page: number | string },
@@ -13,6 +14,14 @@ export default function useCommentsSWR(
       ...options,
     },
   );
+  const { data: userData } = useUserSWR();
 
-  return response;
+  return {
+    ...response,
+    data: response.data?.map((comment) => ({
+      ...comment,
+      isLiked: comment.likes.some((likedUser) => likedUser.id === userData?.id),
+      isMine: comment.user.id === userData?.id,
+    })),
+  };
 }

@@ -28,12 +28,6 @@ export default function useComment({
     return commentsData.find((c) => c.id === commentId);
   }, [commentsData, commentId]);
 
-  const isAlreadyLikedComment = useMemo(() => {
-    if (!userData || !comment) return false;
-
-    return comment.likes.some((likedUser) => likedUser.id === userData.id);
-  }, [comment, userData]);
-
   const submitComment = useCallback(
     async (content: string) => {
       console.log('a');
@@ -66,7 +60,7 @@ export default function useComment({
   const toggleLikeComment = useCallback(async () => {
     if (!userData || !commentId) return;
 
-    if (isAlreadyLikedComment) {
+    if (comment?.isLiked) {
       mutateComments(
         produce((comments?: Comment[]) => {
           if (!comments) return;
@@ -75,7 +69,6 @@ export default function useComment({
             (c: Comment) => c.id === commentId,
           );
           if (commentIndex === -1) return;
-          // eslint-disable-next-line no-param-reassign
           comments[commentIndex].likes = comments[commentIndex].likes.filter(
             (likedUser: User) => likedUser.id !== userData.id,
           );
@@ -100,7 +93,7 @@ export default function useComment({
     try {
       await likeComment({ postId, commentId: commentId.toString() });
     } catch (e) {
-      if (!isAlreadyLikedComment) {
+      if (!comment) {
         mutateComments(
           produce((comments: any) => {
             const commentIndex = comments.findIndex(
@@ -127,10 +120,9 @@ export default function useComment({
         );
       }
     }
-  }, [isAlreadyLikedComment, comment, mutateComments, postId, userData]);
+  }, [comment, mutateComments, postId, userData]);
 
   return {
-    isAlreadyLikedComment,
     toggleLikeComment,
     submitComment,
   };

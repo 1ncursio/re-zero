@@ -1,15 +1,20 @@
-import React, { FC } from 'react';
-import { Comment } from '../../typings/comment';
+import React, { VFC } from 'react';
+import { useParams } from 'react-router-dom';
+import useCommentsSWR from '../../hooks/swr/useCommentsSWR';
+import useQuery from '../../hooks/useQuery';
 import CommentItem from '../CommentItem';
 
-type CommentListProps = {
-  comments: Comment[];
-};
+const CommentList: VFC = () => {
+  const { postId } = useParams<{ postId: string }>();
+  const query = useQuery();
+  const { data: commentsData } = useCommentsSWR({
+    postId,
+    page: query.get('page') ?? 1,
+  });
 
-const CommentList: FC<CommentListProps> = ({ comments }) => {
   return (
     <div className="flex flex-col gap-6">
-      {comments?.map((comment) => (
+      {commentsData?.map((comment) => (
         <CommentItem comment={comment} key={comment.id} />
       ))}
     </div>

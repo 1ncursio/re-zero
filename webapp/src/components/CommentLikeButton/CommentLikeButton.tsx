@@ -5,13 +5,11 @@ import { Comment } from '../../typings/comment';
 import Icon from '../Icon';
 
 type CommentLikeButtonProps = {
-  isAlreadyLiked: boolean;
   toggleLikeComment: () => void;
   comment: Comment;
 };
 
 const CommentLikeButton: FC<CommentLikeButtonProps> = ({
-  isAlreadyLiked,
   toggleLikeComment,
   comment,
 }) => {
@@ -41,7 +39,7 @@ const CommentLikeButton: FC<CommentLikeButtonProps> = ({
   return (
     <div className="flex gap-1 items-center">
       <button type="button" ref={setTriggerRef} onClick={handleClickLike}>
-        {isAlreadyLiked ? (
+        {comment.isLiked ? (
           <Icon name="filledLike" className="w-4 h-4" />
         ) : (
           <Icon name="outlinedLike" className="w-4 h-4" />
@@ -53,7 +51,7 @@ const CommentLikeButton: FC<CommentLikeButtonProps> = ({
           >
             <div {...getArrowProps({ className: 'tooltip-arrow' })} />
             <span className="text-xs">
-              {isAlreadyLiked ? '좋아요 취소' : '좋아요'}
+              {comment.isLiked ? '좋아요 취소' : '좋아요'}
             </span>
           </div>
         )}
