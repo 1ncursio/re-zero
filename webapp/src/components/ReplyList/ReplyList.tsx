@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
 import { Comment } from '../../typings/comment';
-import CommentItem from '../CommentItem';
 import ReplyItem from '../ReplyItem';
 
 type ReplyListProps = {

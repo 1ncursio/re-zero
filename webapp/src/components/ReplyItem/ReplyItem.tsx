@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { userThumbnail } from '../../assets/images';
 import useBoolean from '../../hooks/useBoolean';
 import useReply from '../../hooks/useReply';
@@ -51,7 +51,7 @@ const ReplyItem: FC<ReplyItemProps> = ({ reply, commentId }) => {
             </button>
           )}
         </div>
-        {isOpenReplyForm && <ReplyForm replyId={reply.id} />}
+        {isOpenReplyForm && <ReplyForm commentId={commentId} />}
       </div>
     </div>
   );

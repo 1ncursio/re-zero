@@ -4,7 +4,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import 'react-popper-tooltip/dist/styles.css';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { userThumbnail } from '../../../assets/images';
 import CommentContainer from '../../../components/CommentContainer';
 import usePostSWR from '../../../hooks/swr/usePostSWR';

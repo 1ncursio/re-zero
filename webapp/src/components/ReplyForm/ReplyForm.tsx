@@ -1,17 +1,19 @@
 import React, { FC, useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { userThumbnail } from '../../assets/images';
+import useRepliesSWR from '../../hooks/swr/useRepliesSWR';
 import useUserSWR from '../../hooks/swr/useUserSWR';
 import useReply from '../../hooks/useReply';
+import createReply from '../../lib/api/replies/createReply';
 import optimizeImage from '../../lib/optimizeImage';
 
 type ReplyFormProps = {
-  replyId: number;
+  commentId: number;
 };
 
 // eslint-disable-next-line no-undef
-const ReplyForm: FC<ReplyFormProps> = ({ replyId }) => {
+const ReplyForm: FC<ReplyFormProps> = ({ commentId }) => {
   const {
     register,
     handleSubmit,
@@ -23,25 +25,33 @@ const ReplyForm: FC<ReplyFormProps> = ({ replyId }) => {
 
   const { data: userData } = useUserSWR();
 
-  const { submitReply } = useReply({ postId, commentId: replyId });
-
-  const onSubmitReply = useCallback(
-    async (content: string) => {
-      try {
-        await submitReply(content);
-        reset({ content: '' });
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    [submitReply, postId, reset],
-  );
+  const { data: repliesData, mutate: mutateReplies } = useRepliesSWR({
+    postId,
+    commentId,
+    page: 1,
+    shouldFetch: true,
+  });
 
   const onSubmit = useCallback(
     async ({ content }: { content: string }) => {
-      onSubmitReply(content);
+      if (!userData || !content.trim()) return;
+
+      try {
+        await createReply({
+          content,
+          postId,
+          commentId,
+          mutateReplies,
+          user: userData,
+        });
+        reset({ content: '' });
+      } catch (error) {
+        console.error(error);
+      } finally {
+        mutateReplies();
+      }
     },
-    [submitReply],
+    [commentId, postId, mutateReplies, userData, reset],
   );
 
   useEffect(() => {

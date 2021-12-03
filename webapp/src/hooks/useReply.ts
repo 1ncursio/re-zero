@@ -22,51 +22,9 @@ export default function useReply({
   const { data: repliesData, mutate: mutateReplies } = useRepliesSWR({
     shouldFetch: isOpenReply,
     postId,
-    commentId: commentId ?? -1,
+    commentId,
     page: 1,
   });
-
-  // const fetchReplies = useCallback(async () => {
-  //   mutateReplies();
-  // }, [mutateReplies]);
-
-  const submitReply = useCallback(
-    async (content: string) => {
-      if (!content || !userData) return;
-
-      await mutateReplies(
-        produce((replies?: Comment[]) => {
-          console.log({ replies });
-          replies?.push({
-            id: Math.floor(Math.random() * 100000),
-            content,
-            user: userData,
-            likes: [],
-            created_at: new Date(),
-            updated_at: new Date(),
-            reply_id: commentId,
-            isLiked: false,
-            isMine: true,
-            post_id: +postId,
-            reply_count: 0,
-            user_id: userData.id,
-          });
-        }),
-        false,
-      );
-
-      console.log('mutate invoked');
-
-      try {
-        await createReply({ postId, content, commentId });
-      } catch (e) {
-        console.error(e);
-      }
-
-      mutateReplies();
-    },
-    [postId, userData, mutateReplies, commentId],
-  );
 
   const toggleLikeReply = useCallback(async () => {
     const reply = repliesData?.find((r) => r.id === replyId);
@@ -119,7 +77,6 @@ export default function useReply({
   return {
     repliesData,
     toggleLikeReply,
-    submitReply,
     shouldFetch: isOpenReply,
   };
 }

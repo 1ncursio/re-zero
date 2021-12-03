@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { userThumbnail } from '../../assets/images';
+import useRepliesSWR from '../../hooks/swr/useRepliesSWR';
 import useBoolean from '../../hooks/useBoolean';
 import useComment from '../../hooks/useComment';
 import useReply from '../../hooks/useReply';
@@ -26,10 +27,18 @@ const CommentItem: FC<CommentItemProps> = ({ comment }) => {
     postId,
     commentId: comment.id,
   });
-  const { shouldFetch, repliesData } = useReply({
+
+  // const { repliesData } = useReply({
+  //   postId,
+  //   commentId: comment.id,
+  //   isOpenReply,
+  // });
+
+  const { data: repliesData } = useRepliesSWR({
     postId,
     commentId: comment.id,
-    isOpenReply,
+    shouldFetch: isOpenReply,
+    page: 1,
   });
 
   return (
@@ -62,14 +71,14 @@ const CommentItem: FC<CommentItemProps> = ({ comment }) => {
             </button>
           )}
         </div>
-        {isOpenReplyForm && <ReplyForm replyId={comment.id} />}
+        {isOpenReplyForm && <ReplyForm commentId={comment.id} />}
         {comment.reply_count > 0 && (
           <button
             type="button"
             onClick={toggleReply}
             className="inline-flex gap-1 items-center text-emerald-500 hover:text-emerald-400 mb-2"
           >
-            {shouldFetch ? (
+            {isOpenReply ? (
               <Icon
                 name="outlinedUpArrow"
                 className="w-4 h-4"
@@ -85,16 +94,16 @@ const CommentItem: FC<CommentItemProps> = ({ comment }) => {
               />
             )}
             <span className="text-sm">
-              {shouldFetch
+              {isOpenReply
                 ? `답글 ${comment.reply_count}개 숨기기`
                 : `답글 ${comment.reply_count}개 보기`}
             </span>
           </button>
         )}
-        {shouldFetch && repliesData && (
+        {isOpenReply && repliesData && (
           <ReplyList replies={repliesData} commentId={comment.id} />
         )}
-        {shouldFetch && (
+        {isOpenReply && (
           <button
             type="button"
             className="inline-flex gap-1 items-center text-emerald-500 hover:text-emerald-400 mb-2"
