@@ -27,7 +27,8 @@ class CommentController extends BaseController
         //     $post->comments()->latest()->paginate(12)
         // );
 
-        $comments = $post->comments()->where('reply_id', null)->oldest()->paginate(12);
+        // $comments = $post->comments()->where('reply_id', null)->oldest()->paginate(12);
+        $comments = $post->comments()->where('reply_id', null)->oldest()->get();
 
         return $this->sendResponse($comments, 'Comments retrieved successfully.');
     }
@@ -97,6 +98,7 @@ class CommentController extends BaseController
 
     public function toggleLike(Post $post, Comment $comment)
     {
+        // toggle like a comment
         $comment->likes()->toggle(auth()->id());
 
         return $this->sendResponse($comment, 'Comment liked(unliked) successfully.');
@@ -146,7 +148,8 @@ class CommentController extends BaseController
     // replies
     public function replies(Post $post, Comment $comment)
     {
-        $replies = $comment->replies()->oldest()->paginate(12);
+        // $replies = $comment->replies()->oldest()->paginate(12);
+        $replies = $comment->replies()->oldest()->get();
 
         return $this->sendResponse($replies, 'Replies retrieved successfully.');
     }

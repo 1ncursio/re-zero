@@ -9,4 +9,9 @@ export interface Post {
   created_at: Date;
   updated_at: Date;
   user: User;
+  likes: User[];
+
+  // custom fields for the frontend
+  isLiked: boolean;
+  isMine: boolean;
 }

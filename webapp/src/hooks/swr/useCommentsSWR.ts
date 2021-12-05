@@ -9,7 +9,7 @@ export default function useCommentsSWR(
 ): SWRResponse<Comment[], any> {
   const response = useSWR<Comment[]>(
     `/api/posts/${postId}/comments?page=${page ?? 1}`,
-    (url) => fetcher(url, true),
+    fetcher,
     {
       ...options,
     },

@@ -34,8 +34,7 @@ Route::prefix('posts')->group(function () {
     Route::middleware('auth:sanctum')->put('/{post}/comments/{comment}', [CommentController::class, 'update']);
     Route::middleware('auth:sanctum')->delete('/{post}/comments/{comment}', [CommentController::class, 'destroy']);
 
-    Route::middleware('auth:sanctum')->post('/{post}/likes', [PostController::class, 'like']);
-    Route::middleware('auth:sanctum')->delete('/{post}/likes', [PostController::class, 'unlike']);
+    Route::middleware('auth:sanctum')->post('/{post}/likes', [PostController::class, 'toggleLike']);
 
     Route::middleware('auth:sanctum')->post('/{post}/comments/{comment}/likes', [CommentController::class, 'toggleLike']);
 

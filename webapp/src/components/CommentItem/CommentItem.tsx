@@ -103,7 +103,7 @@ const CommentItem: FC<CommentItemProps> = ({ comment }) => {
         {isOpenReply && repliesData && (
           <ReplyList replies={repliesData} commentId={comment.id} />
         )}
-        {isOpenReply && (
+        {/* {isOpenReply && (
           <button
             type="button"
             className="inline-flex gap-1 items-center text-emerald-500 hover:text-emerald-400 mb-2"
@@ -116,7 +116,7 @@ const CommentItem: FC<CommentItemProps> = ({ comment }) => {
             />
             <span className="text-sm">답글 더보기</span>
           </button>
-        )}
+        )} */}
       </div>
     </div>
   );

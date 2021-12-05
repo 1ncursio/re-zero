@@ -21,7 +21,7 @@ export default function useRepliesSWR(
     shouldFetch
       ? `/api/posts/${postId}/comments/${commentId}/replies?page=${page ?? 1}`
       : null,
-    (url) => fetcher(url, true),
+    fetcher,
     {
       ...options,
     },
@@ -30,10 +30,13 @@ export default function useRepliesSWR(
 
   return {
     ...response,
-    data: response.data?.map((comment) => ({
-      ...comment,
-      isLiked: comment.likes.some((likedUser) => likedUser.id === userData?.id),
-      isMine: comment.user.id === userData?.id,
-    })),
+    data:
+      response.data?.map((comment) => ({
+        ...comment,
+        isLiked: comment.likes.some(
+          (likedUser) => likedUser.id === userData?.id,
+        ),
+        isMine: comment.user.id === userData?.id,
+      })) ?? [],
   };
 }

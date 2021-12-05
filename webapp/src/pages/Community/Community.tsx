@@ -1,11 +1,13 @@
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { userThumbnail } from '../../assets/images';
+import Pagination from '../../components/Pagination';
 import usePostsSWR from '../../hooks/swr/usePostsSWR';
+import useQuery from '../../hooks/useQuery';
 import optimizeImage from '../../lib/optimizeImage';
 import relativeCreatedAt from '../../lib/relativeCreatedAt';
 
@@ -13,11 +15,17 @@ dayjs.extend(relativeTime);
 dayjs.locale('ko');
 
 const Community = () => {
-  const { data: postsData } = usePostsSWR();
+  const query = useQuery();
+  const page = Number(query.get('page')) ?? 1;
 
-  useEffect(() => {
-    console.log('postsData', postsData);
-  }, [postsData]);
+  const { data: postsData, links: linksData } = usePostsSWR({
+    page,
+  });
+
+  // for ux purpose only (pagination)
+  usePostsSWR({
+    page: page + 1,
+  });
 
   return (
     <div className="lg:w-[calc(768px-2rem)] w-md mx-auto md:w-full md:px-4">
@@ -28,11 +36,11 @@ const Community = () => {
         {postsData?.map((post) => (
           <div key={post.id}>
             <div className="flex justify-between my-4">
-              <Link to={`/community/${post.id}`}>
+              {/* eslint-disable-next-line prefer-template */}
+              <Link to={'/community/' + post.id}>
                 <h1 className="text-blueGray-700 px-2">{post.title}</h1>
               </Link>
               <span className="text-xs text-blueGray-500">
-                {/* Display relative time if it was posted today. If not, display formatted date-time */}
                 {relativeCreatedAt(post.created_at)}
               </span>
             </div>
@@ -52,6 +60,7 @@ const Community = () => {
           </div>
         ))}
       </div>
+      <Pagination links={linksData} />
     </div>
   );
 };

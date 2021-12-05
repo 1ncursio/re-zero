@@ -104,21 +104,11 @@ class PostController extends BaseController
         return $this->sendResponse($post, 'Post deleted successfully.');
     }
 
-    public function like(Post $post)
+    public function toggleLike(Post $post)
     {
-        // like a post
-        $post->likes()->create([
-            'user_id' => auth()->id()
-        ]);
+        // toggle like a post
+        $post->likes()->toggle(auth()->id());
 
-        return $this->sendResponse($post, 'Post liked successfully.');
-    }
-
-    public function unlike(Post $post)
-    {
-        // unlike a post
-        $post->likes()->where('user_id', auth()->id())->delete();
-
-        return $this->sendResponse($post, 'Post unliked successfully.');
+        return $this->sendResponse($post, 'Post liked(unliked) successfully.');
     }
 }
