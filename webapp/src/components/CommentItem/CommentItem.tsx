@@ -1,18 +1,21 @@
-import React, { FC } from 'react';
+import React, { FC, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { userThumbnail } from '../../assets/images';
+import useCommentsSWR from '../../hooks/swr/useCommentsSWR';
 import useRepliesSWR from '../../hooks/swr/useRepliesSWR';
 import useBoolean from '../../hooks/useBoolean';
 import useComment from '../../hooks/useComment';
-import useReply from '../../hooks/useReply';
 import useToggle from '../../hooks/useToggle';
+import deleteComment from '../../lib/api/comments/deleteComment';
 import optimizeImage from '../../lib/optimizeImage';
 import relativeCreatedAt from '../../lib/relativeCreatedAt';
 import { Comment } from '../../typings/comment';
 import CommentLikeButton from '../CommentLikeButton';
+import EditCommentForm from '../EditCommentForm';
 import Icon from '../Icon';
 import ReplyForm from '../ReplyForm';
 import ReplyList from '../ReplyList';
+import StyledModal from '../StyledModal';
 
 type CommentItemProps = {
   comment: Comment;
@@ -20,8 +23,16 @@ type CommentItemProps = {
 
 const CommentItem: FC<CommentItemProps> = ({ comment }) => {
   const [isOpenReply, toggleReply] = useToggle(false);
+  const [isOpen, openModal, closeModal] = useBoolean(false);
   const [isOpenReplyForm, openReplyForm] = useBoolean(false);
+  // const [isOpenEditCommentForm, openEditCommentForm] = useBoolean(false);
+  const [isOpenEditCommentForm, openEditCommentForm, closeEditCommentForm] =
+    useBoolean(false);
   const { postId } = useParams<{ postId: string }>();
+
+  const { mutate: mutateComments } = useCommentsSWR({
+    postId,
+  });
 
   const { toggleLikeComment } = useComment({
     postId,
@@ -32,8 +43,16 @@ const CommentItem: FC<CommentItemProps> = ({ comment }) => {
     postId,
     commentId: comment.id,
     shouldFetch: isOpenReply,
-    page: 1,
   });
+
+  const onDeleteComment = useCallback(() => {
+    deleteComment({
+      postId,
+      commentId: comment.id,
+      mutateComments,
+    });
+    closeModal();
+  }, [closeModal, comment.id, mutateComments, postId]);
 
   return (
     <div key={comment.id} className="flex gap-2">
@@ -43,13 +62,53 @@ const CommentItem: FC<CommentItemProps> = ({ comment }) => {
         className="w-8 h-8 rounded-full mr-1"
       />
       <div className="flex-1">
-        <div className="flex gap-2 items-center mb-1">
-          <span className="text-xs text-blueGray-600">{comment.user.name}</span>
-          <span className="text-xs text-blueGray-400">
-            {relativeCreatedAt(comment.created_at)}
-          </span>
+        <div className="flex justify-between mb-1">
+          <div className="flex gap-2">
+            <span className="text-xs text-blueGray-600">
+              {comment.user.name}
+            </span>
+            <span className="text-xs text-blueGray-400">
+              {relativeCreatedAt(comment.created_at)}
+            </span>
+          </div>
+          {comment.isMine && (
+            <div className="flex gap-1">
+              <button
+                type="button"
+                className="text-xs text-blueGray-600"
+                onClick={openEditCommentForm}
+              >
+                수정
+              </button>
+              <button
+                type="button"
+                className="text-xs text-red-400"
+                onClick={openModal}
+              >
+                삭제
+              </button>
+              <StyledModal
+                isOpen={isOpen}
+                onRequestClose={closeModal}
+                onRequestOk={onDeleteComment}
+                title="댓글 삭제"
+                showCloseButton
+                showOkButton
+                width="480px"
+              >
+                댓글을 정말로 삭제하시겠습니까?
+              </StyledModal>
+            </div>
+          )}
         </div>
-        <p className="text-sm text-blueGray-600 mb-2">{comment.content}</p>
+        {isOpenEditCommentForm ? (
+          <EditCommentForm
+            comment={comment}
+            closeEditCommentForm={closeEditCommentForm}
+          />
+        ) : (
+          <p className="text-sm text-blueGray-600 mb-2">{comment.content}</p>
+        )}
         <div className="flex gap-4 items-center mb-2">
           <CommentLikeButton
             toggleLikeComment={toggleLikeComment}

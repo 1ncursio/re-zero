@@ -3,6 +3,7 @@
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -45,3 +46,5 @@ Route::prefix('posts')->group(function () {
 
     Route::middleware('auth:sanctum')->post('/{post}/comments/{comment}/replies/{reply}/likes', [CommentController::class, 'toggleLikeReply']);
 });
+
+Route::get('/search', [SearchController::class, 'query']);

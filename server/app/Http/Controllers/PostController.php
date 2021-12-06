@@ -16,10 +16,11 @@ class PostController extends BaseController
     public function index()
     {
         // paginate comments using cache
-        $key = "posts";
-        $ttl = now()->addMinutes(5);
+        // $key = "posts";
+        // $ttl = now()->addMinutes(5);
 
         $posts = Post::latest()->paginate(12);
+        // get clients ip address for cache
 
         // $posts = Cache::has($key) ? Cache::get($key) : Cache::remember(
         //     $key,
@@ -63,6 +64,17 @@ class PostController extends BaseController
      */
     public function show(Post $post)
     {
+        // parse the cookie and get the views count from it
+        $post_views_cookie = request()->cookie('post_views');
+        $post_views = explode('|', $post_views_cookie);
+
+        if (!in_array($post->id, $post_views)) {
+
+            $post->increment('views');
+            $cookie = cookie('post_views', "{$post_views_cookie}|{$post->id}", 60);
+            return $this->sendResponse($post, 'Post retrieved successfully.')->withCookie($cookie);
+        }
+
         return $this->sendResponse($post, 'Post retrieved successfully.');
     }
 

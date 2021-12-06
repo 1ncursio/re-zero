@@ -54,6 +54,7 @@ const CommentForm: VFC = () => {
       <input
         placeholder="댓글 추가"
         {...register('content', { required: true, maxLength: 200 })}
+        autoComplete="off"
         className="w-full border-b border-blueGray-200 text-sm focus:outline-none focus:border-blueGray-400"
       />
       <button type="submit" hidden />

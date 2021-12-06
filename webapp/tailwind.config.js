@@ -40,6 +40,13 @@ module.exports = {
         white: colors.white,
         black: colors.black,
       },
+      screens: {
+        '2xl': { max: '1535px' },
+        xl: { max: '1279px' },
+        lg: { max: '1023px' },
+        md: { max: '767px' },
+        sm: { max: '639px' },
+      },
       animation: {
         'ping-once': 'ping 0.3s cubic-bezier(0, 0, 0.2, 1);',
       },

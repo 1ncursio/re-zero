@@ -10,6 +10,7 @@ type CreateReplyParams = {
   user: User;
   content: string;
   mutateReplies: KeyedMutator<Comment[]>;
+  mutateComments: KeyedMutator<Comment[]>;
 };
 
 export default async function createReply({
@@ -18,6 +19,7 @@ export default async function createReply({
   user,
   content,
   mutateReplies,
+  mutateComments,
 }: CreateReplyParams): Promise<Comment> {
   mutateReplies(
     produce((replies?: Comment[]) => {
@@ -40,6 +42,16 @@ export default async function createReply({
     false,
   );
 
+  mutateComments(
+    produce((comments?: Comment[]) => {
+      const comment = comments?.find((comment) => comment.id === commentId);
+      if (comment) {
+        comment.reply_count += 1;
+      }
+    }),
+    false,
+  );
+
   const response = await client.post(
     `/api/posts/${postId}/comments/${commentId}/replies`,
     {
@@ -47,48 +59,8 @@ export default async function createReply({
     },
   );
 
+  mutateReplies();
+  mutateComments();
+
   return response.data.payload;
 }
-
-// const submitReply = useCallback(
-//   async (content: string) => {
-//     if (!content || !userData) return;
-
-//     await mutateReplies(
-//       produce((replies?: Comment[]) => {
-//         console.log({ replies });
-//         replies?.push({
-//           id: Math.floor(Math.random() * 100000),
-//           content,
-//           user: userData,
-//           likes: [],
-//           created_at: new Date(),
-//           updated_at: new Date(),
-//           reply_id: commentId,
-//           isLiked: false,
-//           isMine: true,
-//           post_id: +postId,
-//           reply_count: 0,
-//           user_id: userData.id,
-//         });
-//       }),
-//       false,
-//     );
-
-//     console.log('mutate invoked');
-
-//     try {
-//       await createReply({
-//         postId,
-//         content,
-//         commentId,
-//         mutateReplies,
-//       });
-//     } catch (e) {
-//       console.error(e);
-//     }
-
-//     mutateReplies();
-//   },
-//   [postId, userData, mutateReplies, commentId],
-// );

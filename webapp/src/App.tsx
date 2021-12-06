@@ -10,6 +10,7 @@ import CommunityPost from './pages/Community/CommunityPost';
 import Home from './pages/Home';
 import OthelloMain from './pages/OthelloMain';
 import PvpWaitingRoom from './pages/PvpWaitingRoom';
+import Search from './pages/Search';
 
 function App() {
   return (
@@ -18,7 +19,6 @@ function App() {
         errorRetryCount: 3,
         dedupingInterval: 5000,
         errorRetryInterval: 5000,
-        // provider: () => new Cache(),
       }}
     >
       {/* {process.env.NODE_ENV === 'production' ? null : <SWRDevtools />} */}
@@ -42,6 +42,9 @@ function App() {
             </Route>
             <Route exact path="/community/:postId">
               <CommunityPost />
+            </Route>
+            <Route exact path="/search">
+              <Search />
             </Route>
           </Switch>
         </AppLayout.Main>

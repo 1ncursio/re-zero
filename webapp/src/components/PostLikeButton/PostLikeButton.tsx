@@ -1,9 +1,8 @@
 import React, { FC, useCallback } from 'react';
 import { usePopperTooltip } from 'react-popper-tooltip';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import usePostSWR from '../../hooks/swr/usePostSWR';
 import useBoolean from '../../hooks/useBoolean';
-import useQuery from '../../hooks/useQuery';
 import Icon from '../Icon';
 
 type PostLikeButtonProps = {
@@ -44,9 +43,9 @@ const PostLikeButton: FC<PostLikeButtonProps> = ({ toggleLikePost }) => {
     <div className="flex gap-1 items-center">
       <button type="button" ref={setTriggerRef} onClick={handleClickLike}>
         {postData.isLiked ? (
-          <Icon name="filledLike" className="w-6 h-6" />
+          <Icon name="filledLike" className="w-4 h-4" />
         ) : (
-          <Icon name="outlinedLike" className="w-6 h-6" />
+          <Icon name="outlinedLike" className="w-4 h-4" />
         )}
         {visible && (
           <div
@@ -55,7 +54,7 @@ const PostLikeButton: FC<PostLikeButtonProps> = ({ toggleLikePost }) => {
           >
             <div {...getArrowProps({ className: 'tooltip-arrow' })} />
             <span className="text-xs">
-              {postData.isLiked ? '좋아요 취소' : '좋아요'}
+              {postData.isLiked ? '좋아요 취소' : '이 게시물이 마음에 들어요!'}
             </span>
           </div>
         )}
@@ -63,7 +62,7 @@ const PostLikeButton: FC<PostLikeButtonProps> = ({ toggleLikePost }) => {
       {isClickedLike && (
         <span className="animate-ping-once absolute -z-10 inline-flex h-6 w-6 rounded-full bg-blueGray-400 opacity-75" />
       )}
-      <span className="text-blueGray-600">{postData.likes.length}</span>
+      <span className="text-xs text-blueGray-600">{postData.likes.length}</span>
     </div>
   );
 };

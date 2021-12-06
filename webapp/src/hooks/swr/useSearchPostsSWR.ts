@@ -1,4 +1,4 @@
-import useSWR, { KeyedMutator, SWRConfiguration, SWRResponse } from 'swr';
+import useSWR, { SWRConfiguration, SWRResponse } from 'swr';
 import fetcher from '../../lib/api/fetcher';
 import { Post } from '../../typings/post';
 import useUserSWR from './useUserSWR';
@@ -9,31 +9,13 @@ export interface ILink {
   active: boolean;
 }
 
-export interface PostsSWRResponse extends SWRResponse<Post[], Error> {
-  data: Post[];
-  // error: Error;
-  // isValidating: boolean;
-  // current_page: number;
-  // first_page_url: string;
-  // from: number;
-  // last_page: number;
-  // last_page_url: string;
-  links: ILink[];
-  // next_page_url: string;
-  // path: string;
-  // per_page: number;
-  // prev_page_url: null;
-  // to: number;
-  // total: number;
-}
-
-export default function usePostsSWR(
-  { page }: { page: number | string },
+export default function useSearchPostsSWR(
+  { q, page }: { q: string | null; page: number | string },
   options: SWRConfiguration = {},
 ): SWRResponse<Post[], Error> & { links: ILink[] } {
+  console.log({ page });
   const response = useSWR<any>(
-    `/api/posts?page=${page ?? 1}`,
-    // (url) => fetcher(url, true),
+    q ? `/api/search?q=${q}&page=${page}` : null,
     fetcher,
     {
       ...options,

@@ -4,13 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 
 class Post extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
     protected $with = ['user', 'likes'];
     protected $fillable = ['title', 'content', 'user_id'];
+
+    public function searchableAs()
+    {
+        return 'posts';
+    }
 
     public function user()
     {

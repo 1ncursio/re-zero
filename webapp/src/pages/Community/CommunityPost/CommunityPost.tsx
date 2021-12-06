@@ -7,6 +7,7 @@ import 'react-popper-tooltip/dist/styles.css';
 import { useParams } from 'react-router-dom';
 import { userThumbnail } from '../../../assets/images';
 import CommentContainer from '../../../components/CommentContainer';
+import Icon from '../../../components/Icon';
 import PostLikeButton from '../../../components/PostLikeButton';
 import usePostSWR from '../../../hooks/swr/usePostSWR';
 import optimizeImage from '../../../lib/optimizeImage';
@@ -50,8 +51,14 @@ const CommunityPost = () => {
         </header>
         <section className="p-4 mb-24">
           <p className="text-sm text-blueGray-600">{postData.content}</p>
-          <div className="flex justify-end my-2">
+          <div className="flex gap-2 my-6 py-4">
             <PostLikeButton toggleLikePost={() => {}} />
+            <div className="flex gap-1 items-center">
+              <Icon name="eye" className="w-4 h-4" />
+              <span className="text-xs text-blueGray-600">
+                {postData.views}
+              </span>
+            </div>
           </div>
         </section>
         <footer className="p-4">

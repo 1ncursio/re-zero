@@ -6,7 +6,6 @@ import { Comment } from '../typings/comment';
 import { User } from '../typings/user';
 import useCommentsSWR from './swr/useCommentsSWR';
 import useUserSWR from './swr/useUserSWR';
-import useQuery from './useQuery';
 
 export default function useComment({
   postId,
@@ -15,11 +14,9 @@ export default function useComment({
   postId: string;
   commentId?: number;
 }) {
-  const query = useQuery();
   const { data: userData } = useUserSWR();
   const { data: commentsData, mutate: mutateComments } = useCommentsSWR({
     postId,
-    page: query.get('page') ?? 1,
   });
 
   const comment = useMemo(() => {

@@ -22,7 +22,6 @@ export default function useReply({
     shouldFetch: isOpenReply,
     postId,
     commentId,
-    page: 1,
   });
 
   const reply = useMemo(() => {

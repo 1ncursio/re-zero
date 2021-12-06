@@ -2,9 +2,9 @@ import React, { FC, useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { userThumbnail } from '../../assets/images';
+import useCommentsSWR from '../../hooks/swr/useCommentsSWR';
 import useRepliesSWR from '../../hooks/swr/useRepliesSWR';
 import useUserSWR from '../../hooks/swr/useUserSWR';
-import useReply from '../../hooks/useReply';
 import createReply from '../../lib/api/replies/createReply';
 import optimizeImage from '../../lib/optimizeImage';
 
@@ -25,10 +25,11 @@ const ReplyForm: FC<ReplyFormProps> = ({ commentId }) => {
 
   const { data: userData } = useUserSWR();
 
+  const { mutate: mutateComments } = useCommentsSWR({ postId });
+
   const { data: repliesData, mutate: mutateReplies } = useRepliesSWR({
     postId,
     commentId,
-    page: 1,
     shouldFetch: true,
   });
 
@@ -42,6 +43,7 @@ const ReplyForm: FC<ReplyFormProps> = ({ commentId }) => {
           postId,
           commentId,
           mutateReplies,
+          mutateComments,
           user: userData,
         });
         reset({ content: '' });
@@ -67,6 +69,7 @@ const ReplyForm: FC<ReplyFormProps> = ({ commentId }) => {
       />
       <input
         placeholder="답글 추가"
+        autoComplete="off"
         {...register('content', { required: true, maxLength: 200 })}
         className="w-full border-b border-blueGray-200 text-sm focus:outline-none focus:border-blueGray-400"
       />

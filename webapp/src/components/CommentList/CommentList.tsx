@@ -6,10 +6,9 @@ import CommentItem from '../CommentItem';
 
 const CommentList: VFC = () => {
   const { postId } = useParams<{ postId: string }>();
-  const query = useQuery();
+
   const { data: commentsData } = useCommentsSWR({
     postId,
-    page: query.get('page') ?? 1,
   });
 
   return (

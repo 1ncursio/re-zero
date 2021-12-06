@@ -54,8 +54,8 @@ const StyledModal: FC<StyledModalProps> = ({
         contentLabel="Modal"
       >
         <div>
-          {title && <h3 className="text-2xl font-bold">{title}</h3>}
-          <div className="py-4">{children}</div>
+          {title && <h3 className="text-lg font-bold">{title}</h3>}
+          <div className="py-4 text-sm">{children}</div>
         </div>
         {(showOkButton || showCloseButton) && (
           <div className="flex justify-end gap-2">
@@ -63,7 +63,7 @@ const StyledModal: FC<StyledModalProps> = ({
               <button
                 type="button"
                 onClick={onRequestClose}
-                className="btn-white bg-gray-200 hover:bg-gray-100 text-gray-600"
+                className="text-sm bg-blueGray-100 py-1 px-2 hover:bg-white text-blueGray-600"
               >
                 {closeText}
               </button>
@@ -72,7 +72,7 @@ const StyledModal: FC<StyledModalProps> = ({
               <button
                 type="button"
                 onClick={onRequestOk}
-                className="btn-cyan bg-emerald-500 hover:bg-emerald-400"
+                className="text-sm text-white py-1 px-2 bg-emerald-400 hover:bg-emerald-300"
               >
                 {okText}
               </button>
@@ -104,7 +104,7 @@ const modalStyle = ({
   }
 
   .content-base {
-    ${tw`flex flex-col justify-between md:w-[calc(100% - 2rem)] rounded-lg p-6 shadow transition ease-out-back duration-300 transform translate-y-full scale-50`}
+    ${tw`flex flex-col justify-between md:w-[calc(100% - 2rem)] p-6 shadow transition ease-out-back duration-300 transform translate-y-full scale-50`}
     ${width &&
     css`
       width: ${width};
