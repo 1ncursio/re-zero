@@ -1,7 +1,6 @@
 import produce from 'immer';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import likeComment from '../lib/api/comments/likeComment';
-import createReply from '../lib/api/replies/createReply';
 import { Comment } from '../typings/comment';
 import { User } from '../typings/user';
 import useRepliesSWR from './swr/useRepliesSWR';
@@ -26,13 +25,16 @@ export default function useReply({
     page: 1,
   });
 
-  const toggleLikeReply = useCallback(async () => {
-    const reply = repliesData?.find((r) => r.id === replyId);
+  const reply = useMemo(() => {
+    if (!repliesData || !replyId) return undefined;
 
+    return repliesData.find((c) => c.id === replyId);
+  }, [repliesData, replyId]);
+
+  const toggleLikeReply = useCallback(async () => {
     if (!userData || !reply) return;
 
     if (reply.isLiked) {
-      console.log('이미 좋아요를 누른 상태입니다.');
       mutateReplies(
         produce((replies?: Comment[]) => {
           if (!replies) return;
@@ -44,12 +46,10 @@ export default function useReply({
           replies[replyIndex].likes = replies[replyIndex].likes.filter(
             (likedUser: User) => likedUser.id !== userData.id,
           );
-          replies[replyIndex].isLiked = false;
         }),
         false,
       );
     } else {
-      console.log('좋아요를 누르겠습니다.');
       mutateReplies(
         produce((replies?: Comment[]) => {
           if (!replies) return;
@@ -59,7 +59,6 @@ export default function useReply({
           );
           if (replyIndex === -1) return;
           replies[replyIndex].likes.push(userData);
-          replies[replyIndex].isLiked = true;
         }),
         false,
       );
@@ -72,10 +71,9 @@ export default function useReply({
     } finally {
       mutateReplies();
     }
-  }, [mutateReplies, postId, userData]);
+  }, [reply, mutateReplies, postId, userData]);
 
   return {
-    repliesData,
     toggleLikeReply,
     shouldFetch: isOpenReply,
   };

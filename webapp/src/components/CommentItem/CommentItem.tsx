@@ -28,12 +28,6 @@ const CommentItem: FC<CommentItemProps> = ({ comment }) => {
     commentId: comment.id,
   });
 
-  // const { repliesData } = useReply({
-  //   postId,
-  //   commentId: comment.id,
-  //   isOpenReply,
-  // });
-
   const { data: repliesData } = useRepliesSWR({
     postId,
     commentId: comment.id,

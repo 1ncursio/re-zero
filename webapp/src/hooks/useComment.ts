@@ -30,9 +30,7 @@ export default function useComment({
 
   const submitComment = useCallback(
     async (content: string) => {
-      console.log('a');
       if (!content || !userData) return;
-      console.log('b');
 
       mutateComments(
         produce((comments?: Comment[] | any) => {
@@ -58,9 +56,9 @@ export default function useComment({
   );
 
   const toggleLikeComment = useCallback(async () => {
-    if (!userData || !commentId) return;
+    if (!userData || !commentId || !comment) return;
 
-    if (comment?.isLiked) {
+    if (comment.isLiked) {
       mutateComments(
         produce((comments?: Comment[]) => {
           if (!comments) return;
@@ -93,32 +91,9 @@ export default function useComment({
     try {
       await likeComment({ postId, commentId: commentId.toString() });
     } catch (e) {
-      if (!comment) {
-        mutateComments(
-          produce((comments: any) => {
-            const commentIndex = comments.findIndex(
-              (c: Comment) => c.id === commentId,
-            );
-            if (commentIndex === -1) return;
-            // eslint-disable-next-line no-param-reassign
-            comments[commentIndex].likes = comments[commentIndex].likes.filter(
-              (likedUser: User) => likedUser.id !== userData.id,
-            );
-          }),
-          false,
-        );
-      } else {
-        mutateComments(
-          produce((comments: any) => {
-            const commentIndex = comments.findIndex(
-              (c: Comment) => c.id === commentId,
-            );
-            if (commentIndex === -1) return;
-            comments[commentIndex].likes.push(userData);
-          }),
-          false,
-        );
-      }
+      console.error(e);
+    } finally {
+      mutateComments();
     }
   }, [comment, mutateComments, postId, userData]);
 

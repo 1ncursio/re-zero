@@ -18,10 +18,13 @@ export default function useCommentsSWR(
 
   return {
     ...response,
-    data: response.data?.map((comment) => ({
-      ...comment,
-      isLiked: comment.likes.some((likedUser) => likedUser.id === userData?.id),
-      isMine: comment.user.id === userData?.id,
-    })),
+    data:
+      response.data?.map((comment) => ({
+        ...comment,
+        isLiked: comment.likes.some(
+          (likedUser) => likedUser.id === userData?.id,
+        ),
+        isMine: comment.user.id === userData?.id,
+      })) ?? [],
   };
 }

@@ -31,12 +31,10 @@ export default function useRepliesSWR(
   return {
     ...response,
     data:
-      response.data?.map((comment) => ({
-        ...comment,
-        isLiked: comment.likes.some(
-          (likedUser) => likedUser.id === userData?.id,
-        ),
-        isMine: comment.user.id === userData?.id,
+      response.data?.map((reply) => ({
+        ...reply,
+        isLiked: reply.likes.some((likedUser) => likedUser.id === userData?.id),
+        isMine: reply.user.id === userData?.id,
       })) ?? [],
   };
 }

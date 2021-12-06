@@ -15,7 +15,6 @@ type ReplyItemProps = {
 };
 
 const ReplyItem: FC<ReplyItemProps> = ({ reply, commentId }) => {
-  const [isOpenReplyForm, openReplyForm] = useBoolean(false);
   const { postId } = useParams<{ postId: string }>();
 
   const { toggleLikeReply } = useReply({
@@ -41,17 +40,7 @@ const ReplyItem: FC<ReplyItemProps> = ({ reply, commentId }) => {
         <p className="text-sm text-blueGray-600 mb-2">{reply.content}</p>
         <div className="flex gap-4 items-center mb-2">
           <ReplyLikeButton toggleLikeReply={toggleLikeReply} reply={reply} />
-          {!reply.reply_id && (
-            <button
-              type="button"
-              className="text-xs text-blueGray-600"
-              onClick={openReplyForm}
-            >
-              답글
-            </button>
-          )}
         </div>
-        {isOpenReplyForm && <ReplyForm commentId={commentId} />}
       </div>
     </div>
   );
