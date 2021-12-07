@@ -26,9 +26,14 @@ export type ChildrenProps = {
 
 function Main({ children }: ChildrenProps) {
   return (
-    <main className="flex-1 mx-auto xl:w-full mt-12 xl:mt-6">{children}</main>
+    <main className="flex-1 xl:w-full mt-12 xl:mt-6 pb-4">{children}</main>
   );
+}
+
+function Footer({ children }: ChildrenProps) {
+  return <footer className="h-48 bg-blueGray-800">{children}</footer>;
 }
 
 AppLayout.Head = Head;
 AppLayout.Main = Main;
+AppLayout.Footer = Footer;

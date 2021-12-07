@@ -1,12 +1,14 @@
 // import SWRDevtools, { Cache } from '@jjordy/swr-devtools';
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import { SWRConfig } from 'swr';
 import './App.css';
 import AppLayout from './components/AppLayout';
+import Footer from './components/Footer';
 import Header from './components/Header';
 import Community from './pages/Community';
 import CommunityPost from './pages/Community/CommunityPost';
+import NewCommunityPost from './pages/Community/NewCommunityPost';
 import Home from './pages/Home';
 import OthelloMain from './pages/OthelloMain';
 import PvpWaitingRoom from './pages/PvpWaitingRoom';
@@ -29,7 +31,8 @@ function App() {
         <AppLayout.Main>
           <Switch>
             <Route exact path="/">
-              <Home />
+              {/* <Home /> */}
+              <Redirect to="/othello" />
             </Route>
             <Route exact path="/othello">
               <OthelloMain />
@@ -40,6 +43,9 @@ function App() {
             <Route exact path="/community">
               <Community />
             </Route>
+            <Route exact path="/community/new">
+              <NewCommunityPost />
+            </Route>
             <Route exact path="/community/:postId">
               <CommunityPost />
             </Route>
@@ -48,6 +54,9 @@ function App() {
             </Route>
           </Switch>
         </AppLayout.Main>
+        <AppLayout.Footer>
+          <Footer />
+        </AppLayout.Footer>
       </AppLayout>
     </SWRConfig>
   );

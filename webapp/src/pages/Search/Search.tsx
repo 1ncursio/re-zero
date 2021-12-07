@@ -15,7 +15,7 @@ const Search = () => {
   const query = useQuery();
   const page = Number(query.get('page')) || 1;
   const history = useHistory();
-  const q = query.get('q');
+  const q = query.get('q') !== null ? query.get('q') : '';
   const [isFocus, focus, blur] = useBoolean(false);
   const {
     register,
@@ -24,7 +24,11 @@ const Search = () => {
     setFocus,
     formState: { errors },
   } = useForm();
-  const { data: postsData, links: linksData } = useSearchPostsSWR({ page, q });
+  const {
+    data: postsData,
+    links: linksData,
+    total,
+  } = useSearchPostsSWR({ page, q });
 
   useEffect(() => {
     setFocus('q');
@@ -35,7 +39,8 @@ const Search = () => {
 
   const onSearch = useCallback(
     ({ q }: { q: string }) => {
-      if (q) history.push(`/search?q=${q}`);
+      const encodedQ = encodeURIComponent(q);
+      if (q) history.push(`/search?q=${encodedQ}`);
       else history.push('/search');
     },
     [q, history],
@@ -67,6 +72,13 @@ const Search = () => {
         />
         <button type="submit" hidden />
       </form>
+      {postsData && q && (
+        <div className="text-blueGray-600 my-4">
+          <span>총 </span>
+          <b className="font-bold text-emerald-500">{total}</b>
+          <span>개의 포스트를 찾았습니다.</span>
+        </div>
+      )}
       {postsData && <SearchPostList posts={postsData} />}
       <Pagination links={linksData} />
     </div>

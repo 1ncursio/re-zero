@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use Cache;
 use Illuminate\Http\Request;
+use Intervention\Image\Facades\Image;
 
 class PostController extends BaseController
 {
@@ -122,5 +123,27 @@ class PostController extends BaseController
         $post->likes()->toggle(auth()->id());
 
         return $this->sendResponse($post, 'Post liked(unliked) successfully.');
+    }
+
+    public function uploadImage(Request $request)
+    {
+        // upload an image
+        $this->validate($request, [
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        $image = $request->file('image');
+        $time = time();
+
+        $filename = "{$time}_{$image->getClientOriginalName()}";
+        $location = public_path('storage/images/' . $filename);
+        Image::make($image)->resize(768, null, function ($constraint) {
+            $constraint->aspectRatio();
+        })->save($location);
+
+
+        // http://localhost:8000/storage/images/1638867234.jpg
+
+        return $this->sendResponse($filename, 'Image uploaded successfully.');
     }
 }

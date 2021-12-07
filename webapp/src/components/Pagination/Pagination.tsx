@@ -14,7 +14,7 @@ const Pagination: FC<PaginationProps> = ({ links }) => {
   }
 
   return (
-    <div className="flex justify-center gap-1 my-4">
+    <div className="flex justify-center gap-1">
       {links.map((link, i) => (
         <div key={i} className="flex">
           {!link.url ? (
