@@ -35,6 +35,11 @@ const SearchPostList: FC<SearchPostListProps> = ({ posts }) => {
     );
   };
 
+  // delete all the html tags from the post content
+  const cleanContent = (content: string) => {
+    return content.replace(/<[^>]*>?/gm, '');
+  };
+
   return (
     <div className="flex flex-col gap-6 divide-y divide-blueGray-200">
       {posts?.map((post) => (
@@ -51,7 +56,7 @@ const SearchPostList: FC<SearchPostListProps> = ({ posts }) => {
             </span>
           </div>
           <p className="m-2 text-sm text-blueGray-600 line-clamp-2">
-            {getHighlightedText(post.content, q)}
+            {getHighlightedText(cleanContent(post.content), q)}
           </p>
           <div className="p-2 flex gap-1 items-center">
             <img

@@ -10,6 +10,11 @@ type PostListProps = {
 };
 
 const PostList: FC<PostListProps> = ({ posts }) => {
+  // delete all the html tags from the post content
+  const cleanContent = (content: string) => {
+    return content.replace(/<[^>]*>?/gm, '');
+  };
+
   return (
     <div className="flex flex-col gap-6 divide-y divide-blueGray-200">
       {posts?.map((post) => (
@@ -24,7 +29,7 @@ const PostList: FC<PostListProps> = ({ posts }) => {
             </span>
           </div>
           <p className="m-2 text-sm text-blueGray-600 line-clamp-2">
-            {post.content}
+            {cleanContent(post.content)}
           </p>
           <div className="p-2 flex gap-1 items-center">
             <img

@@ -1,15 +1,16 @@
-import { Comment } from '../../../typings/comment';
+import { Post } from '../../../typings/post';
 import client from '../client';
 
-export default async function createComment({
-  postId,
+export default async function createPost({
   content,
+  title,
 }: {
-  postId: string;
   content: string;
-}): Promise<Comment> {
-  const response = await client.post(`/api/posts/${postId}/comments`, {
+  title: string;
+}): Promise<Post> {
+  const response = await client.post('/api/posts', {
     content,
+    title,
   });
   return response.data.payload;
 }

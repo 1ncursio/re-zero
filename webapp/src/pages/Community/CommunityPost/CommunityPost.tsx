@@ -1,3 +1,4 @@
+import { css } from '@emotion/react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -50,7 +51,10 @@ const CommunityPost = () => {
           </div>
         </header>
         <section className="p-4 mb-24">
-          <p className="text-sm text-blueGray-600">{postData.content}</p>
+          <p
+            dangerouslySetInnerHTML={{ __html: postData.content }}
+            css={contentStyle}
+          />
           <div className="flex gap-2 my-6 py-4">
             <PostLikeButton toggleLikePost={() => {}} />
             <div className="flex gap-1 items-center">
@@ -68,5 +72,63 @@ const CommunityPost = () => {
     </div>
   );
 };
+
+const contentStyle = css`
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    all: unset;
+  }
+
+  h1 {
+    display: block;
+    font-size: 2em;
+    margin-block-start: 0.67em;
+    margin-block-end: 0.67em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+  }
+
+  h2 {
+    display: block;
+    font-size: 1.5em;
+    margin-block-start: 0.83em;
+    margin-block-end: 0.83em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+  }
+
+  h3 {
+    display: block;
+    font-size: 1.17em;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+  }
+
+  h4 {
+    display: block;
+    margin-block-start: 1.33em;
+    margin-block-end: 1.33em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+  }
+
+  p {
+    display: block;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+  }
+`;
 
 export default CommunityPost;

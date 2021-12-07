@@ -141,9 +141,6 @@ class PostController extends BaseController
             $constraint->aspectRatio();
         })->save($location);
 
-
-        // http://localhost:8000/storage/images/1638867234.jpg
-
         return $this->sendResponse($filename, 'Image uploaded successfully.');
     }
 }
