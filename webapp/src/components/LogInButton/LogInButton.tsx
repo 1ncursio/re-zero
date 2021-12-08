@@ -1,17 +1,13 @@
 import React, { useCallback } from 'react';
+import { undrawWelcome } from '../../assets/images';
 import useBoolean from '../../hooks/useBoolean';
 import IconButton from '../Button';
+import Icon from '../Icon';
 import StyledModal from '../StyledModal';
 
 const LogInButton = () => {
   const [isOpen, openModal, closeModal] = useBoolean(false);
-
-  const auth = useCallback(
-    (name: string) => () => {
-      window.location.href = `http://localhost:8000/auth/redirect`;
-    },
-    [],
-  );
+  const { REACT_APP_AUTH_URL } = process.env;
 
   return (
     <>
@@ -31,16 +27,17 @@ const LogInButton = () => {
       >
         <div className="relative">
           <div className="absolute top-16 left-0 w-full z-0 md:hidden opacity-80">
-            {/* <img src={undrawWelcome} alt="login" /> */}
+            <img src={undrawWelcome} alt="login" />
           </div>
           <div className="flex-[3] flex flex-col gap-4 items-center relative z-10">
             <h2 className="text-xl text-gray-600 font-medium">간편 로그인</h2>
             <div className="w-1/2 flex justify-around items-center">
-              <IconButton
-                icon="google"
-                onClick={auth('google')}
-                className="bg-white"
-              />
+              <a
+                href={REACT_APP_AUTH_URL}
+                className="rounded-full border-2 border-blueGray-200 flex justify-center items-center"
+              >
+                <Icon name="google" className="w-12 h-12" />
+              </a>
             </div>
           </div>
         </div>

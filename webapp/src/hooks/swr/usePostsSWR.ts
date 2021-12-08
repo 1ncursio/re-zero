@@ -39,7 +39,7 @@ export default function usePostsSWR(
       ...options,
     },
   );
-  const { data: userData } = useUserSWR();
+  const { data: userData } = useUserSWR({ ...options });
 
   return {
     ...response,

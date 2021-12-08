@@ -13,7 +13,6 @@ export default function useSearchPostsSWR(
   { q, page }: { q: string | null; page: number | string },
   options: SWRConfiguration = {},
 ): SWRResponse<Post[], Error> & { links: ILink[]; total: number } {
-  console.log({ page });
   const response = useSWR<any>(
     q ? `/api/search?q=${q}&page=${page}` : null,
     fetcher,

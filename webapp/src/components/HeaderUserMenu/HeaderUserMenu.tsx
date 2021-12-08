@@ -16,19 +16,17 @@ const HeaderUserMenu = ({ onClose, visible }: HeaderUserMenuProps) => {
   return (
     <OutsideClickHandler onOutsideClick={onClose}>
       <div className="relative">
-        <div
+        <button
+          type="button"
           onClick={onClose}
-          className="absolute w-36 shadow-10 right-0 top-3 rounded-md bg-gray-500 text-gray-600 z-10"
-          role="button"
+          className="absolute text-sm w-32 shadow-10 right-0 top-3 text-blueGray-600 z-10"
           tabIndex={0}
         >
           <HeaderUserMenuItem to="/account/profile">
             내 프로필
           </HeaderUserMenuItem>
-          <HeaderUserMenuItem>메뉴 1</HeaderUserMenuItem>
-          <HeaderUserMenuItem>메뉴 2</HeaderUserMenuItem>
           <HeaderUserMenuItem onClick={logout}>로그아웃</HeaderUserMenuItem>
-        </div>
+        </button>
       </div>
     </OutsideClickHandler>
   );

@@ -6,6 +6,7 @@ import './App.css';
 import AppLayout from './components/AppLayout';
 import Footer from './components/Footer';
 import Header from './components/Header';
+import AccountProfile from './pages/AccountProfile';
 import Community from './pages/Community';
 import CommunityPost from './pages/Community/CommunityPost';
 import NewCommunityPost from './pages/Community/NewCommunityPost';
@@ -51,6 +52,9 @@ function App() {
             </Route>
             <Route exact path="/search">
               <Search />
+            </Route>
+            <Route exact path="/account/profile">
+              <AccountProfile />
             </Route>
           </Switch>
         </AppLayout.Main>

@@ -2,10 +2,9 @@ import { css } from '@emotion/react';
 import React, { useCallback, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useForm } from 'react-hook-form';
-import { useHistory } from 'react-router';
+import { useHistory } from 'react-router-dom';
 import Icon from '../../components/Icon';
 import Pagination from '../../components/Pagination';
-import PostList from '../../components/PostList/PostList';
 import SearchPostList from '../../components/SearchPostList';
 import useSearchPostsSWR from '../../hooks/swr/useSearchPostsSWR';
 import useBoolean from '../../hooks/useBoolean';
@@ -30,6 +29,9 @@ const Search = () => {
     total,
   } = useSearchPostsSWR({ page, q });
 
+  // for ux purpose only (pagination)
+  useSearchPostsSWR({ page: page + 1, q });
+
   useEffect(() => {
     setFocus('q');
     if (q) {
@@ -46,10 +48,12 @@ const Search = () => {
     [q, history],
   );
 
+  const currentUrl = new URL(window.location.href);
+
   return (
     <div className="lg:w-[calc(768px-2rem)] w-md mx-auto md:w-full md:px-4">
       <Helmet>
-        <title>{`"${q}" 검색결과 | Lathello`}</title>
+        <title>{q ? `"${q}" 검색결과 | Lathello` : 'Lathello'}</title>
       </Helmet>
       <form
         onSubmit={handleSubmit(onSearch)}
@@ -80,7 +84,7 @@ const Search = () => {
         </div>
       )}
       {postsData && <SearchPostList posts={postsData} />}
-      <Pagination links={linksData} />
+      <Pagination links={linksData} referrerUrl={currentUrl} />
     </div>
   );
 };
@@ -95,5 +99,3 @@ const searchStyle = css`
 `;
 
 export default Search;
-
-// hide input search x button

@@ -72,7 +72,7 @@ const CommentItem: FC<CommentItemProps> = ({ comment }) => {
             </span>
           </div>
           {comment.isMine && (
-            <div className="flex gap-1">
+            <div className="flex gap-2">
               <button
                 type="button"
                 className="text-xs text-blueGray-600"

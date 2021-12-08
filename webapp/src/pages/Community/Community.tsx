@@ -1,11 +1,7 @@
 import { Editor } from '@tinymce/tinymce-react';
-import dayjs from 'dayjs';
-import 'dayjs/locale/ko';
-import relativeTime from 'dayjs/plugin/relativeTime';
 import React, { useCallback, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useHistory } from 'react-router';
-import CreatePostButton from '../../components/CreatePostButton';
+import { useHistory } from 'react-router-dom';
 import Pagination from '../../components/Pagination';
 import PostList from '../../components/PostList/PostList';
 import StyledModal from '../../components/StyledModal';
@@ -15,10 +11,7 @@ import useBoolean from '../../hooks/useBoolean';
 import useInput from '../../hooks/useInput';
 import useQuery from '../../hooks/useQuery';
 import uploadImage from '../../lib/api/comments/uploadImage';
-import createPost from '../../lib/api/posts/createComment';
-
-dayjs.extend(relativeTime);
-dayjs.locale('ko');
+import createPost from '../../lib/api/posts/createPost';
 
 const Community = () => {
   const [title, onChangeTitle] = useInput('');
@@ -33,16 +26,13 @@ const Community = () => {
   });
 
   // for ux purpose only (pagination)
-  usePostsSWR({
-    page: page + 1,
-  });
+  usePostsSWR({ page: page + 1 });
 
   const onUploadImage = useCallback(async (blobInfo, success, failure) => {
     try {
       const formData = new FormData();
       formData.append('image', blobInfo.blob());
       const imageName = await uploadImage(formData);
-      // const { data } = await axios.post('/questions/image', formData);
       success(`http://localhost:8000/storage/images/${imageName}`);
       // console.log(data);
     } catch (error) {
@@ -52,7 +42,7 @@ const Community = () => {
   }, []);
 
   const onCreatePost = useCallback(async () => {
-    if (!editorRef.current) return;
+    if (!editorRef.current || !title) return;
     // @ts-ignore
     const content = editorRef.current.getContent();
 
@@ -66,6 +56,8 @@ const Community = () => {
       console.error(error);
     }
   }, [history, title, editorRef]);
+
+  const currentUrl = new URL(window.location.href);
 
   return (
     <div className="lg:w-[calc(768px-2rem)] w-md mx-auto md:w-full md:px-4 flex flex-col gap-4">
@@ -103,7 +95,7 @@ const Community = () => {
         </StyledModal>
       </div>
       {postsData && <PostList posts={postsData} />}
-      <Pagination links={linksData} />
+      <Pagination links={linksData} referrerUrl={currentUrl} />
     </div>
   );
 };

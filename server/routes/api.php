@@ -22,7 +22,13 @@ use Illuminate\Support\Facades\Route;
 // Route::post('register', [RegisterController::class, 'register']);
 // Route::post('login', [RegisterController::class, 'login']);
 
-Route::middleware('auth:sanctum')->get('/user', [UserController::class, 'user']);
+// Route::middleware('auth:sanctum')->get('/user', [UserController::class, 'user']);
+Route::middleware('auth:sanctum')->prefix('user')->group(function () {
+    Route::get('/', [UserController::class, 'user']);
+    Route::post('/image', [UserController::class, 'updateImage']);
+    Route::put('/profile', [UserController::class, 'updateProfile']);
+});
+
 Route::prefix('posts')->group(function () {
     Route::get('/', [PostController::class, 'index']);
     Route::get('/{post}', [PostController::class, 'show']);
