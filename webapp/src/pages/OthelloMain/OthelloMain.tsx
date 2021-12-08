@@ -14,7 +14,7 @@ const OthelloMain = () => {
         </p>
       </div>
       <div className="my-28 flex gap-16 justify-center text-lg">
-        <Link to="/othello">
+        <Link to="/othello/alphazero">
           <div className="flex flex-col justify-center items-center gap-2">
             <Button
               icon="ai"

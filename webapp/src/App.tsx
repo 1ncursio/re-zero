@@ -11,6 +11,7 @@ import Community from './pages/Community';
 import CommunityPost from './pages/Community/CommunityPost';
 import NewCommunityPost from './pages/Community/NewCommunityPost';
 import Home from './pages/Home';
+import OthelloAlphaZero from './pages/OthelloAlphaZero';
 import OthelloMain from './pages/OthelloMain';
 import PvpWaitingRoom from './pages/PvpWaitingRoom';
 import Search from './pages/Search';
@@ -40,6 +41,9 @@ function App() {
             </Route>
             <Route exact path="/othello/pvp">
               <PvpWaitingRoom />
+            </Route>
+            <Route exact path="/othello/alphazero">
+              <OthelloAlphaZero />
             </Route>
             <Route exact path="/community">
               <Community />

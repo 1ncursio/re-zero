@@ -50,24 +50,26 @@ const Header = () => {
           </Link>
         </div>
       </div>
-      {userData && !isLoadingUserData ? (
-        <div className="flex items-center">
-          <Link to="/search" className="mr-6">
-            <Icon
-              name="outlinedSearch"
-              className="w-5 h-5 text-blueGray-600"
-              fill="none"
-              stroke="currentColor"
-            />
-          </Link>
-          <div ref={headerUserIconRef} className="flex items-center">
-            <HeaderUserIcon onClick={toggleUserMenu} />
-          </div>
-          <HeaderUserMenu visible={userMenu} onClose={onOutsideClick} />
-        </div>
-      ) : (
-        <LogInButton />
-      )}
+      <div className="flex items-center">
+        <Link to="/search" className="mr-6">
+          <Icon
+            name="outlinedSearch"
+            className="w-5 h-5 text-blueGray-600"
+            fill="none"
+            stroke="currentColor"
+          />
+        </Link>
+        {userData && !isLoadingUserData ? (
+          <>
+            <div ref={headerUserIconRef} className="flex items-center">
+              <HeaderUserIcon onClick={toggleUserMenu} />
+            </div>
+            <HeaderUserMenu visible={userMenu} onClose={onOutsideClick} />
+          </>
+        ) : (
+          <LogInButton />
+        )}
+      </div>
     </div>
   );
 };
