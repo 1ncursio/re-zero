@@ -39,13 +39,10 @@ export default class Piece {
     context.stroke();
     context.closePath();
 
-    // draw one more circle for the shadow
     context.beginPath();
     context.arc(x, y, this.radius - 20, 0, Math.PI * 2, false);
     context.strokeStyle = INNER_STROKE_COLOR;
     context.lineWidth = 1;
-    // context.fillStyle = this.color;
-    // context.fill();
     context.stroke();
     context.closePath();
 

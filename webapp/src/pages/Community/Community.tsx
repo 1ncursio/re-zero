@@ -4,9 +4,11 @@ import { Helmet } from 'react-helmet-async';
 import { useHistory } from 'react-router-dom';
 import Pagination from '../../components/Pagination';
 import PostList from '../../components/PostList/PostList';
+import RequireLogIn from '../../components/RequireLogin/RequireLogin';
 import StyledModal from '../../components/StyledModal';
 import TinyEditor from '../../components/TinyEditor';
 import usePostsSWR from '../../hooks/swr/usePostsSWR';
+import useUserSWR from '../../hooks/swr/useUserSWR';
 import useBoolean from '../../hooks/useBoolean';
 import useInput from '../../hooks/useInput';
 import useQuery from '../../hooks/useQuery';
@@ -20,6 +22,8 @@ const Community = () => {
   const history = useHistory();
   const page = Number(query.get('page')) || 1;
   const editorRef = useRef<Editor>(null);
+
+  const { data: userData, isLoading: isLoadingUserData } = useUserSWR();
 
   const { data: postsData, links: linksData } = usePostsSWR({
     page,
@@ -58,6 +62,10 @@ const Community = () => {
   }, [history, title, editorRef]);
 
   const currentUrl = new URL(window.location.href);
+
+  if (!userData && !isLoadingUserData) {
+    return <RequireLogIn />;
+  }
 
   return (
     <div className="lg:w-[calc(768px-2rem)] w-md mx-auto md:w-full md:px-4 flex flex-col gap-4">

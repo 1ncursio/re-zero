@@ -9,6 +9,7 @@ import CommentContainer from '../../../components/CommentContainer';
 import EditPostForm from '../../../components/EditPostForm';
 import PostLikeButton from '../../../components/PostLikeButton';
 import PostViews from '../../../components/PostViews';
+import RequireLogIn from '../../../components/RequireLogin/RequireLogin';
 import StyledModal from '../../../components/StyledModal';
 import usePostSWR from '../../../hooks/swr/usePostSWR';
 import useUserSWR from '../../../hooks/swr/useUserSWR';
@@ -32,7 +33,7 @@ const CommunityPost = () => {
   const editorRef = useRef<Editor>(null);
 
   const { data: postData, mutate: mutatePost } = usePostSWR(postId);
-  const { data: userData } = useUserSWR();
+  const { data: userData, isLoading: isLoadingUserData } = useUserSWR();
 
   const onUpdatePost = useCallback(async () => {
     if (!editorRef.current || !title || !postData) return;
@@ -89,6 +90,10 @@ const CommunityPost = () => {
 
   if (!postData) {
     return null;
+  }
+
+  if (!userData && !isLoadingUserData) {
+    return <RequireLogIn />;
   }
 
   return (

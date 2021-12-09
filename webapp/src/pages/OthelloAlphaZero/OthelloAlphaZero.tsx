@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Icon from '../../components/Icon';
+import RequireLogIn from '../../components/RequireLogin/RequireLogin';
 import useUserSWR from '../../hooks/swr/useUserSWR';
+import createAIHistory from '../../lib/api/othello/createAIHistory';
 import requestNextState, {
   TState,
 } from '../../lib/api/othello/requestNextState';
@@ -29,7 +31,7 @@ const OthelloAlphaZero = () => {
   const contextRef = useRef<CanvasRenderingContext2D | null>(null);
   const stateRef = useRef<State | null>(null);
 
-  const { data: userData } = useUserSWR();
+  const { data: userData, isLoading: isLoadingUserData } = useUserSWR();
 
   const pieces = Array.from(
     { length: CELL_COUNT ** 2 },
@@ -203,9 +205,39 @@ const OthelloAlphaZero = () => {
     return () => cancelAnimationFrame(requestRef.current as number);
   }, []);
 
+  useEffect(() => {
+    if (!userData) return;
+
+    if (isDone) {
+      if (isDraw) {
+        createAIHistory({
+          blackId: userData.id,
+          whiteId: null,
+          status: 'draw',
+        });
+      } else if (isLoss) {
+        createAIHistory({
+          blackId: userData.id,
+          whiteId: null,
+          status: 'white_win',
+        });
+      } else {
+        createAIHistory({
+          blackId: userData.id,
+          whiteId: null,
+          status: 'black_win',
+        });
+      }
+    }
+  }, [isDone, isDraw, isLoss]);
+
   const coloredPiecesCount = (x: number, y: number) => (
     <span className={x > y ? 'text-emerald-500' : ''}>{x}</span>
   );
+
+  if (!userData && !isLoadingUserData) {
+    return <RequireLogIn />;
+  }
 
   return (
     <div className="lg:w-[calc(768px-2rem)] w-md mx-auto md:w-full md:px-4 flex flex-col gap-4 items-center">
