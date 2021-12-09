@@ -2,6 +2,8 @@ import {
   BLACK_PIECE_COLOR,
   CELL_COUNT,
   CELL_SIZE,
+  INNER_STROKE_COLOR,
+  SHADOW_COLOR,
   STROKE_COLOR,
   WHITE_PIECE_COLOR,
 } from '../othelloConfig';
@@ -24,6 +26,10 @@ export default class Piece {
       Math.floor(this.index / CELL_COUNT) * this.radius * 2 + this.radius;
     const x = (this.index % CELL_COUNT) * this.radius * 2 + this.radius;
 
+    context.shadowBlur = 4;
+    context.shadowColor = SHADOW_COLOR;
+    context.shadowOffsetY = 4;
+
     context.beginPath();
     context.arc(x, y, this.radius - 10, 0, Math.PI * 2, false);
     context.strokeStyle = STROKE_COLOR;
@@ -32,6 +38,20 @@ export default class Piece {
     context.fill();
     context.stroke();
     context.closePath();
+
+    // draw one more circle for the shadow
+    context.beginPath();
+    context.arc(x, y, this.radius - 20, 0, Math.PI * 2, false);
+    context.strokeStyle = INNER_STROKE_COLOR;
+    context.lineWidth = 1;
+    // context.fillStyle = this.color;
+    // context.fill();
+    context.stroke();
+    context.closePath();
+
+    context.shadowBlur = 0;
+    context.shadowColor = 'transparent';
+    context.shadowOffsetY = 0;
   }
 
   setIsblack(isBlack: boolean) {
