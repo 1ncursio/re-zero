@@ -31,7 +31,7 @@ function Main({ children }: ChildrenProps) {
 }
 
 function Footer({ children }: ChildrenProps) {
-  return <footer className="h-48 bg-blueGray-800">{children}</footer>;
+  return <footer className="h-44 bg-blueGray-800">{children}</footer>;
 }
 
 AppLayout.Head = Head;

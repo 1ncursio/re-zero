@@ -107,7 +107,7 @@ const AccountProfile = () => {
                 placeholder="닉네임 (최대 20자)"
                 autoComplete="off"
                 spellCheck={false}
-                className="text-sm flex-1 border-b border-blueGray-600 focus:outline-none text-blueGray-600"
+                className="text-sm flex-1 border-b border-blueGray-200 focus:border-blueGray-400 focus:outline-none text-blueGray-600"
               />
               {errors.name?.type === 'required' && (
                 <p className="text-red-500">닉네임은 필수 항목입니다.</p>

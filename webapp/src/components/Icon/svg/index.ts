@@ -11,6 +11,7 @@ import { ReactComponent as outlinedSearch } from './outlined_search.svg';
 import { ReactComponent as outlinedUpArrow } from './outlined_up_arrow.svg';
 import { ReactComponent as pvp } from './pvp.svg';
 import { ReactComponent as subdirectoryArrowRight } from './subdirectory_arrow_right.svg';
+import { ReactComponent as loading } from './loading.svg';
 
 export {
   google,
@@ -26,4 +27,5 @@ export {
   outlinedUpArrow,
   subdirectoryArrowRight,
   outlinedSearch,
+  loading,
 };
