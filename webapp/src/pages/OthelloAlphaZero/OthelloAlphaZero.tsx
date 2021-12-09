@@ -25,9 +25,9 @@ const OthelloAlphaZero = () => {
   const [isCalculating, setIsCalculating] = useState<boolean>(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const requestRef = useRef<number>(null);
-  const contextRef = useRef<CanvasRenderingContext2D>(null);
-  const stateRef = useRef<State>(null);
+  const requestRef = useRef<number | null>(null);
+  const contextRef = useRef<CanvasRenderingContext2D | null>(null);
+  const stateRef = useRef<State | null>(null);
 
   const { data: userData } = useUserSWR();
 
@@ -44,7 +44,6 @@ const OthelloAlphaZero = () => {
   function render() {
     if (!canvasRef.current || !contextRef.current || !stateRef.current) return;
 
-    // @ts-ignore
     requestRef.current = window.requestAnimationFrame(render);
     contextRef.current.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
     contextRef.current.fillStyle = BACKGROUND_COLOR;
@@ -80,7 +79,6 @@ const OthelloAlphaZero = () => {
   const onRestart = useCallback(() => {
     if (!stateRef.current) return;
 
-    // @ts-ignore
     stateRef.current = new State();
     setPiecesCount(2);
     setEnemyPiecesCount(2);
@@ -103,7 +101,6 @@ const OthelloAlphaZero = () => {
 
       if (stateRef.current.isDone()) {
         console.log('is Done');
-        // @ts-ignore
         return;
       }
 
@@ -128,7 +125,6 @@ const OthelloAlphaZero = () => {
           return;
         }
 
-        // @ts-ignore
         stateRef.current = stateRef.current.next(action);
         setPiecesCount(
           stateRef.current.piecesCount(stateRef.current.enemyPieces),
@@ -161,7 +157,6 @@ const OthelloAlphaZero = () => {
         });
         setIsCalculating(false);
 
-        // @ts-ignore
         stateRef.current = new State(pieces, enemy_pieces, depth);
         setPiecesCount(stateRef.current.piecesCount(stateRef.current.pieces));
         setEnemyPiecesCount(
@@ -182,13 +177,6 @@ const OthelloAlphaZero = () => {
             setIsLoss(true);
             console.log('is loss');
           }
-          // if (is_done && is_draw) {
-          //   console.log('비겼네요!');
-          // } else if (is_done && is_loss) {
-          //   console.log('졌네요!');
-          // } else if (is_done && !is_loss) {
-          //   console.log('이겼네요!');
-          // }
 
           break;
         }
@@ -199,23 +187,18 @@ const OthelloAlphaZero = () => {
 
   useEffect(() => {
     if (!canvasRef.current) return;
-    // @ts-ignore
     stateRef.current = new State();
     setPiecesCount(stateRef.current.piecesCount(stateRef.current.pieces));
     setEnemyPiecesCount(
       stateRef.current.piecesCount(stateRef.current.enemyPieces),
     );
 
-    // @ts-ignore
     contextRef.current = canvasRef.current.getContext('2d');
-    // @ts-ignore
     canvasRef.current.width = CANVAS_SIZE;
-    // @ts-ignore
     canvasRef.current.height = CANVAS_SIZE;
   }, [canvasRef, stateRef]);
 
   useEffect(() => {
-    // @ts-ignore
     requestRef.current = requestAnimationFrame(render);
     return () => cancelAnimationFrame(requestRef.current as number);
   }, []);
