@@ -1,4 +1,4 @@
-import useSWR, { KeyedMutator, SWRConfiguration, SWRResponse } from 'swr';
+import useSWR, { SWRConfiguration, SWRResponse } from 'swr';
 import fetcher from '../../lib/api/fetcher';
 import { Post } from '../../typings/post';
 import useUserSWR from './useUserSWR';

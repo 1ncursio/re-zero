@@ -16,7 +16,7 @@ class CreateHistoriesTable extends Migration
         Schema::create('histories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('black_id')->constrained('users', 'id')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignId('white_id')->constrained('users', 'id')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('white_id')->nullable()->constrained('users', 'id')->cascadeOnUpdate()->cascadeOnDelete();
             $table->enum('status', ['black_win', 'white_win', 'draw']);
             $table->string('record')->nullable();
             $table->time('play_time')->nullable();

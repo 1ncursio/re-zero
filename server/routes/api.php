@@ -58,7 +58,9 @@ Route::prefix('posts')->group(function () {
 
 Route::get('/search', [SearchController::class, 'query']);
 
-Route::middleware('auth:sanctum')->prefix('history')->group(function () {
+Route::prefix('history')->group(function () {
     Route::get('/ai', [HistoryController::class, 'indexAI']);
     Route::post('/ai', [HistoryController::class, 'storeHistoryAI']);
+
+    Route::get('/ai/user', [HistoryController::class, 'userHistoryAI']);
 });
