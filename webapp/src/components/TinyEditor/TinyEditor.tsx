@@ -24,7 +24,7 @@ const TinyEditor = forwardRef<Editor, TinyEditorProps>(
         onInit={(evt, editor) => (ref.current = editor)}
         initialValue={initialValue || ''}
         init={{
-          height: 500,
+          height: 400,
           menubar: false,
           plugins: ['lists', 'image', 'quickbars', 'link'],
           file_picker_types: 'file image media',

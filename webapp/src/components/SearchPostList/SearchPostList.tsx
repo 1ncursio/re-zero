@@ -66,9 +66,11 @@ const SearchPostList: FC<SearchPostListProps> = ({ posts }) => {
               {relativeCreatedAt(post.created_at)}
             </span>
           </div>
-          <p className="m-2 text-sm text-blueGray-600 line-clamp-2">
-            {getHighlightedText(cleanContent(post.content), q)}
-          </p>
+          <p
+            className="m-2 text-sm text-blueGray-600 line-clamp-2"
+            // eslint-disable-next-line react/no-danger
+            dangerouslySetInnerHTML={{ __html: cleanContent(post.content) }}
+          />
           <div className="p-2 flex gap-1 items-center">
             <img
               src={optimizeImage(post.user?.image_url ?? userThumbnail)}
