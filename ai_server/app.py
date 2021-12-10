@@ -7,7 +7,11 @@ from pv_mcts import pv_mcts_action
 from game import State
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+CORS(
+    app,
+    resources={r"/*": {"origins": "http://localhost:3000"}},
+    supports_credentials=True,
+)
 
 model = load_model("./model/best.h5")
 next_action = pv_mcts_action(model, 0.0)
