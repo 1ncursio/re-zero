@@ -1,8 +1,8 @@
 import { CELL_COUNT } from '../othelloConfig';
 
 export default class State {
-  public dxy: number[][];
-  public passEnd: boolean;
+  private dxy: number[][];
+  private passEnd: boolean;
   public depth: number;
   public pieces: number[];
   public enemyPieces: number[];
@@ -40,12 +40,12 @@ export default class State {
   }
 
   // 돌의 수 얻기
-  piecesCount(pieces: number[]) {
+  public piecesCount(pieces: number[]) {
     return pieces.filter((v) => v === 1).length;
   }
 
   // 패배 여부 판정
-  isLoss() {
+  public isLoss() {
     return (
       this.isDone() &&
       this.piecesCount(this.pieces) < this.piecesCount(this.enemyPieces)
@@ -53,7 +53,7 @@ export default class State {
   }
 
   // 무승부 여부 판정
-  isDraw() {
+  public isDraw() {
     return (
       this.isDone() &&
       this.piecesCount(this.pieces) === this.piecesCount(this.enemyPieces)
@@ -61,7 +61,7 @@ export default class State {
   }
 
   // 게임 종료 여부 판정
-  isDone() {
+  public isDone() {
     return (
       this.piecesCount(this.pieces) + this.piecesCount(this.enemyPieces) ===
         CELL_COUNT ** 2 || this.passEnd
@@ -69,7 +69,7 @@ export default class State {
   }
 
   // 다음 상태 얻기
-  next(action: number) {
+  public next(action: number) {
     const state = new State(this.pieces, this.enemyPieces, this.depth + 1);
     if (action != CELL_COUNT ** 2) {
       state.isLegalActionXy(
@@ -94,7 +94,7 @@ export default class State {
   }
 
   // 합법적인 수 리스트 얻기
-  legalActions() {
+  public legalActions() {
     const actions = [];
 
     for (let j = 0; j < CELL_COUNT; j++) {
@@ -113,7 +113,7 @@ export default class State {
   }
 
   // 임의의 매스가 합법적인 수인지 판정
-  isLegalActionXy(x: number, y: number, flip = false) {
+  public isLegalActionXy(x: number, y: number, flip = false) {
     const that = this;
     // 임의의 매스에서 임의의 방향이 합법적인 수인지 판정
     function isLegalActionXyDxy(x: number, y: number, dx: number, dy: number) {
@@ -191,36 +191,36 @@ export default class State {
   }
 
   // 선 수 여부 확인
-  isFirstPlayer() {
+  public isFirstPlayer() {
     return this.depth % 2 === 0;
   }
 
-  getRandomIntInclusive(min: number, max: number) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min; //최댓값도 포함, 최솟값도 포함
-  }
+  // getRandomIntInclusive(min: number, max: number) {
+  //   min = Math.ceil(min);
+  //   max = Math.floor(max);
+  //   return Math.floor(Math.random() * (max - min + 1)) + min; //최댓값도 포함, 최솟값도 포함
+  // }
 
   // 랜덤으로 행동 선택
-  randomAction(state: State) {
-    const legalActions = state.legalActions();
-    return legalActions[this.getRandomIntInclusive(0, legalActions.length - 1)];
-  }
+  // randomAction(state: State) {
+  //   const legalActions = state.legalActions();
+  //   return legalActions[this.getRandomIntInclusive(0, legalActions.length - 1)];
+  // }
 
-  randomAIAction(state: State) {
-    const selectedAction = this.randomAction(state);
-    console.log({ selectedAction });
-    if (selectedAction !== CELL_COUNT ** 2) {
-      console.log('AI 수 선택 완료');
-    }
+  // randomAIAction(state: State) {
+  //   const selectedAction = this.randomAction(state);
+  //   console.log({ selectedAction });
+  //   if (selectedAction !== CELL_COUNT ** 2) {
+  //     console.log('AI 수 선택 완료');
+  //   }
 
-    return state.next(selectedAction);
-    // if (state.isDone()) {
-    //   console.log('게임 끝!');
-    // }
-  }
+  //   return state.next(selectedAction);
+  //   // if (state.isDone()) {
+  //   //   console.log('게임 끝!');
+  //   // }
+  // }
 
-  setPassEnd(passEnd: boolean) {
+  public setPassEnd(passEnd: boolean) {
     this.passEnd = passEnd;
   }
 }

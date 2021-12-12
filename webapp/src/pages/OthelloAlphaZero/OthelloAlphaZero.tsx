@@ -20,6 +20,8 @@ import {
   BACKGROUND_COLOR,
   CELL_SIZE,
 } from '../../lib/othelloConfig';
+// @ts-ignore
+import blop from '../../assets/audios/blop.mp3';
 
 const OthelloAlphaZero = () => {
   const [piecesCount, setPiecesCount] = useState<number>(0);
@@ -103,6 +105,7 @@ const OthelloAlphaZero = () => {
 
   const onMouseDown = useCallback(
     async (e: React.MouseEvent<HTMLCanvasElement>) => {
+      new Audio(blop).play();
       if (
         !canvasRef.current ||
         !contextRef.current ||

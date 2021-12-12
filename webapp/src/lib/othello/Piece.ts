@@ -10,14 +10,12 @@ import {
 
 export default class Piece {
   private radius: number;
-  private isBlack: boolean;
   private color: string;
   private index: number;
 
   constructor(index: number) {
     this.radius = Math.floor(CELL_SIZE * 0.5);
-    this.isBlack = true;
-    this.color = true ? BLACK_PIECE_COLOR : WHITE_PIECE_COLOR;
+    this.color = BLACK_PIECE_COLOR;
     this.index = index;
   }
 
@@ -52,7 +50,6 @@ export default class Piece {
   }
 
   setIsblack(isBlack: boolean) {
-    this.isBlack = isBlack;
     this.color = isBlack ? BLACK_PIECE_COLOR : WHITE_PIECE_COLOR;
     return this;
   }

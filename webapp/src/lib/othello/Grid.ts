@@ -1,9 +1,9 @@
 import { CELL_SIZE, CELL_COUNT, GRID_COLOR } from '../othelloConfig';
 
 export default class Grid {
-  public size: number;
-  public count: number;
-  public color: string;
+  private size: number;
+  private count: number;
+  private color: string;
 
   constructor() {
     this.size = CELL_SIZE;
@@ -11,7 +11,7 @@ export default class Grid {
     this.color = GRID_COLOR;
   }
 
-  draw(context: CanvasRenderingContext2D) {
+  public draw(context: CanvasRenderingContext2D) {
     context.strokeStyle = this.color;
     context.lineWidth = 1;
 
