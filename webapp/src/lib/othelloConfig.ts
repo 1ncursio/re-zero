@@ -1,4 +1,5 @@
 export const CELL_SIZE = 80;
+export const COORDINATE_SIZE = 16;
 export const CELL_COUNT = 6;
 export const CANVAS_SIZE = CELL_SIZE * CELL_COUNT;
 

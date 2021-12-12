@@ -1,4 +1,9 @@
-import { CELL_COUNT, CELL_SIZE, INDICATOR_COLOR } from '../othelloConfig';
+import {
+  CELL_COUNT,
+  CELL_SIZE,
+  COORDINATE_SIZE,
+  INDICATOR_COLOR,
+} from '../othelloConfig';
 
 export default class Indicator {
   private radius: number;
@@ -11,17 +16,24 @@ export default class Indicator {
     this.index = index;
   }
 
-  public draw(context: CanvasRenderingContext2D) {
+  public draw(ctx: CanvasRenderingContext2D) {
     const y =
       Math.floor(this.index / CELL_COUNT) * this.size +
       Math.floor(this.size / 2);
     const x = (this.index % CELL_COUNT) * this.size + Math.floor(this.size / 2);
 
-    context.beginPath();
-    context.arc(x, y, this.radius, 0, Math.PI * 2, false);
-    context.lineWidth = 2;
-    context.fillStyle = INDICATOR_COLOR;
-    context.fill();
-    context.closePath();
+    ctx.beginPath();
+    ctx.arc(
+      x + COORDINATE_SIZE,
+      y + COORDINATE_SIZE,
+      this.radius,
+      0,
+      Math.PI * 2,
+      false,
+    );
+    ctx.lineWidth = 2;
+    ctx.fillStyle = INDICATOR_COLOR;
+    ctx.fill();
+    ctx.closePath();
   }
 }

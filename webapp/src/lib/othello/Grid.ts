@@ -1,34 +1,35 @@
-import { CELL_SIZE, CELL_COUNT, GRID_COLOR } from '../othelloConfig';
+import {
+  CELL_SIZE,
+  CELL_COUNT,
+  GRID_COLOR,
+  COORDINATE_SIZE,
+} from '../othelloConfig';
 
 export default class Grid {
-  private size: number;
-  private count: number;
-  private color: string;
+  public draw(ctx: CanvasRenderingContext2D) {
+    ctx.strokeStyle = GRID_COLOR;
+    ctx.lineWidth = 1;
 
-  constructor() {
-    this.size = CELL_SIZE;
-    this.count = CELL_COUNT;
-    this.color = GRID_COLOR;
-  }
+    const CANVAS_SIZE = CELL_SIZE * CELL_COUNT;
 
-  public draw(context: CanvasRenderingContext2D) {
-    context.strokeStyle = this.color;
-    context.lineWidth = 1;
-
-    const CANVAS_SIZE = this.size * this.count;
-
-    for (let i = 1; i < CANVAS_SIZE; i++) {
+    for (let i = 0; i < CANVAS_SIZE; i++) {
       // vertical lines
-      context.beginPath();
-      context.moveTo(i * this.size, 0);
-      context.lineTo(i * this.size, CANVAS_SIZE);
+      ctx.beginPath();
+      ctx.moveTo(i * CELL_SIZE + COORDINATE_SIZE, 0 + COORDINATE_SIZE);
+      ctx.lineTo(
+        i * CELL_SIZE + COORDINATE_SIZE,
+        CANVAS_SIZE + COORDINATE_SIZE,
+      );
 
       // horizontal lines
-      context.moveTo(0, i * this.size);
-      context.lineTo(CANVAS_SIZE, i * this.size);
+      ctx.moveTo(0 + COORDINATE_SIZE, i * CELL_SIZE + COORDINATE_SIZE);
+      ctx.lineTo(
+        CANVAS_SIZE + COORDINATE_SIZE,
+        i * CELL_SIZE + COORDINATE_SIZE,
+      );
 
-      context.stroke();
-      context.closePath();
+      ctx.stroke();
+      ctx.closePath();
     }
   }
 }

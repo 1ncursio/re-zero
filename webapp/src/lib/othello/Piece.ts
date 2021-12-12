@@ -2,6 +2,7 @@ import {
   BLACK_PIECE_COLOR,
   CELL_COUNT,
   CELL_SIZE,
+  COORDINATE_SIZE,
   INNER_STROKE_COLOR,
   SHADOW_COLOR,
   STROKE_COLOR,
@@ -19,34 +20,48 @@ export default class Piece {
     this.index = index;
   }
 
-  draw(context: CanvasRenderingContext2D) {
+  draw(ctx: CanvasRenderingContext2D) {
     const y =
       Math.floor(this.index / CELL_COUNT) * this.radius * 2 + this.radius;
     const x = (this.index % CELL_COUNT) * this.radius * 2 + this.radius;
 
-    context.shadowBlur = 4;
-    context.shadowColor = SHADOW_COLOR;
-    context.shadowOffsetY = 4;
+    ctx.shadowBlur = 4;
+    ctx.shadowColor = SHADOW_COLOR;
+    ctx.shadowOffsetY = 4;
 
-    context.beginPath();
-    context.arc(x, y, this.radius - 10, 0, Math.PI * 2, false);
-    context.strokeStyle = STROKE_COLOR;
-    context.lineWidth = 1;
-    context.fillStyle = this.color;
-    context.fill();
-    context.stroke();
-    context.closePath();
+    ctx.beginPath();
+    ctx.arc(
+      x + COORDINATE_SIZE,
+      y + COORDINATE_SIZE,
+      this.radius - 10,
+      0,
+      Math.PI * 2,
+      false,
+    );
+    ctx.strokeStyle = STROKE_COLOR;
+    ctx.lineWidth = 1;
+    ctx.fillStyle = this.color;
+    ctx.fill();
+    ctx.stroke();
+    ctx.closePath();
 
-    context.beginPath();
-    context.arc(x, y, this.radius - 20, 0, Math.PI * 2, false);
-    context.strokeStyle = INNER_STROKE_COLOR;
-    context.lineWidth = 1;
-    context.stroke();
-    context.closePath();
+    ctx.beginPath();
+    ctx.arc(
+      x + COORDINATE_SIZE,
+      y + COORDINATE_SIZE,
+      this.radius - 20,
+      0,
+      Math.PI * 2,
+      false,
+    );
+    ctx.strokeStyle = INNER_STROKE_COLOR;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.closePath();
 
-    context.shadowBlur = 0;
-    context.shadowColor = 'transparent';
-    context.shadowOffsetY = 0;
+    ctx.shadowBlur = 0;
+    ctx.shadowColor = 'transparent';
+    ctx.shadowOffsetY = 0;
   }
 
   setIsblack(isBlack: boolean) {
