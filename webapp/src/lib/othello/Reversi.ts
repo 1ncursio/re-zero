@@ -1,18 +1,22 @@
-import { CELL_COUNT } from '../othelloConfig';
+import { CELL_COUNT, TOTAL_CELL_COUNT } from '../othelloConfig';
 
-export default class State {
+export default class Reversi {
   private _dxy: number[][];
   private _passEnd: boolean;
+  private _lastAction: number;
   public depth: number;
   public pieces: number[];
   public enemyPieces: number[];
   public histories: string[];
+  public flipedPieces: number[];
 
   constructor(
     pieces?: number[],
     enemyPieces?: number[],
     depth = 0,
     histories: string[] = [],
+    lastAction: number = -1,
+    flipedPieces?: number[],
   ) {
     // 방향 정수
     this._dxy = [
@@ -30,14 +34,16 @@ export default class State {
     this._passEnd = false;
     this.depth = depth;
     this.histories = histories;
+    this._lastAction = lastAction;
+    this.flipedPieces = flipedPieces || [];
 
     // 돌의 초기 배치
     if (pieces && enemyPieces) {
       this.pieces = pieces;
       this.enemyPieces = enemyPieces;
     } else {
-      this.pieces = new Array(CELL_COUNT ** 2).fill(0);
-      this.enemyPieces = new Array(CELL_COUNT ** 2).fill(0);
+      this.pieces = new Array(TOTAL_CELL_COUNT).fill(0);
+      this.enemyPieces = new Array(TOTAL_CELL_COUNT).fill(0);
       this._initPieces();
     }
   }
@@ -78,20 +84,21 @@ export default class State {
   public isDone() {
     return (
       this.piecesCount(this.pieces) + this.piecesCount(this.enemyPieces) ===
-        CELL_COUNT ** 2 || this._passEnd
+        TOTAL_CELL_COUNT || this._passEnd
     );
   }
 
   // 다음 상태 얻기
   public next(action: number) {
-    const state = new State(
+    const reversi = new Reversi(
       this.pieces,
       this.enemyPieces,
       this.depth + 1,
       this.histories,
+      action,
     );
-    if (action != CELL_COUNT ** 2) {
-      state._isLegalActionXy(
+    if (action != TOTAL_CELL_COUNT) {
+      reversi._isLegalActionXy(
         action % CELL_COUNT,
         Math.floor(action / CELL_COUNT),
         true,
@@ -100,19 +107,30 @@ export default class State {
       console.log('스킵');
     }
 
-    [state.pieces, state.enemyPieces] = [state.enemyPieces, state.pieces];
+    console.log(
+      'fliped',
+      reversi.flipedPieces.map((v) => reversi.actionToCoord(v)),
+    );
+    [reversi.pieces, reversi.enemyPieces] = [
+      reversi.enemyPieces,
+      reversi.pieces,
+    ];
 
     // 2회 연속 패스 판정
     if (
-      action === CELL_COUNT ** 2 &&
-      state.legalActions()[0] === CELL_COUNT ** 2
+      action === TOTAL_CELL_COUNT &&
+      reversi.legalActions()[0] === TOTAL_CELL_COUNT
     ) {
-      state._passEnd = true;
+      reversi._passEnd = true;
     }
 
-    const coord = state.actionToCoord(action);
+    const coord = reversi.actionToCoord(action);
     this.histories.push(coord);
-    return state;
+    return reversi;
+  }
+
+  get lastAction() {
+    return this._lastAction;
   }
 
   // 합법적인 수 리스트 얻기
@@ -128,7 +146,7 @@ export default class State {
     }
 
     if (actions.length === 0) {
-      actions.push(CELL_COUNT ** 2); // 패스
+      actions.push(TOTAL_CELL_COUNT); // 패스
     }
 
     return actions;
@@ -178,6 +196,7 @@ export default class State {
               }
               that.pieces[x + y * CELL_COUNT] = 1;
               that.enemyPieces[x + y * CELL_COUNT] = 0;
+              that.flipedPieces.push(x + y * CELL_COUNT);
             }
           }
           return true;
@@ -232,7 +251,7 @@ export default class State {
   // randomAIAction(state: State) {
   //   const selectedAction = this.randomAction(state);
   //   console.log({ selectedAction });
-  //   if (selectedAction !== CELL_COUNT ** 2) {
+  //   if (selectedAction !== TOTAL_CELL_COUNT) {
   //     console.log('AI 수 선택 완료');
   //   }
 
@@ -247,7 +266,7 @@ export default class State {
   }
 
   public actionToCoord(action: number) {
-    if (action === CELL_COUNT ** 2) return '--';
+    if (action === TOTAL_CELL_COUNT) return '--';
 
     const x = String.fromCharCode((action % CELL_COUNT) + 65);
     const y = Math.floor(action / CELL_COUNT) + 1;

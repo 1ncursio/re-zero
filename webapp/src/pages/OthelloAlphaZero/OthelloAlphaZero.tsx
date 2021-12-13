@@ -12,20 +12,24 @@ import createAIHistory from '../../lib/api/othello/createAIHistory';
 import requestNextState, {
   TState,
 } from '../../lib/api/othello/requestNextState';
+import BackgroundObject from '../../lib/othello/BackgroundObject';
 import Coordinate from '../../lib/othello/Coordinate';
+import GameObject from '../../lib/othello/GameObject';
 import Grid from '../../lib/othello/Grid';
 import Indicator from '../../lib/othello/Indicator';
 import LastAction from '../../lib/othello/LastAction';
 import Piece from '../../lib/othello/Piece';
-import State from '../../lib/othello/State';
+import Reversi from '../../lib/othello/Reversi';
 import {
-  BACKGROUND_COLOR,
   BACKGROUND_CANVAS_SIZE,
+  BACKGROUND_COLOR,
   CELL_COUNT,
   CELL_SIZE,
+  COORDINATE_COLOR,
   COORDINATE_SIZE,
-  GRID_COLOR,
   GAME_CANVAS_SIZE,
+  GRID_COLOR,
+  TOTAL_CELL_COUNT,
 } from '../../lib/othelloConfig';
 
 const OthelloAlphaZero = () => {
@@ -35,41 +39,29 @@ const OthelloAlphaZero = () => {
   const [isDraw, setIsDraw] = useState<boolean>(false);
   const [isLoss, setIsLoss] = useState<boolean>(false);
   const [isCalculating, setIsCalculating] = useState<boolean>(false);
+
   const gameRef = useRef<HTMLCanvasElement>(null);
   const gameCtxRef = useRef<CanvasRenderingContext2D | null>(null);
   const backgroundRef = useRef<HTMLCanvasElement>(null);
   const backgroundCtxRef = useRef<CanvasRenderingContext2D | null>(null);
 
   const requestRef = useRef<number | null>(null);
-  const stateRef = useRef<State | null>(null);
-  const lastActionRef = useRef<LastAction | null>(null);
+  const stateRef = useRef<Reversi | null>(null);
+  const gameObjectsRef = useRef<GameObject[]>([]);
+  const backgroundObjectsRef = useRef<BackgroundObject[]>([]);
 
   const { data: userData, isLoading: isLoadingUserData } = useUserSWR();
   const { mutate: mutateAIHistories } = useAIHistoriesSWR();
   const { mutate: mutateUsersAIHistories } = useUsersAIHistoriesSWR();
-
-  const pieces = Array.from(
-    { length: CELL_COUNT ** 2 },
-    (_, i) => new Piece(i),
-  );
-  const grid = new Grid();
-  const coordinate = new Coordinate();
-  const indicators = Array.from(
-    { length: CELL_COUNT ** 2 },
-    (_, i) => new Indicator(i),
-  );
 
   function render() {
     if (
       !gameRef.current ||
       !gameCtxRef.current ||
       !stateRef.current ||
-      !backgroundCtxRef.current ||
-      !lastActionRef.current
+      !backgroundCtxRef.current
     )
       return;
-
-    requestRef.current = window.requestAnimationFrame(render);
 
     gameCtxRef.current.clearRect(
       0,
@@ -78,37 +70,19 @@ const OthelloAlphaZero = () => {
       BACKGROUND_CANVAS_SIZE,
     );
 
-    const isFirstPlayer = stateRef.current.isFirstPlayer();
-    stateRef.current.pieces.forEach((v, i) => {
-      if (v === 1) {
-        pieces[i]
-          .setIsblack(isFirstPlayer)
-          .draw(gameCtxRef.current as CanvasRenderingContext2D);
-      }
-    });
-    stateRef.current.enemyPieces.forEach((v, i) => {
-      if (v === 1) {
-        pieces[i]
-          .setIsblack(!isFirstPlayer)
-          .draw(gameCtxRef.current as CanvasRenderingContext2D);
-      }
-    });
-    if (isFirstPlayer && !stateRef.current.isDone()) {
-      stateRef.current
-        .legalActions()
-        .forEach(
-          (v) =>
-            v !== CELL_COUNT ** 2 &&
-            indicators[v]?.draw(gameCtxRef.current as CanvasRenderingContext2D),
-        );
-    }
-    lastActionRef.current.draw(gameCtxRef.current as CanvasRenderingContext2D);
+    gameObjectsRef.current.forEach((obj) => obj.draw());
+
+    gameObjectsRef.current.forEach((obj) =>
+      obj.update(stateRef.current as Reversi),
+    );
+
+    requestRef.current = window.requestAnimationFrame(render);
   }
 
   const onRestart = useCallback(() => {
     if (!stateRef.current) return;
 
-    stateRef.current = new State();
+    stateRef.current = new Reversi();
     setPiecesCount(2);
     setEnemyPiecesCount(2);
     setIsDone(false);
@@ -129,7 +103,6 @@ const OthelloAlphaZero = () => {
         !gameRef.current ||
         !gameCtxRef.current ||
         !stateRef.current ||
-        !lastActionRef.current ||
         !userData
       )
         return;
@@ -149,20 +122,19 @@ const OthelloAlphaZero = () => {
       const y = e.clientY - top;
       let action =
         Math.floor(x / CELL_SIZE) + Math.floor(y / CELL_SIZE) * CELL_COUNT;
-      if (action >= CELL_COUNT ** 2 || action < 0) return;
+      if (action >= TOTAL_CELL_COUNT || action < 0) return;
 
       while (true) {
         const legalActions = stateRef.current.legalActions();
-        if (legalActions[0] === CELL_COUNT ** 2) {
-          action = CELL_COUNT ** 2;
+        if (legalActions[0] === TOTAL_CELL_COUNT) {
+          action = TOTAL_CELL_COUNT;
         }
 
-        if (action !== CELL_COUNT ** 2 && !legalActions.includes(action)) {
+        if (action !== TOTAL_CELL_COUNT && !legalActions.includes(action)) {
           return;
         }
 
         stateRef.current = stateRef.current.next(action);
-        lastActionRef.current.setIndex(action);
         console.log(stateRef.current.historiesToNotation());
         new Audio(blop).play();
 
@@ -222,7 +194,6 @@ const OthelloAlphaZero = () => {
 
         stateRef.current = stateRef.current.next(_action);
         new Audio(blop).play();
-        lastActionRef.current.setIndex(_action);
         console.log(stateRef.current.historiesToNotation());
         setPiecesCount(stateRef.current.piecesCount(stateRef.current.pieces));
         setEnemyPiecesCount(
@@ -276,7 +247,6 @@ const OthelloAlphaZero = () => {
       gameRef,
       gameCtxRef,
       stateRef,
-      lastActionRef,
       setPiecesCount,
       setEnemyPiecesCount,
       userData,
@@ -285,23 +255,45 @@ const OthelloAlphaZero = () => {
 
   useEffect(() => {
     if (!gameRef.current || !backgroundRef.current) return;
-    stateRef.current = new State();
-    lastActionRef.current = new LastAction();
+    stateRef.current = new Reversi();
+
+    gameCtxRef.current = gameRef.current.getContext('2d');
+    backgroundCtxRef.current = backgroundRef.current.getContext('2d');
+    if (!backgroundCtxRef.current || !gameCtxRef.current) return;
+
     setPiecesCount(stateRef.current.piecesCount(stateRef.current.pieces));
     setEnemyPiecesCount(
       stateRef.current.piecesCount(stateRef.current.enemyPieces),
     );
 
-    gameCtxRef.current = gameRef.current.getContext('2d');
-    backgroundCtxRef.current = backgroundRef.current.getContext('2d');
-    if (!backgroundCtxRef.current) return;
+    // game objects init
+    const lastAction = new LastAction(gameCtxRef.current);
+    const indicators = new Array(TOTAL_CELL_COUNT)
+      .fill(null)
+      .map(
+        (_, i) =>
+          new Indicator(gameCtxRef.current as CanvasRenderingContext2D, i),
+      );
+    const pieces = new Array(TOTAL_CELL_COUNT)
+      .fill(null)
+      .map(
+        (_, i) => new Piece(gameCtxRef.current as CanvasRenderingContext2D, i),
+      );
+
+    gameObjectsRef.current = [...indicators, ...pieces, lastAction];
+
+    // background objects init
+    const coordinate = new Coordinate(backgroundCtxRef.current);
+    const grid = new Grid(backgroundCtxRef.current);
+    backgroundObjectsRef.current = [coordinate, grid];
+
     backgroundCtxRef.current.clearRect(
       0,
       0,
       BACKGROUND_CANVAS_SIZE,
       BACKGROUND_CANVAS_SIZE,
     );
-    backgroundCtxRef.current.fillStyle = GRID_COLOR;
+    backgroundCtxRef.current.fillStyle = COORDINATE_COLOR;
     backgroundCtxRef.current.fillRect(
       0,
       0,
@@ -315,9 +307,8 @@ const OthelloAlphaZero = () => {
       GAME_CANVAS_SIZE,
       GAME_CANVAS_SIZE,
     );
-    grid.draw(backgroundCtxRef.current);
-    coordinate.draw(backgroundCtxRef.current);
-  }, [gameRef, stateRef, backgroundRef]);
+    backgroundObjectsRef.current.forEach((obj) => obj.draw());
+  }, []);
 
   useEffect(() => {
     requestRef.current = requestAnimationFrame(render);
