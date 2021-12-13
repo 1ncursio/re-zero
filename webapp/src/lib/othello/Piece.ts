@@ -2,7 +2,6 @@ import {
   BLACK_PIECE_COLOR,
   CELL_COUNT,
   CELL_SIZE,
-  COORDINATE_SIZE,
   INNER_STROKE_COLOR,
   SHADOW_COLOR,
   STROKE_COLOR,
@@ -20,7 +19,7 @@ export default class Piece {
     this.index = index;
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
+  public draw(ctx: CanvasRenderingContext2D) {
     const y =
       Math.floor(this.index / CELL_COUNT) * this.radius * 2 + this.radius;
     const x = (this.index % CELL_COUNT) * this.radius * 2 + this.radius;
@@ -30,14 +29,7 @@ export default class Piece {
     ctx.shadowOffsetY = 4;
 
     ctx.beginPath();
-    ctx.arc(
-      x + COORDINATE_SIZE,
-      y + COORDINATE_SIZE,
-      this.radius - 10,
-      0,
-      Math.PI * 2,
-      false,
-    );
+    ctx.arc(x, y, this.radius - 10, 0, Math.PI * 2, false);
     ctx.strokeStyle = STROKE_COLOR;
     ctx.lineWidth = 1;
     ctx.fillStyle = this.color;
@@ -46,14 +38,7 @@ export default class Piece {
     ctx.closePath();
 
     ctx.beginPath();
-    ctx.arc(
-      x + COORDINATE_SIZE,
-      y + COORDINATE_SIZE,
-      this.radius - 20,
-      0,
-      Math.PI * 2,
-      false,
-    );
+    ctx.arc(x, y, this.radius - 20, 0, Math.PI * 2, false);
     ctx.strokeStyle = INNER_STROKE_COLOR;
     ctx.lineWidth = 1;
     ctx.stroke();
@@ -64,7 +49,7 @@ export default class Piece {
     ctx.shadowOffsetY = 0;
   }
 
-  setIsblack(isBlack: boolean) {
+  public setIsblack(isBlack: boolean) {
     this.color = isBlack ? BLACK_PIECE_COLOR : WHITE_PIECE_COLOR;
     return this;
   }

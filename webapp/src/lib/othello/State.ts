@@ -1,15 +1,21 @@
 import { CELL_COUNT } from '../othelloConfig';
 
 export default class State {
-  private dxy: number[][];
-  private passEnd: boolean;
+  private _dxy: number[][];
+  private _passEnd: boolean;
   public depth: number;
   public pieces: number[];
   public enemyPieces: number[];
+  public histories: string[];
 
-  constructor(pieces?: number[], enemyPieces?: number[], depth = 0) {
+  constructor(
+    pieces?: number[],
+    enemyPieces?: number[],
+    depth = 0,
+    histories: string[] = [],
+  ) {
     // 방향 정수
-    this.dxy = [
+    this._dxy = [
       [1, 0],
       [1, 1],
       [0, 1],
@@ -21,22 +27,30 @@ export default class State {
     ];
 
     // 연속 패스에 따른 종료
-    this.passEnd = false;
+    this._passEnd = false;
     this.depth = depth;
+    this.histories = histories;
 
     // 돌의 초기 배치
     if (pieces && enemyPieces) {
-      // 돌의 배치
       this.pieces = pieces;
       this.enemyPieces = enemyPieces;
     } else {
-      this.pieces = Array.from({ length: CELL_COUNT ** 2 }, () => 0);
-      this.pieces[14] = this.pieces[21] = 1;
-      // this.pieces[27] = this.pieces[36] = 1;
-      this.enemyPieces = Array.from({ length: CELL_COUNT ** 2 }, () => 0);
-      // this.enemyPieces[28] = this.enemyPieces[35] = 1;
-      this.enemyPieces[15] = this.enemyPieces[20] = 1;
+      this.pieces = new Array(CELL_COUNT ** 2).fill(0);
+      this.enemyPieces = new Array(CELL_COUNT ** 2).fill(0);
+      this._initPieces();
     }
+  }
+
+  // 초기 돌 설정
+  private _initPieces() {
+    this.pieces[CELL_COUNT / 2 - 1 + (CELL_COUNT / 2 - 1) * CELL_COUNT] =
+      this.pieces[CELL_COUNT / 2 + (CELL_COUNT / 2) * CELL_COUNT] = 1;
+    this.enemyPieces[
+      CELL_COUNT / 2 - 1 + (CELL_COUNT / 2 - 1) * CELL_COUNT + 1
+    ] = this.enemyPieces[
+      CELL_COUNT / 2 + (CELL_COUNT / 2) * CELL_COUNT - 1
+    ] = 1;
   }
 
   // 돌의 수 얻기
@@ -64,15 +78,20 @@ export default class State {
   public isDone() {
     return (
       this.piecesCount(this.pieces) + this.piecesCount(this.enemyPieces) ===
-        CELL_COUNT ** 2 || this.passEnd
+        CELL_COUNT ** 2 || this._passEnd
     );
   }
 
   // 다음 상태 얻기
   public next(action: number) {
-    const state = new State(this.pieces, this.enemyPieces, this.depth + 1);
+    const state = new State(
+      this.pieces,
+      this.enemyPieces,
+      this.depth + 1,
+      this.histories,
+    );
     if (action != CELL_COUNT ** 2) {
-      state.isLegalActionXy(
+      state._isLegalActionXy(
         action % CELL_COUNT,
         Math.floor(action / CELL_COUNT),
         true,
@@ -88,8 +107,11 @@ export default class State {
       action === CELL_COUNT ** 2 &&
       state.legalActions()[0] === CELL_COUNT ** 2
     ) {
-      state.passEnd = true;
+      state._passEnd = true;
     }
+
+    const coord = state.actionToCoord(action);
+    this.histories.push(coord);
     return state;
   }
 
@@ -99,7 +121,7 @@ export default class State {
 
     for (let j = 0; j < CELL_COUNT; j++) {
       for (let i = 0; i < CELL_COUNT; i++) {
-        if (this.isLegalActionXy(i, j)) {
+        if (this._isLegalActionXy(i, j)) {
           actions.push(i + j * CELL_COUNT);
         }
       }
@@ -113,13 +135,13 @@ export default class State {
   }
 
   // 임의의 매스가 합법적인 수인지 판정
-  public isLegalActionXy(x: number, y: number, flip = false) {
+  private _isLegalActionXy(x: number, y: number, flip = false) {
     const that = this;
     // 임의의 매스에서 임의의 방향이 합법적인 수인지 판정
-    function isLegalActionXyDxy(x: number, y: number, dx: number, dy: number) {
+    function _isLegalActionXyDxy(x: number, y: number, dx: number, dy: number) {
       // １번째 상대의 돌
-      x = x + dx;
-      y = y + dy;
+      x += dx;
+      y += dy;
       if (
         y < 0 ||
         CELL_COUNT - 1 < y ||
@@ -146,11 +168,11 @@ export default class State {
 
         // 자신의 돌
         if (that.pieces[x + y * CELL_COUNT] == 1) {
-          // 반전
+          //
           if (flip) {
             for (let i = 0; i < CELL_COUNT; i++) {
-              x = x - dx;
-              y = y - dy;
+              x -= dx;
+              y -= dy;
               if (that.pieces[x + y * CELL_COUNT] == 1) {
                 return true;
               }
@@ -161,8 +183,8 @@ export default class State {
           return true;
         }
         // 상대의 돌
-        x = x + dx;
-        y = y + dy;
+        x += dx;
+        y += dy;
       }
       return false;
     }
@@ -182,8 +204,8 @@ export default class State {
 
     // 임의의 위치의 합법적인 수 여부 확인
     let flag = false;
-    for (const [dx, dy] of this.dxy) {
-      if (isLegalActionXyDxy(x, y, dx, dy)) {
+    for (const [dx, dy] of this._dxy) {
+      if (_isLegalActionXyDxy(x, y, dx, dy)) {
         flag = true;
       }
     }
@@ -221,24 +243,48 @@ export default class State {
   // }
 
   public setPassEnd(passEnd: boolean) {
-    this.passEnd = passEnd;
+    this._passEnd = passEnd;
+  }
+
+  public actionToCoord(action: number) {
+    if (action === CELL_COUNT ** 2) return '--';
+
+    const x = String.fromCharCode((action % CELL_COUNT) + 65);
+    const y = Math.floor(action / CELL_COUNT) + 1;
+    return x + y;
+  }
+
+  public historiesToNotation() {
+    // history 두 개씩 묶어서 변환
+    const histories = this.histories.reduce(
+      (acc: string[][], cur: string, i: number) => {
+        if (i % 2 === 0) {
+          acc.push([cur, this.histories[i + 1] ?? '']);
+        }
+        return acc;
+      },
+      [],
+    );
+
+    // 변환
+    const notation = histories.map((history, i) => {
+      const [actionCoord, nextCoord] = history;
+      return `${i + 1}. ${actionCoord} ${nextCoord}`;
+    });
+
+    // split by line every 6
+    const notationWithLine = notation.reduce(
+      (acc: string[], cur: string, i: number) => {
+        if (i % CELL_COUNT === 0 && i !== 0) {
+          acc[acc.length - 1] += `\n${cur}`;
+        } else {
+          acc.push(cur);
+        }
+        return acc;
+      },
+      [],
+    );
+
+    return notationWithLine.join(' ');
   }
 }
-
-// 동작 확인
-// function main() {
-//   // 상태 생성
-//   let state = new State();
-
-//   // 게임 종료 시까지 반복
-//   while (true) {
-//     // 게임 종료 시
-//     if (state.isDone()) break;
-
-//     // 다음 상태 얻기
-//     state = state.next(randomAction(state));
-
-//     // 문자열 출력
-//     console.log(state.print());
-//   }
-// }
