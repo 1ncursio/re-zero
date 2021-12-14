@@ -1,4 +1,4 @@
-import { CELL_COUNT, CELL_SIZE } from '../othelloConfig';
+import { CELL_COUNT, CELL_SIZE, COORDINATE_SIZE } from '../othelloConfig';
 import BackgroundObject from './BackgroundObject';
 
 export default class Coordinate extends BackgroundObject {
@@ -8,22 +8,23 @@ export default class Coordinate extends BackgroundObject {
 
   public draw() {
     this.ctx.fillStyle = 'white';
-    // draw horizontal text
-    this.ctx.font = '14px Arial';
+    this.ctx.textAlign = 'center';
+    this.ctx.textBaseline = 'middle';
+    this.ctx.font = '12px sans-serif';
+
     for (let i = 0; i < CELL_COUNT; i++) {
+      // horizontal text e.g. 'A B C D E F ...'
       this.ctx.fillText(
         String.fromCharCode(i + 65),
-        i * CELL_SIZE + Math.floor(CELL_SIZE / 2) + 9,
-        14,
+        COORDINATE_SIZE + (i + 0.5) * CELL_SIZE,
+        COORDINATE_SIZE * 0.5,
       );
-    }
 
-    // draw vertical text
-    for (let i = 0; i < CELL_COUNT; i++) {
+      // vertical text e.g. '1 2 3 4 5 6 ...'
       this.ctx.fillText(
         (i + 1).toString(),
-        5,
-        i * CELL_SIZE + Math.floor(CELL_SIZE / 2) + 22,
+        COORDINATE_SIZE * 0.5,
+        COORDINATE_SIZE + (i + 0.5) * CELL_SIZE,
       );
     }
   }

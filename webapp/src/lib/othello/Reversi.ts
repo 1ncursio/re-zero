@@ -50,12 +50,12 @@ export default class Reversi {
 
   // 초기 돌 설정
   private _initPieces() {
-    this.pieces[CELL_COUNT / 2 - 1 + (CELL_COUNT / 2 - 1) * CELL_COUNT] =
-      this.pieces[CELL_COUNT / 2 + (CELL_COUNT / 2) * CELL_COUNT] = 1;
+    this.pieces[CELL_COUNT * 0.5 - 1 + (CELL_COUNT * 0.5 - 1) * CELL_COUNT] =
+      this.pieces[CELL_COUNT * 0.5 + CELL_COUNT * 0.5 * CELL_COUNT] = 1;
     this.enemyPieces[
-      CELL_COUNT / 2 - 1 + (CELL_COUNT / 2 - 1) * CELL_COUNT + 1
+      CELL_COUNT * 0.5 - 1 + (CELL_COUNT * 0.5 - 1) * CELL_COUNT + 1
     ] = this.enemyPieces[
-      CELL_COUNT / 2 + (CELL_COUNT / 2) * CELL_COUNT - 1
+      CELL_COUNT * 0.5 + CELL_COUNT * 0.5 * CELL_COUNT - 1
     ] = 1;
   }
 

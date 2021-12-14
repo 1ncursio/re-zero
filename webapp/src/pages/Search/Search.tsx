@@ -48,7 +48,7 @@ const Search = () => {
     [q, history],
   );
 
-  const currentUrl = new URL(window.location.href);
+  const currentUrl = new URL((window as Window).location.href);
 
   return (
     <div className="lg:w-[calc(768px-2rem)] w-md mx-auto md:w-full md:px-4">

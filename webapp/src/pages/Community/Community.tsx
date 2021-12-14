@@ -61,7 +61,7 @@ const Community = () => {
     }
   }, [history, title, editorRef]);
 
-  const currentUrl = new URL(window.location.href);
+  const currentUrl = new URL((window as Window).location.href);
 
   if (!userData && !isLoadingUserData) {
     return <RequireLogIn />;

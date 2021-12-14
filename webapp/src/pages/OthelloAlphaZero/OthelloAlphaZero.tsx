@@ -76,7 +76,30 @@ const OthelloAlphaZero = () => {
       obj.update(stateRef.current as Reversi),
     );
 
-    requestRef.current = window.requestAnimationFrame(render);
+    // Draw number to the screen
+    backgroundCtxRef.current.clearRect(
+      0,
+      0,
+      BACKGROUND_CANVAS_SIZE,
+      BACKGROUND_CANVAS_SIZE,
+    );
+    backgroundCtxRef.current.fillStyle = COORDINATE_COLOR;
+    backgroundCtxRef.current.fillRect(
+      0,
+      0,
+      BACKGROUND_CANVAS_SIZE,
+      BACKGROUND_CANVAS_SIZE,
+    );
+    backgroundCtxRef.current.fillStyle = BACKGROUND_COLOR;
+    backgroundCtxRef.current.fillRect(
+      COORDINATE_SIZE,
+      COORDINATE_SIZE,
+      GAME_CANVAS_SIZE,
+      GAME_CANVAS_SIZE,
+    );
+    backgroundObjectsRef.current.forEach((obj) => obj.draw());
+
+    requestRef.current = requestAnimationFrame(render);
   }
 
   const onRestart = useCallback(() => {
@@ -261,6 +284,32 @@ const OthelloAlphaZero = () => {
     backgroundCtxRef.current = backgroundRef.current.getContext('2d');
     if (!backgroundCtxRef.current || !gameCtxRef.current) return;
 
+    const bgRect = backgroundRef.current.getBoundingClientRect();
+    const gameRect = gameRef.current.getBoundingClientRect();
+
+    const bgWidth =
+      Math.round(devicePixelRatio * bgRect.right) -
+      Math.round(devicePixelRatio * bgRect.left);
+    const bgHeight =
+      Math.round(devicePixelRatio * bgRect.bottom) -
+      Math.round(devicePixelRatio * bgRect.top);
+
+    const gameWidth =
+      Math.round(devicePixelRatio * gameRect.right) -
+      Math.round(devicePixelRatio * gameRect.left);
+    const gameHeight =
+      Math.round(devicePixelRatio * gameRect.bottom) -
+      Math.round(devicePixelRatio * gameRect.top);
+
+    backgroundRef.current.width = bgWidth;
+    backgroundRef.current.height = bgHeight;
+
+    gameRef.current.width = gameWidth;
+    gameRef.current.height = gameHeight;
+
+    backgroundCtxRef.current.scale(devicePixelRatio, devicePixelRatio);
+    gameCtxRef.current.scale(devicePixelRatio, devicePixelRatio);
+
     setPiecesCount(stateRef.current.piecesCount(stateRef.current.pieces));
     setEnemyPiecesCount(
       stateRef.current.piecesCount(stateRef.current.enemyPieces),
@@ -286,28 +335,6 @@ const OthelloAlphaZero = () => {
     const coordinate = new Coordinate(backgroundCtxRef.current);
     const grid = new Grid(backgroundCtxRef.current);
     backgroundObjectsRef.current = [coordinate, grid];
-
-    backgroundCtxRef.current.clearRect(
-      0,
-      0,
-      BACKGROUND_CANVAS_SIZE,
-      BACKGROUND_CANVAS_SIZE,
-    );
-    backgroundCtxRef.current.fillStyle = COORDINATE_COLOR;
-    backgroundCtxRef.current.fillRect(
-      0,
-      0,
-      BACKGROUND_CANVAS_SIZE,
-      BACKGROUND_CANVAS_SIZE,
-    );
-    backgroundCtxRef.current.fillStyle = BACKGROUND_COLOR;
-    backgroundCtxRef.current.fillRect(
-      COORDINATE_SIZE,
-      COORDINATE_SIZE,
-      GAME_CANVAS_SIZE,
-      GAME_CANVAS_SIZE,
-    );
-    backgroundObjectsRef.current.forEach((obj) => obj.draw());
   }, []);
 
   useEffect(() => {
@@ -388,15 +415,11 @@ const OthelloAlphaZero = () => {
             )}
             <canvas
               ref={backgroundRef}
-              width={BACKGROUND_CANVAS_SIZE}
-              height={BACKGROUND_CANVAS_SIZE}
               className="w-full h-full absolute z-10"
             />
             <canvas
               ref={gameRef}
               onMouseUp={onMouseUp}
-              width={GAME_CANVAS_SIZE}
-              height={GAME_CANVAS_SIZE}
               className="w-[480px] h-[480px] absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 z-20"
             />
           </div>

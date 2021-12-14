@@ -1,10 +1,9 @@
-export const CELL_SIZE = 80;
 export const COORDINATE_SIZE = 16;
+export const GAME_CANVAS_SIZE = 480;
+export const BACKGROUND_CANVAS_SIZE = GAME_CANVAS_SIZE + COORDINATE_SIZE * 2;
 export const CELL_COUNT = 6;
+export const CELL_SIZE = GAME_CANVAS_SIZE / CELL_COUNT;
 export const TOTAL_CELL_COUNT = CELL_COUNT ** 2;
-export const BACKGROUND_CANVAS_SIZE =
-  CELL_SIZE * CELL_COUNT + COORDINATE_SIZE * 2;
-export const GAME_CANVAS_SIZE = CELL_SIZE * CELL_COUNT;
 
 // colors for the game
 export const BACKGROUND_COLOR = 'rgba(84, 149, 107)';
