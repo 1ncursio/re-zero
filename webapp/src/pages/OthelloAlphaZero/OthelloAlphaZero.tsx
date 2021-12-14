@@ -13,6 +13,7 @@ import requestNextState, {
   TState,
 } from '../../lib/api/othello/requestNextState';
 import BackgroundObject from '../../lib/othello/BackgroundObject';
+import Canvas from '../../lib/othello/Canvas';
 import Coordinate from '../../lib/othello/Coordinate';
 import GameObject from '../../lib/othello/GameObject';
 import Grid from '../../lib/othello/Grid';
@@ -28,7 +29,6 @@ import {
   COORDINATE_COLOR,
   COORDINATE_SIZE,
   GAME_CANVAS_SIZE,
-  GRID_COLOR,
   TOTAL_CELL_COUNT,
 } from '../../lib/othelloConfig';
 
@@ -49,6 +49,8 @@ const OthelloAlphaZero = () => {
   const stateRef = useRef<Reversi | null>(null);
   const gameObjectsRef = useRef<GameObject[]>([]);
   const backgroundObjectsRef = useRef<BackgroundObject[]>([]);
+
+  let canvas = useRef<Canvas | null>(null);
 
   const { data: userData, isLoading: isLoadingUserData } = useUserSWR();
   const { mutate: mutateAIHistories } = useAIHistoriesSWR();
@@ -284,15 +286,17 @@ const OthelloAlphaZero = () => {
     backgroundCtxRef.current = backgroundRef.current.getContext('2d');
     if (!backgroundCtxRef.current || !gameCtxRef.current) return;
 
-    const bgRect = backgroundRef.current.getBoundingClientRect();
+    canvas.current = new Canvas(backgroundRef.current);
+
+    // const bgRect = backgroundRef.current.getBoundingClientRect();
     const gameRect = gameRef.current.getBoundingClientRect();
 
-    const bgWidth =
-      Math.round(devicePixelRatio * bgRect.right) -
-      Math.round(devicePixelRatio * bgRect.left);
-    const bgHeight =
-      Math.round(devicePixelRatio * bgRect.bottom) -
-      Math.round(devicePixelRatio * bgRect.top);
+    // const bgWidth =
+    //   Math.round(devicePixelRatio * bgRect.right) -
+    //   Math.round(devicePixelRatio * bgRect.left);
+    // const bgHeight =
+    //   Math.round(devicePixelRatio * bgRect.bottom) -
+    //   Math.round(devicePixelRatio * bgRect.top);
 
     const gameWidth =
       Math.round(devicePixelRatio * gameRect.right) -
@@ -301,13 +305,13 @@ const OthelloAlphaZero = () => {
       Math.round(devicePixelRatio * gameRect.bottom) -
       Math.round(devicePixelRatio * gameRect.top);
 
-    backgroundRef.current.width = bgWidth;
-    backgroundRef.current.height = bgHeight;
+    // backgroundRef.current.width = bgWidth;
+    // backgroundRef.current.height = bgHeight;
 
     gameRef.current.width = gameWidth;
     gameRef.current.height = gameHeight;
 
-    backgroundCtxRef.current.scale(devicePixelRatio, devicePixelRatio);
+    // backgroundCtxRef.current.scale(devicePixelRatio, devicePixelRatio);
     gameCtxRef.current.scale(devicePixelRatio, devicePixelRatio);
 
     setPiecesCount(stateRef.current.piecesCount(stateRef.current.pieces));

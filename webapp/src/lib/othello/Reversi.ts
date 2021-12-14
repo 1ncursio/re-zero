@@ -2,21 +2,25 @@ import { CELL_COUNT, TOTAL_CELL_COUNT } from '../othelloConfig';
 
 export default class Reversi {
   private _dxy: number[][];
+
   private _passEnd: boolean;
+
   private _lastAction: number;
+
   public depth: number;
+
   public pieces: number[];
+
   public enemyPieces: number[];
+
   public histories: string[];
-  public flipedPieces: number[];
 
   constructor(
     pieces?: number[],
     enemyPieces?: number[],
     depth = 0,
     histories: string[] = [],
-    lastAction: number = -1,
-    flipedPieces?: number[],
+    lastAction = -1,
   ) {
     // 방향 정수
     this._dxy = [
@@ -35,7 +39,6 @@ export default class Reversi {
     this.depth = depth;
     this.histories = histories;
     this._lastAction = lastAction;
-    this.flipedPieces = flipedPieces || [];
 
     // 돌의 초기 배치
     if (pieces && enemyPieces) {
@@ -50,13 +53,10 @@ export default class Reversi {
 
   // 초기 돌 설정
   private _initPieces() {
-    this.pieces[CELL_COUNT * 0.5 - 1 + (CELL_COUNT * 0.5 - 1) * CELL_COUNT] =
-      this.pieces[CELL_COUNT * 0.5 + CELL_COUNT * 0.5 * CELL_COUNT] = 1;
-    this.enemyPieces[
-      CELL_COUNT * 0.5 - 1 + (CELL_COUNT * 0.5 - 1) * CELL_COUNT + 1
-    ] = this.enemyPieces[
-      CELL_COUNT * 0.5 + CELL_COUNT * 0.5 * CELL_COUNT - 1
-    ] = 1;
+    this.pieces[CELL_COUNT * 0.5 - 1 + (CELL_COUNT * 0.5 - 1) * CELL_COUNT] = 1;
+    this.pieces[CELL_COUNT * 0.5 + CELL_COUNT * 0.5 * CELL_COUNT] = 1;
+    this.enemyPieces[CELL_COUNT * 0.5 - 1 + (CELL_COUNT * 0.5 - 1) * CELL_COUNT + 1] = 1;
+    this.enemyPieces[CELL_COUNT * 0.5 + CELL_COUNT * 0.5 * CELL_COUNT - 1] = 1;
   }
 
   // 돌의 수 얻기
@@ -66,61 +66,34 @@ export default class Reversi {
 
   // 패배 여부 판정
   public isLoss() {
-    return (
-      this.isDone() &&
-      this.piecesCount(this.pieces) < this.piecesCount(this.enemyPieces)
-    );
+    return this.isDone() && this.piecesCount(this.pieces) < this.piecesCount(this.enemyPieces);
   }
 
   // 무승부 여부 판정
   public isDraw() {
-    return (
-      this.isDone() &&
-      this.piecesCount(this.pieces) === this.piecesCount(this.enemyPieces)
-    );
+    return this.isDone() && this.piecesCount(this.pieces) === this.piecesCount(this.enemyPieces);
   }
 
   // 게임 종료 여부 판정
   public isDone() {
     return (
-      this.piecesCount(this.pieces) + this.piecesCount(this.enemyPieces) ===
-        TOTAL_CELL_COUNT || this._passEnd
+      this.piecesCount(this.pieces) + this.piecesCount(this.enemyPieces) === TOTAL_CELL_COUNT || this._passEnd
     );
   }
 
   // 다음 상태 얻기
   public next(action: number) {
-    const reversi = new Reversi(
-      this.pieces,
-      this.enemyPieces,
-      this.depth + 1,
-      this.histories,
-      action,
-    );
+    const reversi = new Reversi(this.pieces, this.enemyPieces, this.depth + 1, this.histories, action);
     if (action != TOTAL_CELL_COUNT) {
-      reversi._isLegalActionXy(
-        action % CELL_COUNT,
-        Math.floor(action / CELL_COUNT),
-        true,
-      );
+      reversi._isLegalActionXy(action % CELL_COUNT, Math.floor(action / CELL_COUNT), true);
     } else {
       console.log('스킵');
     }
 
-    console.log(
-      'fliped',
-      reversi.flipedPieces.map((v) => reversi.actionToCoord(v)),
-    );
-    [reversi.pieces, reversi.enemyPieces] = [
-      reversi.enemyPieces,
-      reversi.pieces,
-    ];
+    [reversi.pieces, reversi.enemyPieces] = [reversi.enemyPieces, reversi.pieces];
 
     // 2회 연속 패스 판정
-    if (
-      action === TOTAL_CELL_COUNT &&
-      reversi.legalActions()[0] === TOTAL_CELL_COUNT
-    ) {
+    if (action === TOTAL_CELL_COUNT && reversi.legalActions()[0] === TOTAL_CELL_COUNT) {
       reversi._passEnd = true;
     }
 
@@ -137,8 +110,8 @@ export default class Reversi {
   public legalActions() {
     const actions = [];
 
-    for (let j = 0; j < CELL_COUNT; j++) {
-      for (let i = 0; i < CELL_COUNT; i++) {
+    for (let j = 0; j < CELL_COUNT; j += 1) {
+      for (let i = 0; i < CELL_COUNT; i += 1) {
         if (this._isLegalActionXy(i, j)) {
           actions.push(i + j * CELL_COUNT);
         }
@@ -154,9 +127,8 @@ export default class Reversi {
 
   // 임의의 매스가 합법적인 수인지 판정
   private _isLegalActionXy(x: number, y: number, flip = false) {
-    const that = this;
     // 임의의 매스에서 임의의 방향이 합법적인 수인지 판정
-    function _isLegalActionXyDxy(x: number, y: number, dx: number, dy: number) {
+    const _isLegalActionXyDxy = (x: number, y: number, dx: number, dy: number) => {
       // １번째 상대의 돌
       x += dx;
       y += dy;
@@ -165,38 +137,36 @@ export default class Reversi {
         CELL_COUNT - 1 < y ||
         x < 0 ||
         CELL_COUNT - 1 < x ||
-        that.enemyPieces[x + y * CELL_COUNT] !== 1
+        this.enemyPieces[x + y * CELL_COUNT] !== 1
       ) {
         return false;
       }
 
       // 2번째 이후
-      for (let j = 0; j < CELL_COUNT; j++) {
+      for (let j = 0; j < CELL_COUNT; j += 1) {
         // 빈 칸
         if (
           y < 0 ||
           CELL_COUNT - 1 < y ||
           x < 0 ||
           CELL_COUNT - 1 < x ||
-          (that.enemyPieces[x + y * CELL_COUNT] == 0 &&
-            that.pieces[x + y * CELL_COUNT] == 0)
+          (this.enemyPieces[x + y * CELL_COUNT] === 0 && this.pieces[x + y * CELL_COUNT] === 0)
         ) {
           return false;
         }
 
         // 자신의 돌
-        if (that.pieces[x + y * CELL_COUNT] == 1) {
+        if (this.pieces[x + y * CELL_COUNT] === 1) {
           //
           if (flip) {
-            for (let i = 0; i < CELL_COUNT; i++) {
+            for (let i = 0; i < CELL_COUNT; i += 1) {
               x -= dx;
               y -= dy;
-              if (that.pieces[x + y * CELL_COUNT] == 1) {
+              if (this.pieces[x + y * CELL_COUNT] === 1) {
                 return true;
               }
-              that.pieces[x + y * CELL_COUNT] = 1;
-              that.enemyPieces[x + y * CELL_COUNT] = 0;
-              that.flipedPieces.push(x + y * CELL_COUNT);
+              this.pieces[x + y * CELL_COUNT] = 1;
+              this.enemyPieces[x + y * CELL_COUNT] = 0;
             }
           }
           return true;
@@ -206,13 +176,10 @@ export default class Reversi {
         y += dy;
       }
       return false;
-    }
+    };
 
     // 빈칸 없음
-    if (
-      this.enemyPieces[x + y * CELL_COUNT] === 1 ||
-      this.pieces[x + y * CELL_COUNT] === 1
-    ) {
+    if (this.enemyPieces[x + y * CELL_COUNT] === 1 || this.pieces[x + y * CELL_COUNT] === 1) {
       return false;
     }
 
@@ -275,15 +242,12 @@ export default class Reversi {
 
   public historiesToNotation() {
     // history 두 개씩 묶어서 변환
-    const histories = this.histories.reduce(
-      (acc: string[][], cur: string, i: number) => {
-        if (i % 2 === 0) {
-          acc.push([cur, this.histories[i + 1] ?? '']);
-        }
-        return acc;
-      },
-      [],
-    );
+    const histories = this.histories.reduce((acc: string[][], cur: string, i: number) => {
+      if (i % 2 === 0) {
+        acc.push([cur, this.histories[i + 1] ?? '']);
+      }
+      return acc;
+    }, []);
 
     // 변환
     const notation = histories.map((history, i) => {
@@ -292,17 +256,14 @@ export default class Reversi {
     });
 
     // split by line every 6
-    const notationWithLine = notation.reduce(
-      (acc: string[], cur: string, i: number) => {
-        if (i % CELL_COUNT === 0 && i !== 0) {
-          acc[acc.length - 1] += `\n${cur}`;
-        } else {
-          acc.push(cur);
-        }
-        return acc;
-      },
-      [],
-    );
+    const notationWithLine = notation.reduce((acc: string[], cur: string, i: number) => {
+      if (i % CELL_COUNT === 0 && i !== 0) {
+        acc[acc.length - 1] += `\n${cur}`;
+      } else {
+        acc.push(cur);
+      }
+      return acc;
+    }, []);
 
     return notationWithLine.join(' ');
   }

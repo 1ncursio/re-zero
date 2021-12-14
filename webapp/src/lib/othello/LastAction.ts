@@ -4,8 +4,11 @@ import Reversi from './Reversi';
 
 export default class LastAction extends GameObject {
   private _width: number;
+
   private _index: number;
+
   private _x: number;
+
   private _y: number;
 
   constructor(ctx: CanvasRenderingContext2D) {
@@ -25,10 +28,7 @@ export default class LastAction extends GameObject {
 
   public update(reversi: Reversi) {
     this._index = reversi.lastAction;
-    this._x =
-      ((this._index % CELL_COUNT) + 0.5) * CELL_SIZE - this._width * 0.5;
-    this._y =
-      (Math.floor(this._index / CELL_COUNT) + 0.5) * CELL_SIZE -
-      this._width * 0.5;
+    this._x = ((this._index % CELL_COUNT) + 0.5) * CELL_SIZE - this._width * 0.5;
+    this._y = (Math.floor(this._index / CELL_COUNT) + 0.5) * CELL_SIZE - this._width * 0.5;
   }
 }

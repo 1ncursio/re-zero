@@ -12,10 +12,15 @@ import Reversi from './Reversi';
 
 export default class Piece extends GameObject {
   private _radius: number;
+
   private _color: string;
+
   private _index: number;
+
   private _x: number;
+
   private _y: number;
+
   private _state: 'empty' | 'black' | 'white';
 
   constructor(ctx: CanvasRenderingContext2D, index: number) {
@@ -49,14 +54,7 @@ export default class Piece extends GameObject {
     this.ctx.strokeStyle = INNER_STROKE_COLOR;
     this.ctx.lineWidth = 1;
     this.ctx.beginPath();
-    this.ctx.arc(
-      this._x,
-      this._y,
-      this._radius * (3 / 4),
-      0,
-      Math.PI * 2,
-      false,
-    );
+    this.ctx.arc(this._x, this._y, this._radius * (3 / 4), 0, Math.PI * 2, false);
 
     this.ctx.stroke();
     this.ctx.closePath();

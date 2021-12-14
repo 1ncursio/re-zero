@@ -12,7 +12,7 @@ export default class Coordinate extends BackgroundObject {
     this.ctx.textBaseline = 'middle';
     this.ctx.font = '12px sans-serif';
 
-    for (let i = 0; i < CELL_COUNT; i++) {
+    for (let i = 0; i < CELL_COUNT; i += 1) {
       // horizontal text e.g. 'A B C D E F ...'
       this.ctx.fillText(
         String.fromCharCode(i + 65),
@@ -21,11 +21,7 @@ export default class Coordinate extends BackgroundObject {
       );
 
       // vertical text e.g. '1 2 3 4 5 6 ...'
-      this.ctx.fillText(
-        (i + 1).toString(),
-        COORDINATE_SIZE * 0.5,
-        COORDINATE_SIZE + (i + 0.5) * CELL_SIZE,
-      );
+      this.ctx.fillText((i + 1).toString(), COORDINATE_SIZE * 0.5, COORDINATE_SIZE + (i + 0.5) * CELL_SIZE);
     }
   }
 }

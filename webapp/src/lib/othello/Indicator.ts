@@ -4,9 +4,13 @@ import Reversi from './Reversi';
 
 export default class Indicator extends GameObject {
   private _radius: number;
+
   private _index: number;
+
   private _state: 'active' | 'inactive';
+
   private _x: number;
+
   private _y: number;
 
   constructor(ctx: CanvasRenderingContext2D, index: number) {
