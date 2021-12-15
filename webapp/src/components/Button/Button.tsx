@@ -9,13 +9,7 @@ export type ButtonProps = {
   iconClassName?: string;
 };
 
-const Button = ({
-  icon,
-  text,
-  onClick,
-  className = '',
-  iconClassName = '',
-}: ButtonProps) => {
+const Button = ({ icon, text, onClick, className = '', iconClassName = '' }: ButtonProps) => {
   return (
     <button
       onClick={onClick}

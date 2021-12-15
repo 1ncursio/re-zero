@@ -13,11 +13,7 @@ export type HeadProps = {
 };
 
 function Head({ children }: HeadProps) {
-  return (
-    <header className="bg-white h-[70px] flex items-center px-16 xl:px-4 border-b-2">
-      {children}
-    </header>
-  );
+  return <header className="bg-white h-[70px] flex items-center px-16 xl:px-4 border-b-2">{children}</header>;
 }
 
 export type ChildrenProps = {
@@ -25,9 +21,7 @@ export type ChildrenProps = {
 };
 
 function Main({ children }: ChildrenProps) {
-  return (
-    <main className="flex-1 xl:w-full mt-12 xl:mt-6 pb-4">{children}</main>
-  );
+  return <main className="flex-1 xl:w-full mt-12 xl:mt-6 pb-4">{children}</main>;
 }
 
 function Footer({ children }: ChildrenProps) {

@@ -8,10 +8,16 @@ export default class Canvas {
 
   public canvasObjects: CanvasObject[];
 
+  public mouseX: number;
+
+  public mouseY: number;
+
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
     this.context = this.canvas.getContext('2d') as CanvasRenderingContext2D;
     this.canvasObjects = [];
+    this.mouseX = 0;
+    this.mouseY = 0;
 
     const rect = canvas.getBoundingClientRect();
 
@@ -32,7 +38,7 @@ export default class Canvas {
   }
 
   update(reversi: Reversi): void {
-    this.canvasObjects.forEach((obj) => obj.update(reversi));
+    this.canvasObjects.forEach((obj) => obj.update(reversi, this.mouseX, this.mouseY));
   }
 
   addCanvasObjects(objs: CanvasObject[]): void {

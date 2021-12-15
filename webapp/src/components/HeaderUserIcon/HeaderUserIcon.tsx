@@ -11,11 +11,7 @@ const HeaderUserIcon: FC<HeaderUserIconProps> = ({ onClick }) => {
   const { data: userData } = useUserSWR();
 
   return (
-    <button
-      onClick={onClick}
-      className="cursor-pointer rounded-full"
-      type="button"
-    >
+    <button onClick={onClick} className="cursor-pointer rounded-full" type="button">
       <img
         src={optimizeImage(userData?.image_url ?? userThumbnail)}
         alt="profile"

@@ -9,17 +9,8 @@ type CommentLikeButtonProps = {
   comment: Comment;
 };
 
-const CommentLikeButton: FC<CommentLikeButtonProps> = ({
-  toggleLikeComment,
-  comment,
-}) => {
-  const {
-    getArrowProps,
-    getTooltipProps,
-    setTooltipRef,
-    setTriggerRef,
-    visible,
-  } = usePopperTooltip();
+const CommentLikeButton: FC<CommentLikeButtonProps> = ({ toggleLikeComment, comment }) => {
+  const { getArrowProps, getTooltipProps, setTooltipRef, setTriggerRef, visible } = usePopperTooltip();
   const [isClickedLike, onClickedLike, offClickedLike] = useBoolean(false);
 
   const handleClickLike = useCallback(() => {
@@ -45,14 +36,9 @@ const CommentLikeButton: FC<CommentLikeButtonProps> = ({
           <Icon name="outlinedLike" className="w-4 h-4" />
         )}
         {visible && (
-          <div
-            ref={setTooltipRef}
-            {...getTooltipProps({ className: 'tooltip-container' })}
-          >
+          <div ref={setTooltipRef} {...getTooltipProps({ className: 'tooltip-container' })}>
             <div {...getArrowProps({ className: 'tooltip-arrow' })} />
-            <span className="text-xs">
-              {comment.isLiked ? '좋아요 취소' : '좋아요'}
-            </span>
+            <span className="text-xs">{comment.isLiked ? '좋아요 취소' : '좋아요'}</span>
           </div>
         )}
       </button>

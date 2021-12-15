@@ -36,10 +36,7 @@ const Header = () => {
           </Link>
         </div>
         <div className="flex gap-8">
-          <Link
-            to="/othello"
-            className="text-blueGray-400 hover:text-blueGray-600 transition link-underline"
-          >
+          <Link to="/othello" className="text-blueGray-400 hover:text-blueGray-600 transition link-underline">
             오셀로 게임
           </Link>
           <Link

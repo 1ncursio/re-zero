@@ -1,7 +1,6 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { undrawWelcome } from '../../assets/images';
 import useBoolean from '../../hooks/useBoolean';
-import IconButton from '../Button';
 import Icon from '../Icon';
 import StyledModal from '../StyledModal';
 
@@ -11,11 +10,7 @@ const LogInButton = () => {
 
   return (
     <>
-      <button
-        onClick={openModal}
-        className="font-medium text-blueGray-500"
-        type="button"
-      >
+      <button onClick={openModal} className="font-medium text-blueGray-500" type="button">
         로그인
       </button>
       <StyledModal

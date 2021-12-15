@@ -5,8 +5,6 @@ const client = axios.create({
 });
 
 client.defaults.baseURL =
-  process.env.NODE_ENV === 'development'
-    ? 'http://localhost:8000'
-    : 'https://api.example.com';
+  process.env.NODE_ENV === 'development' ? 'http://localhost:8000' : 'https://api.example.com';
 
 export default client;

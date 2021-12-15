@@ -13,13 +13,7 @@ type PostLikeButtonProps = {
 const PostLikeButton: FC<PostLikeButtonProps> = ({ toggleLikePost }) => {
   const { postId } = useParams<{ postId: string }>();
   const { data: postData } = usePostSWR(postId);
-  const {
-    getArrowProps,
-    getTooltipProps,
-    setTooltipRef,
-    setTriggerRef,
-    visible,
-  } = usePopperTooltip();
+  const { getArrowProps, getTooltipProps, setTooltipRef, setTriggerRef, visible } = usePopperTooltip();
   const [isClickedLike, onClickedLike, offClickedLike] = useBoolean(false);
 
   const handleClickLike = useCallback(() => {
@@ -49,14 +43,9 @@ const PostLikeButton: FC<PostLikeButtonProps> = ({ toggleLikePost }) => {
           <Icon name="outlinedLike" className="w-4 h-4" />
         )}
         {visible && (
-          <div
-            ref={setTooltipRef}
-            {...getTooltipProps({ className: 'tooltip-container' })}
-          >
+          <div ref={setTooltipRef} {...getTooltipProps({ className: 'tooltip-container' })}>
             <div {...getArrowProps({ className: 'tooltip-arrow' })} />
-            <span className="text-xs">
-              {postData.isLiked ? '좋아요 취소' : '이 게시물이 마음에 들어요!'}
-            </span>
+            <span className="text-xs">{postData.isLiked ? '좋아요 취소' : '이 게시물이 마음에 들어요!'}</span>
           </div>
         )}
       </button>

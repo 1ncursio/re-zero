@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useMemo } from 'react';
+import React, { FC, useCallback, useEffect } from 'react';
 import { usePopperTooltip } from 'react-popper-tooltip';
 import useUserSWR from '../../hooks/swr/useUserSWR';
 import useBoolean from '../../hooks/useBoolean';
@@ -10,17 +10,8 @@ type ReplyLikeButtonProps = {
   reply: Comment;
 };
 
-const ReplyLikeButton: FC<ReplyLikeButtonProps> = ({
-  toggleLikeReply,
-  reply,
-}) => {
-  const {
-    getArrowProps,
-    getTooltipProps,
-    setTooltipRef,
-    setTriggerRef,
-    visible,
-  } = usePopperTooltip();
+const ReplyLikeButton: FC<ReplyLikeButtonProps> = ({ toggleLikeReply, reply }) => {
+  const { getArrowProps, getTooltipProps, setTooltipRef, setTriggerRef, visible } = usePopperTooltip();
   const { data: userData } = useUserSWR();
   const [isClickedLike, onClickedLike, offClickedLike] = useBoolean(false);
 
@@ -51,14 +42,9 @@ const ReplyLikeButton: FC<ReplyLikeButtonProps> = ({
           <Icon name="outlinedLike" className="w-4 h-4" />
         )}
         {visible && (
-          <div
-            ref={setTooltipRef}
-            {...getTooltipProps({ className: 'tooltip-container' })}
-          >
+          <div ref={setTooltipRef} {...getTooltipProps({ className: 'tooltip-container' })}>
             <div {...getArrowProps({ className: 'tooltip-arrow' })} />
-            <span className="text-xs">
-              {reply.isLiked ? '좋아요 취소' : '좋아요'}
-            </span>
+            <span className="text-xs">{reply.isLiked ? '좋아요 취소' : '좋아요'}</span>
           </div>
         )}
       </button>

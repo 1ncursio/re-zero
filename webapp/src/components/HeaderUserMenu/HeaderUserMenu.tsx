@@ -22,9 +22,7 @@ const HeaderUserMenu = ({ onClose, visible }: HeaderUserMenuProps) => {
           className="absolute text-sm w-32 shadow-10 right-0 top-3 text-blueGray-600 z-10"
           tabIndex={0}
         >
-          <HeaderUserMenuItem to="/account/profile">
-            내 프로필
-          </HeaderUserMenuItem>
+          <HeaderUserMenuItem to="/account/profile">내 프로필</HeaderUserMenuItem>
           <HeaderUserMenuItem onClick={logout}>로그아웃</HeaderUserMenuItem>
         </button>
       </div>

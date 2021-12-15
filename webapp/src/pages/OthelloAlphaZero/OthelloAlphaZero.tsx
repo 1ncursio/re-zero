@@ -1,3 +1,4 @@
+import { throttle } from 'lodash';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 // @ts-ignore
@@ -201,6 +202,27 @@ const OthelloAlphaZero = () => {
     ],
   );
 
+  const onMouseMove = useCallback(
+    throttle((e: React.MouseEvent<HTMLCanvasElement>) => {
+      if (!gameCanvas.current || !reversiRef.current || !userData) return;
+
+      const { left, top } = gameCanvas.current.canvas.getBoundingClientRect();
+      const x = e.clientX - left;
+      const y = e.clientY - top;
+
+      gameCanvas.current.mouseX = x;
+      gameCanvas.current.mouseY = y;
+    }, 20),
+    [gameCanvas, reversiRef, userData],
+  );
+
+  const onMouseLeave = useCallback(() => {
+    if (!gameCanvas.current || !reversiRef.current || !userData) return;
+
+    gameCanvas.current.mouseX = -1;
+    gameCanvas.current.mouseY = -1;
+  }, [gameCanvas, reversiRef, userData]);
+
   useEffect(() => {
     if (!gameRef.current || !bgRef.current) return;
     reversiRef.current = new Reversi();
@@ -301,6 +323,8 @@ const OthelloAlphaZero = () => {
             <canvas
               ref={gameRef}
               onMouseUp={onMouseUp}
+              onMouseMove={onMouseMove}
+              onMouseLeave={onMouseLeave}
               className="w-[480px] h-[480px] absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 z-20"
             />
           </div>

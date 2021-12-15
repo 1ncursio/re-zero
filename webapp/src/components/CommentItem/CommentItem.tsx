@@ -26,8 +26,7 @@ const CommentItem: FC<CommentItemProps> = ({ comment }) => {
   const [isOpen, openModal, closeModal] = useBoolean(false);
   const [isOpenReplyForm, openReplyForm] = useBoolean(false);
   // const [isOpenEditCommentForm, openEditCommentForm] = useBoolean(false);
-  const [isOpenEditCommentForm, openEditCommentForm, closeEditCommentForm] =
-    useBoolean(false);
+  const [isOpenEditCommentForm, openEditCommentForm, closeEditCommentForm] = useBoolean(false);
   const { postId } = useParams<{ postId: string }>();
 
   const { mutate: mutateComments } = useCommentsSWR({
@@ -64,27 +63,15 @@ const CommentItem: FC<CommentItemProps> = ({ comment }) => {
       <div className="flex-1">
         <div className="flex justify-between mb-1">
           <div className="flex gap-2">
-            <span className="text-xs text-blueGray-600">
-              {comment.user.name}
-            </span>
-            <span className="text-xs text-blueGray-400">
-              {relativeCreatedAt(comment.created_at)}
-            </span>
+            <span className="text-xs text-blueGray-600">{comment.user.name}</span>
+            <span className="text-xs text-blueGray-400">{relativeCreatedAt(comment.created_at)}</span>
           </div>
           {comment.isMine && (
             <div className="flex gap-2">
-              <button
-                type="button"
-                className="text-xs text-blueGray-600"
-                onClick={openEditCommentForm}
-              >
+              <button type="button" className="text-xs text-blueGray-600" onClick={openEditCommentForm}>
                 수정
               </button>
-              <button
-                type="button"
-                className="text-xs text-red-400"
-                onClick={openModal}
-              >
+              <button type="button" className="text-xs text-red-400" onClick={openModal}>
                 삭제
               </button>
               <StyledModal
@@ -102,24 +89,14 @@ const CommentItem: FC<CommentItemProps> = ({ comment }) => {
           )}
         </div>
         {isOpenEditCommentForm ? (
-          <EditCommentForm
-            comment={comment}
-            closeEditCommentForm={closeEditCommentForm}
-          />
+          <EditCommentForm comment={comment} closeEditCommentForm={closeEditCommentForm} />
         ) : (
           <p className="text-sm text-blueGray-600 mb-2">{comment.content}</p>
         )}
         <div className="flex gap-4 items-center mb-2">
-          <CommentLikeButton
-            toggleLikeComment={toggleLikeComment}
-            comment={comment}
-          />
+          <CommentLikeButton toggleLikeComment={toggleLikeComment} comment={comment} />
           {!comment.reply_id && (
-            <button
-              type="button"
-              className="text-xs text-blueGray-600"
-              onClick={openReplyForm}
-            >
+            <button type="button" className="text-xs text-blueGray-600" onClick={openReplyForm}>
               답글
             </button>
           )}
@@ -132,30 +109,16 @@ const CommentItem: FC<CommentItemProps> = ({ comment }) => {
             className="inline-flex gap-1 items-center text-emerald-500 hover:text-emerald-400 mb-2"
           >
             {isOpenReply ? (
-              <Icon
-                name="outlinedUpArrow"
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-              />
+              <Icon name="outlinedUpArrow" className="w-4 h-4" fill="none" stroke="currentColor" />
             ) : (
-              <Icon
-                name="outlinedDownArrow"
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-              />
+              <Icon name="outlinedDownArrow" className="w-4 h-4" fill="none" stroke="currentColor" />
             )}
             <span className="text-sm">
-              {isOpenReply
-                ? `답글 ${comment.reply_count}개 숨기기`
-                : `답글 ${comment.reply_count}개 보기`}
+              {isOpenReply ? `답글 ${comment.reply_count}개 숨기기` : `답글 ${comment.reply_count}개 보기`}
             </span>
           </button>
         )}
-        {isOpenReply && repliesData && (
-          <ReplyList replies={repliesData} commentId={comment.id} />
-        )}
+        {isOpenReply && repliesData && <ReplyList replies={repliesData} commentId={comment.id} />}
         {/* {isOpenReply && (
           <button
             type="button"

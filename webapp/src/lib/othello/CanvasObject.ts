@@ -5,5 +5,5 @@ export default abstract class CanvasObject {
 
   public abstract draw(): void;
 
-  public abstract update(state: Reversi): void;
+  public abstract update(state: Reversi, mouseX: number, mouseY: number): void;
 }

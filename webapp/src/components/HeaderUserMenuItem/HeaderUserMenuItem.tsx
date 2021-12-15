@@ -13,10 +13,7 @@ const HeaderUserMenuItem: React.FC<HeaderUserMenuItemProps> = ({
   onClick,
 }: HeaderUserMenuItemProps) => {
   const jsx = (
-    <div
-      onClick={onClick}
-      className="p-4 bg-white hover:bg-blueGray-100 cursor-pointer text-blueGray-600"
-    >
+    <div onClick={onClick} className="p-4 bg-white hover:bg-blueGray-100 cursor-pointer text-blueGray-600">
       {children}
     </div>
   );

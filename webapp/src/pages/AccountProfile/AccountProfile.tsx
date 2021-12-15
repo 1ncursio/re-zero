@@ -93,10 +93,7 @@ const AccountProfile = () => {
           className="md:pl-0 pl-6 flex-1 flex flex-col gap-y-{name:string}5"
         >
           <div className="flex flex-col gap-2">
-            <label
-              htmlFor="name"
-              className="text-sm text-blueGray-600 cursor-pointer"
-            >
+            <label htmlFor="name" className="text-sm text-blueGray-600 cursor-pointer">
               닉네임
             </label>
             <div className="flex gap-4">
@@ -109,12 +106,8 @@ const AccountProfile = () => {
                 spellCheck={false}
                 className="text-sm flex-1 border-b border-blueGray-200 focus:border-blueGray-400 focus:outline-none text-blueGray-600"
               />
-              {errors.name?.type === 'required' && (
-                <p className="text-red-500">닉네임은 필수 항목입니다.</p>
-              )}
-              {errors.name?.type === 'maxLength' && (
-                <p className="text-red-500">닉네임은 최대 20자입니다.</p>
-              )}
+              {errors.name?.type === 'required' && <p className="text-red-500">닉네임은 필수 항목입니다.</p>}
+              {errors.name?.type === 'maxLength' && <p className="text-red-500">닉네임은 최대 20자입니다.</p>}
               <button
                 type="submit"
                 disabled={disabled}

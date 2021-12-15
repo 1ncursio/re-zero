@@ -25,8 +25,7 @@ import { Post } from '../../../typings/post';
 const CommunityPost = () => {
   const [title, onChangeTitle, setTitle] = useInput('');
   const [isOpenEditModal, openEditModal, closeEditModal] = useBoolean(false);
-  const [isOpenDeleteModal, openDeleteModal, closeDeleteModal] =
-    useBoolean(false);
+  const [isOpenDeleteModal, openDeleteModal, closeDeleteModal] = useBoolean(false);
   // extract postId from url using react router
   const { postId } = useParams<{ postId: string }>();
   const history = useHistory();
@@ -111,9 +110,7 @@ const CommunityPost = () => {
                 alt="user"
                 className="w-8 h-8 rounded-full mr-1"
               />
-              <span className="text-xs text-blueGray-600">
-                {postData.user.name}
-              </span>
+              <span className="text-xs text-blueGray-600">{postData.user.name}</span>
               <span className="text-xs text-blueGray-400">
                 <span>· </span>
                 {relativeCreatedAt(postData.created_at)}
@@ -121,11 +118,7 @@ const CommunityPost = () => {
             </div>
             {postData.isMine && (
               <div className="flex gap-2">
-                <button
-                  type="button"
-                  className="text-xs text-blueGray-600"
-                  onClick={openEditModal}
-                >
+                <button type="button" className="text-xs text-blueGray-600" onClick={openEditModal}>
                   수정
                 </button>
                 <StyledModal
@@ -145,11 +138,7 @@ const CommunityPost = () => {
                     setTitle={setTitle}
                   />
                 </StyledModal>
-                <button
-                  type="button"
-                  className="text-xs text-red-400"
-                  onClick={openDeleteModal}
-                >
+                <button type="button" className="text-xs text-red-400" onClick={openDeleteModal}>
                   삭제
                 </button>
                 <StyledModal
@@ -168,10 +157,7 @@ const CommunityPost = () => {
           </div>
         </header>
         <section className="p-4 mb-24">
-          <p
-            dangerouslySetInnerHTML={{ __html: postData.content }}
-            css={contentStyle}
-          />
+          <p dangerouslySetInnerHTML={{ __html: postData.content }} css={contentStyle} />
           <div className="flex gap-2 my-6 py-4">
             <PostLikeButton toggleLikePost={onToggleLikePost} />
             <PostViews views={postData.views} />

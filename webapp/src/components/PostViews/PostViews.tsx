@@ -8,13 +8,7 @@ type PostViewsProps = {
 };
 
 const PostViews: FC<PostViewsProps> = ({ views }) => {
-  const {
-    getArrowProps,
-    getTooltipProps,
-    setTooltipRef,
-    setTriggerRef,
-    visible,
-  } = usePopperTooltip();
+  const { getArrowProps, getTooltipProps, setTooltipRef, setTriggerRef, visible } = usePopperTooltip();
 
   return (
     <>
@@ -23,10 +17,7 @@ const PostViews: FC<PostViewsProps> = ({ views }) => {
         <span className="text-xs text-blueGray-600">{views}</span>
       </div>
       {visible && (
-        <div
-          ref={setTooltipRef}
-          {...getTooltipProps({ className: 'tooltip-container' })}
-        >
+        <div ref={setTooltipRef} {...getTooltipProps({ className: 'tooltip-container' })}>
           <div {...getArrowProps({ className: 'tooltip-arrow' })} />
           <span className="text-xs">조회수</span>
         </div>

@@ -7,13 +7,7 @@ import { User } from '../typings/user';
 import useCommentsSWR from './swr/useCommentsSWR';
 import useUserSWR from './swr/useUserSWR';
 
-export default function useComment({
-  postId,
-  commentId,
-}: {
-  postId: string;
-  commentId?: number;
-}) {
+export default function useComment({ postId, commentId }: { postId: string; commentId?: number }) {
   const { data: userData } = useUserSWR();
   const { data: commentsData, mutate: mutateComments } = useCommentsSWR({
     postId,
@@ -60,9 +54,7 @@ export default function useComment({
         produce((comments?: Comment[]) => {
           if (!comments) return;
 
-          const commentIndex = comments.findIndex(
-            (c: Comment) => c.id === commentId,
-          );
+          const commentIndex = comments.findIndex((c: Comment) => c.id === commentId);
           if (commentIndex === -1) return;
           comments[commentIndex].likes = comments[commentIndex].likes.filter(
             (likedUser: User) => likedUser.id !== userData.id,
@@ -75,9 +67,7 @@ export default function useComment({
         produce((comments?: Comment[]) => {
           if (!comments) return;
 
-          const commentIndex = comments.findIndex(
-            (c: Comment) => c.id === commentId,
-          );
+          const commentIndex = comments.findIndex((c: Comment) => c.id === commentId);
           if (commentIndex === -1) return;
           comments[commentIndex].likes.push(userData);
         }),

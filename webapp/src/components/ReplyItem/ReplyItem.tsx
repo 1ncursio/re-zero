@@ -5,7 +5,6 @@ import useCommentsSWR from '../../hooks/swr/useCommentsSWR';
 import useRepliesSWR from '../../hooks/swr/useRepliesSWR';
 import useBoolean from '../../hooks/useBoolean';
 import useReply from '../../hooks/useReply';
-import deleteComment from '../../lib/api/comments/deleteComment';
 import deleteReply from '../../lib/api/replies/deleteReply';
 import optimizeImage from '../../lib/optimizeImage';
 import relativeCreatedAt from '../../lib/relativeCreatedAt';
@@ -21,8 +20,7 @@ type ReplyItemProps = {
 
 const ReplyItem: FC<ReplyItemProps> = ({ reply, commentId }) => {
   const [isOpen, openModal, closeModal] = useBoolean(false);
-  const [isOpenEditReplyForm, openEditReplyForm, closeEditReplyForm] =
-    useBoolean(false);
+  const [isOpenEditReplyForm, openEditReplyForm, closeEditReplyForm] = useBoolean(false);
   useBoolean(false);
   const { postId } = useParams<{ postId: string }>();
 
@@ -59,24 +57,14 @@ const ReplyItem: FC<ReplyItemProps> = ({ reply, commentId }) => {
         <div className="flex justify-between mb-1">
           <div className="flex gap-2">
             <span className="text-xs text-blueGray-600">{reply.user.name}</span>
-            <span className="text-xs text-blueGray-400">
-              {relativeCreatedAt(reply.created_at)}
-            </span>
+            <span className="text-xs text-blueGray-400">{relativeCreatedAt(reply.created_at)}</span>
           </div>
           {reply.isMine && (
             <div className="flex gap-1">
-              <button
-                type="button"
-                className="text-xs text-blueGray-600"
-                onClick={openEditReplyForm}
-              >
+              <button type="button" className="text-xs text-blueGray-600" onClick={openEditReplyForm}>
                 수정
               </button>
-              <button
-                type="button"
-                className="text-xs text-red-400"
-                onClick={openModal}
-              >
+              <button type="button" className="text-xs text-red-400" onClick={openModal}>
                 삭제
               </button>
               <StyledModal
@@ -94,11 +82,7 @@ const ReplyItem: FC<ReplyItemProps> = ({ reply, commentId }) => {
           )}
         </div>
         {isOpenEditReplyForm ? (
-          <EditReplyForm
-            reply={reply}
-            closeEditReplyForm={closeEditReplyForm}
-            commentId={commentId}
-          />
+          <EditReplyForm reply={reply} closeEditReplyForm={closeEditReplyForm} commentId={commentId} />
         ) : (
           <p className="text-sm text-blueGray-600 mb-2">{reply.content}</p>
         )}

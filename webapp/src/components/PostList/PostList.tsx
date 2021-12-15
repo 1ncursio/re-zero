@@ -28,16 +28,12 @@ const PostList: FC<PostListProps> = ({ posts }) => {
           <div className="flex justify-between my-4">
             {/* eslint-disable-next-line prefer-template */}
             <span className="flex items-center ml-2 gap-2">
-              {hasImage(post.content) && (
-                <Icon name="outlinedImage" className="w-4 h-4" />
-              )}
+              {hasImage(post.content) && <Icon name="outlinedImage" className="w-4 h-4" />}
               <Link to={'/community/' + post.id}>
                 <h1 className="text-blueGray-700">{post.title}</h1>
               </Link>
             </span>
-            <span className="text-xs text-blueGray-500">
-              {relativeCreatedAt(post.created_at)}
-            </span>
+            <span className="text-xs text-blueGray-500">{relativeCreatedAt(post.created_at)}</span>
           </div>
           <p
             className="m-2 text-sm text-blueGray-600 line-clamp-2"

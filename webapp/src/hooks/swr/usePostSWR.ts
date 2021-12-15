@@ -4,10 +4,7 @@ import { Post } from '../../typings/post';
 import { User } from '../../typings/user';
 import useUserSWR from './useUserSWR';
 
-export default function usePostSWR(
-  postId: string,
-  options: SWRConfiguration = {},
-): SWRResponse<Post, Error> {
+export default function usePostSWR(postId: string, options: SWRConfiguration = {}): SWRResponse<Post, Error> {
   const response = useSWR<Post>(`/api/posts/${postId}`, fetcher, {
     ...options,
   });
@@ -20,10 +17,7 @@ export default function usePostSWR(
       ? {
           ...response.data,
           isMine: userData?.id === response.data?.user_id,
-          isLiked:
-            response.data?.likes.some(
-              (likedUser: User) => likedUser.id === userData?.id,
-            ) ?? false,
+          isLiked: response.data?.likes.some((likedUser: User) => likedUser.id === userData?.id) ?? false,
         }
       : undefined,
   };

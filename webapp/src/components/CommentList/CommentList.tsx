@@ -16,11 +16,7 @@ const CommentList: VFC = () => {
   }
 
   if (commentsData.length === 0) {
-    return (
-      <div className="text-blueGray-600 flex justify-center items-center h-32">
-        아직 댓글이 없네요!
-      </div>
-    );
+    return <div className="text-blueGray-600 flex justify-center items-center h-32">아직 댓글이 없네요!</div>;
   }
 
   return (

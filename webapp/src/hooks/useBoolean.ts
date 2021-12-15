@@ -11,9 +11,5 @@ export default function useBoolean(defaultValue: boolean) {
     setValue(false);
   }, []);
 
-  return [value, setTrue, setFalse] as [
-    boolean,
-    typeof setTrue,
-    typeof setFalse,
-  ];
+  return [value, setTrue, setFalse] as [boolean, typeof setTrue, typeof setFalse];
 }

@@ -38,9 +38,7 @@ export default function useReply({
         produce((replies?: Comment[]) => {
           if (!replies) return;
 
-          const replyIndex = replies.findIndex(
-            (c: Comment) => c.id === reply.id,
-          );
+          const replyIndex = replies.findIndex((c: Comment) => c.id === reply.id);
           if (replyIndex === -1) return;
           replies[replyIndex].likes = replies[replyIndex].likes.filter(
             (likedUser: User) => likedUser.id !== userData.id,
@@ -53,9 +51,7 @@ export default function useReply({
         produce((replies?: Comment[]) => {
           if (!replies) return;
 
-          const replyIndex = replies.findIndex(
-            (c: Comment) => c.id === reply.id,
-          );
+          const replyIndex = replies.findIndex((c: Comment) => c.id === reply.id);
           if (replyIndex === -1) return;
           replies[replyIndex].likes.push(userData);
         }),
