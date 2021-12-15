@@ -1,8 +1,8 @@
 import { CELL_COUNT, CELL_SIZE, INDICATOR_COLOR } from '../othelloConfig';
-import GameObject from './GameObject';
+import CanvasObject from './CanvasObject';
 import Reversi from './Reversi';
 
-export default class Indicator extends GameObject {
+export default class Indicator extends CanvasObject {
   private _radius: number;
 
   private _index: number;

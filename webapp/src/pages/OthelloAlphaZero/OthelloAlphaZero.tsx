@@ -9,28 +9,14 @@ import useAIHistoriesSWR from '../../hooks/swr/useAIHistoriesSWR';
 import useUsersAIHistoriesSWR from '../../hooks/swr/useUsersAIHistoriesSWR';
 import useUserSWR from '../../hooks/swr/useUserSWR';
 import createAIHistory from '../../lib/api/othello/createAIHistory';
-import requestNextState, {
-  TState,
-} from '../../lib/api/othello/requestNextState';
-import BackgroundObject from '../../lib/othello/BackgroundObject';
+import requestNextState, { TState } from '../../lib/api/othello/requestNextState';
+import Background from '../../lib/othello/Background';
 import Canvas from '../../lib/othello/Canvas';
-import Coordinate from '../../lib/othello/Coordinate';
-import GameObject from '../../lib/othello/GameObject';
-import Grid from '../../lib/othello/Grid';
 import Indicator from '../../lib/othello/Indicator';
 import LastAction from '../../lib/othello/LastAction';
 import Piece from '../../lib/othello/Piece';
 import Reversi from '../../lib/othello/Reversi';
-import {
-  BACKGROUND_CANVAS_SIZE,
-  BACKGROUND_COLOR,
-  CELL_COUNT,
-  CELL_SIZE,
-  COORDINATE_COLOR,
-  COORDINATE_SIZE,
-  GAME_CANVAS_SIZE,
-  TOTAL_CELL_COUNT,
-} from '../../lib/othelloConfig';
+import { CELL_COUNT, CELL_SIZE, TOTAL_CELL_COUNT } from '../../lib/othelloConfig';
 
 const OthelloAlphaZero = () => {
   const [piecesCount, setPiecesCount] = useState<number>(0);
@@ -41,116 +27,58 @@ const OthelloAlphaZero = () => {
   const [isCalculating, setIsCalculating] = useState<boolean>(false);
 
   const gameRef = useRef<HTMLCanvasElement>(null);
-  const gameCtxRef = useRef<CanvasRenderingContext2D | null>(null);
-  const backgroundRef = useRef<HTMLCanvasElement>(null);
-  const backgroundCtxRef = useRef<CanvasRenderingContext2D | null>(null);
+  const bgRef = useRef<HTMLCanvasElement>(null);
 
   const requestRef = useRef<number | null>(null);
-  const stateRef = useRef<Reversi | null>(null);
-  const gameObjectsRef = useRef<GameObject[]>([]);
-  const backgroundObjectsRef = useRef<BackgroundObject[]>([]);
+  const reversiRef = useRef<Reversi | null>(null);
 
-  let canvas = useRef<Canvas | null>(null);
+  const bgCanvas = useRef<Canvas | null>(null);
+  const gameCanvas = useRef<Canvas | null>(null);
 
   const { data: userData, isLoading: isLoadingUserData } = useUserSWR();
   const { mutate: mutateAIHistories } = useAIHistoriesSWR();
   const { mutate: mutateUsersAIHistories } = useUsersAIHistoriesSWR();
 
   function render() {
-    if (
-      !gameRef.current ||
-      !gameCtxRef.current ||
-      !stateRef.current ||
-      !backgroundCtxRef.current
-    )
-      return;
+    if (!reversiRef.current || !bgCanvas.current || !gameCanvas.current) return;
 
-    gameCtxRef.current.clearRect(
-      0,
-      0,
-      BACKGROUND_CANVAS_SIZE,
-      BACKGROUND_CANVAS_SIZE,
-    );
+    bgCanvas.current.draw();
+    gameCanvas.current.draw();
 
-    gameObjectsRef.current.forEach((obj) => obj.draw());
-
-    gameObjectsRef.current.forEach((obj) =>
-      obj.update(stateRef.current as Reversi),
-    );
-
-    // Draw number to the screen
-    backgroundCtxRef.current.clearRect(
-      0,
-      0,
-      BACKGROUND_CANVAS_SIZE,
-      BACKGROUND_CANVAS_SIZE,
-    );
-    backgroundCtxRef.current.fillStyle = COORDINATE_COLOR;
-    backgroundCtxRef.current.fillRect(
-      0,
-      0,
-      BACKGROUND_CANVAS_SIZE,
-      BACKGROUND_CANVAS_SIZE,
-    );
-    backgroundCtxRef.current.fillStyle = BACKGROUND_COLOR;
-    backgroundCtxRef.current.fillRect(
-      COORDINATE_SIZE,
-      COORDINATE_SIZE,
-      GAME_CANVAS_SIZE,
-      GAME_CANVAS_SIZE,
-    );
-    backgroundObjectsRef.current.forEach((obj) => obj.draw());
+    bgCanvas.current.update(reversiRef.current);
+    gameCanvas.current.update(reversiRef.current);
 
     requestRef.current = requestAnimationFrame(render);
   }
 
   const onRestart = useCallback(() => {
-    if (!stateRef.current) return;
+    if (!reversiRef.current) return;
 
-    stateRef.current = new Reversi();
+    reversiRef.current = new Reversi();
     setPiecesCount(2);
     setEnemyPiecesCount(2);
     setIsDone(false);
     setIsDraw(false);
     setIsLoss(false);
-  }, [
-    stateRef,
-    setPiecesCount,
-    setEnemyPiecesCount,
-    setIsDone,
-    setIsDraw,
-    setIsLoss,
-  ]);
+  }, [reversiRef, setPiecesCount, setEnemyPiecesCount, setIsDone, setIsDraw, setIsLoss]);
 
   const onMouseUp = useCallback(
     async (e: React.MouseEvent<HTMLCanvasElement>) => {
-      if (
-        !gameRef.current ||
-        !gameCtxRef.current ||
-        !stateRef.current ||
-        !userData
-      )
-        return;
+      if (!gameCanvas.current || !reversiRef.current || !userData) return;
 
-      if (stateRef.current.isDone()) {
-        console.log('is Done');
+      if (reversiRef.current.isDone() || !reversiRef.current.isFirstPlayer()) {
+        console.log('forbidden to play');
         return;
       }
 
-      if (!stateRef.current.isFirstPlayer()) {
-        console.log('is not first player');
-        return;
-      }
-
-      const { left, top } = gameRef.current.getBoundingClientRect();
+      const { left, top } = gameCanvas.current.canvas.getBoundingClientRect();
       const x = e.clientX - left;
       const y = e.clientY - top;
-      let action =
-        Math.floor(x / CELL_SIZE) + Math.floor(y / CELL_SIZE) * CELL_COUNT;
+      let action = Math.floor(x / CELL_SIZE) + Math.floor(y / CELL_SIZE) * CELL_COUNT;
       if (action >= TOTAL_CELL_COUNT || action < 0) return;
 
       while (true) {
-        const legalActions = stateRef.current.legalActions();
+        const legalActions = reversiRef.current.legalActions();
         if (legalActions[0] === TOTAL_CELL_COUNT) {
           action = TOTAL_CELL_COUNT;
         }
@@ -159,23 +87,19 @@ const OthelloAlphaZero = () => {
           return;
         }
 
-        stateRef.current = stateRef.current.next(action);
-        console.log(stateRef.current.historiesToNotation());
+        reversiRef.current = reversiRef.current.next(action);
+        console.log(reversiRef.current.historiesToNotation());
         new Audio(blop).play();
 
-        setPiecesCount(
-          stateRef.current.piecesCount(stateRef.current.enemyPieces),
-        );
-        setEnemyPiecesCount(
-          stateRef.current.piecesCount(stateRef.current.pieces),
-        );
+        setPiecesCount(reversiRef.current.piecesCount(reversiRef.current.enemyPieces));
+        setEnemyPiecesCount(reversiRef.current.piecesCount(reversiRef.current.pieces));
 
-        if (stateRef.current.isDone()) {
+        if (reversiRef.current.isDone()) {
           setIsDone(true);
-          setIsDraw(stateRef.current.isDraw());
-          setIsLoss(!stateRef.current.isLoss());
+          setIsDraw(reversiRef.current.isDraw());
+          setIsLoss(!reversiRef.current.isLoss());
 
-          if (stateRef.current.isDraw()) {
+          if (reversiRef.current.isDraw()) {
             const history = await createAIHistory({
               blackId: userData.id,
               whiteId: null,
@@ -183,7 +107,7 @@ const OthelloAlphaZero = () => {
             });
             mutateAIHistories();
             mutateUsersAIHistories();
-          } else if (stateRef.current.isLoss()) {
+          } else if (reversiRef.current.isLoss()) {
             const history = await createAIHistory({
               blackId: userData.id,
               whiteId: null,
@@ -191,7 +115,7 @@ const OthelloAlphaZero = () => {
             });
             mutateAIHistories();
             mutateUsersAIHistories();
-          } else if (!stateRef.current.isLoss()) {
+          } else if (!reversiRef.current.isLoss()) {
             const history = await createAIHistory({
               blackId: userData.id,
               whiteId: null,
@@ -211,22 +135,20 @@ const OthelloAlphaZero = () => {
           pass_end,
           action: _action,
         }: TState = await requestNextState({
-          pieces: stateRef.current.pieces,
-          enemyPieces: stateRef.current.enemyPieces,
-          depth: stateRef.current.depth,
+          pieces: reversiRef.current.pieces,
+          enemyPieces: reversiRef.current.enemyPieces,
+          depth: reversiRef.current.depth,
         });
         setIsCalculating(false);
 
-        stateRef.current = stateRef.current.next(_action);
+        reversiRef.current = reversiRef.current.next(_action);
         new Audio(blop).play();
-        console.log(stateRef.current.historiesToNotation());
-        setPiecesCount(stateRef.current.piecesCount(stateRef.current.pieces));
-        setEnemyPiecesCount(
-          stateRef.current.piecesCount(stateRef.current.enemyPieces),
-        );
+        console.log(reversiRef.current.historiesToNotation());
+        setPiecesCount(reversiRef.current.piecesCount(reversiRef.current.pieces));
+        setEnemyPiecesCount(reversiRef.current.piecesCount(reversiRef.current.enemyPieces));
 
-        stateRef.current.setPassEnd(pass_end);
-        if (stateRef.current.legalActions()[0] !== 36 || is_done) {
+        reversiRef.current.setPassEnd(pass_end);
+        if (reversiRef.current.legalActions()[0] !== 36 || is_done) {
           if (is_done) {
             setIsDone(true);
             console.log('is done');
@@ -269,76 +191,41 @@ const OthelloAlphaZero = () => {
       }
     },
     [
-      gameRef,
-      gameCtxRef,
-      stateRef,
+      gameCanvas,
+      reversiRef,
       setPiecesCount,
       setEnemyPiecesCount,
       userData,
+      mutateAIHistories,
+      mutateUsersAIHistories,
     ],
   );
 
   useEffect(() => {
-    if (!gameRef.current || !backgroundRef.current) return;
-    stateRef.current = new Reversi();
+    if (!gameRef.current || !bgRef.current) return;
+    reversiRef.current = new Reversi();
 
-    gameCtxRef.current = gameRef.current.getContext('2d');
-    backgroundCtxRef.current = backgroundRef.current.getContext('2d');
-    if (!backgroundCtxRef.current || !gameCtxRef.current) return;
+    bgCanvas.current = new Canvas(bgRef.current);
+    gameCanvas.current = new Canvas(gameRef.current);
 
-    canvas.current = new Canvas(backgroundRef.current);
-
-    // const bgRect = backgroundRef.current.getBoundingClientRect();
-    const gameRect = gameRef.current.getBoundingClientRect();
-
-    // const bgWidth =
-    //   Math.round(devicePixelRatio * bgRect.right) -
-    //   Math.round(devicePixelRatio * bgRect.left);
-    // const bgHeight =
-    //   Math.round(devicePixelRatio * bgRect.bottom) -
-    //   Math.round(devicePixelRatio * bgRect.top);
-
-    const gameWidth =
-      Math.round(devicePixelRatio * gameRect.right) -
-      Math.round(devicePixelRatio * gameRect.left);
-    const gameHeight =
-      Math.round(devicePixelRatio * gameRect.bottom) -
-      Math.round(devicePixelRatio * gameRect.top);
-
-    // backgroundRef.current.width = bgWidth;
-    // backgroundRef.current.height = bgHeight;
-
-    gameRef.current.width = gameWidth;
-    gameRef.current.height = gameHeight;
-
-    // backgroundCtxRef.current.scale(devicePixelRatio, devicePixelRatio);
-    gameCtxRef.current.scale(devicePixelRatio, devicePixelRatio);
-
-    setPiecesCount(stateRef.current.piecesCount(stateRef.current.pieces));
-    setEnemyPiecesCount(
-      stateRef.current.piecesCount(stateRef.current.enemyPieces),
-    );
+    setPiecesCount(reversiRef.current.piecesCount(reversiRef.current.pieces));
+    setEnemyPiecesCount(reversiRef.current.piecesCount(reversiRef.current.enemyPieces));
 
     // game objects init
-    const lastAction = new LastAction(gameCtxRef.current);
+    const lastAction = new LastAction(gameCanvas.current.context);
     const indicators = new Array(TOTAL_CELL_COUNT)
       .fill(null)
-      .map(
-        (_, i) =>
-          new Indicator(gameCtxRef.current as CanvasRenderingContext2D, i),
-      );
+      .map((_, i) => new Indicator((gameCanvas.current as Canvas).context, i));
     const pieces = new Array(TOTAL_CELL_COUNT)
       .fill(null)
-      .map(
-        (_, i) => new Piece(gameCtxRef.current as CanvasRenderingContext2D, i),
-      );
+      .map((_, i) => new Piece((gameCanvas.current as Canvas).context, i));
 
-    gameObjectsRef.current = [...indicators, ...pieces, lastAction];
+    gameCanvas.current.addCanvasObjects([...indicators, ...pieces, lastAction]);
 
     // background objects init
-    const coordinate = new Coordinate(backgroundCtxRef.current);
-    const grid = new Grid(backgroundCtxRef.current);
-    backgroundObjectsRef.current = [coordinate, grid];
+    const background = new Background(bgCanvas.current.context);
+
+    bgCanvas.current.addCanvasObjects([background]);
   }, []);
 
   useEffect(() => {
@@ -364,9 +251,7 @@ const OthelloAlphaZero = () => {
           <div className="flex justify-between px-2">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-[#404040] border border-blueGray-600 rounded-full" />
-              <span className="text-sm text-blueGray-600">
-                {userData?.name ?? 'GUEST'}
-              </span>
+              <span className="text-sm text-blueGray-600">{userData?.name ?? 'GUEST'}</span>
               <span className="text-lg text-blueGray-600 font-bold">
                 {coloredPiecesCount(piecesCount, enemyPiecesCount)}
               </span>
@@ -394,21 +279,16 @@ const OthelloAlphaZero = () => {
               <div className="absolute top-0 left-0 bg-black w-full h-full bg-opacity-30 backdrop-filter backdrop-blur-sm flex justify-center items-center z-40">
                 <div className="flex flex-col gap-8 items-center">
                   {isDone && isLoss && (
-                    <div className="text-3xl text-white cursor-default user-select-none">
-                      아깝네요!
-                    </div>
+                    <div className="text-3xl text-white cursor-default user-select-none">아깝네요!</div>
                   )}
                   {isDone && !isLoss && !isDraw && (
-                    <div className="text-3xl text-white cursor-default user-select-none">
-                      이기셨네요!
-                    </div>
+                    <div className="text-3xl text-white cursor-default user-select-none">이기셨네요!</div>
                   )}
                   {isDone && isDraw && (
-                    <div className="text-3xl text-white cursor-default user-select-none">
-                      무승부에요!
-                    </div>
+                    <div className="text-3xl text-white cursor-default user-select-none">무승부에요!</div>
                   )}
                   <button
+                    type="button"
                     onClick={onRestart}
                     className="text-lg border border-white hover:border-emerald-300 text-white hover:text-emerald-300 py-3 px-8 transition duration-200"
                   >
@@ -417,10 +297,7 @@ const OthelloAlphaZero = () => {
                 </div>
               </div>
             )}
-            <canvas
-              ref={backgroundRef}
-              className="w-full h-full absolute z-10"
-            />
+            <canvas ref={bgRef} className="w-full h-full absolute z-10" />
             <canvas
               ref={gameRef}
               onMouseUp={onMouseUp}

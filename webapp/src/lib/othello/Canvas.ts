@@ -1,26 +1,24 @@
-import GameObject from './GameObject';
+import CanvasObject from './CanvasObject';
+import Reversi from './Reversi';
 
 export default class Canvas {
-  private canvas;
+  public canvas;
 
   public context;
 
-  public gameObjects: GameObject[];
+  public canvasObjects: CanvasObject[];
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
     this.context = this.canvas.getContext('2d') as CanvasRenderingContext2D;
-    this.gameObjects = [];
+    this.canvasObjects = [];
 
     const rect = canvas.getBoundingClientRect();
 
     const ratio = window.devicePixelRatio || 1;
 
-    const width = Math.round(ratio * rect.right) - Math.round(ratio * rect.left);
-    const height = Math.round(ratio * rect.bottom) - Math.round(ratio * rect.top);
-
-    this.canvas.width = width;
-    this.canvas.height = height;
+    this.canvas.width = Math.round(ratio * rect.right) - Math.round(ratio * rect.left);
+    this.canvas.height = Math.round(ratio * rect.bottom) - Math.round(ratio * rect.top);
     this.context.scale(ratio, ratio);
   }
 
@@ -28,5 +26,16 @@ export default class Canvas {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
-  draw(): void {}
+  draw(): void {
+    this.clear();
+    this.canvasObjects.forEach((obj) => obj.draw());
+  }
+
+  update(reversi: Reversi): void {
+    this.canvasObjects.forEach((obj) => obj.update(reversi));
+  }
+
+  addCanvasObjects(objs: CanvasObject[]): void {
+    this.canvasObjects.push(...objs);
+  }
 }

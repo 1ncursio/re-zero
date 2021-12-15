@@ -23,11 +23,7 @@ const Search = () => {
     setFocus,
     formState: { errors },
   } = useForm();
-  const {
-    data: postsData,
-    links: linksData,
-    total,
-  } = useSearchPostsSWR({ page, q });
+  const { data: postsData, links: linksData, total } = useSearchPostsSWR({ page, q });
 
   // for ux purpose only (pagination)
   useSearchPostsSWR({ page: page + 1, q });

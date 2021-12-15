@@ -7,10 +7,10 @@ import {
   STROKE_COLOR,
   WHITE_PIECE_COLOR,
 } from '../othelloConfig';
-import GameObject from './GameObject';
+import CanvasObject from './CanvasObject';
 import Reversi from './Reversi';
 
-export default class Piece extends GameObject {
+export default class Piece extends CanvasObject {
   private _radius: number;
 
   private _color: string;

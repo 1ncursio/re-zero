@@ -1,8 +1,8 @@
 import { CELL_COUNT, CELL_SIZE, LAST_ACTION_COLOR } from '../othelloConfig';
-import GameObject from './GameObject';
+import CanvasObject from './CanvasObject';
 import Reversi from './Reversi';
 
-export default class LastAction extends GameObject {
+export default class LastAction extends CanvasObject {
   private _width: number;
 
   private _index: number;

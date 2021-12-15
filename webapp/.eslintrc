@@ -36,6 +36,8 @@
     "no-underscore-dangle": 0,
     "max-len" : 0,
     "no-useless-constructor": 0,
+    "no-await-in-loop": 0,
+    "camelcase": 0,
     "semi": "off",
     "prettier/prettier": ["error", {"endOfLine": "auto"}]
   }
