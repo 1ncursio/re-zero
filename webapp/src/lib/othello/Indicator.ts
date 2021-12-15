@@ -13,8 +13,8 @@ export default class Indicator extends CanvasObject {
 
   private _y: number;
 
-  constructor(ctx: CanvasRenderingContext2D, index: number) {
-    super(ctx);
+  constructor(ctx: CanvasRenderingContext2D, index: number, visible: boolean = true) {
+    super(ctx, visible);
     this._radius = Math.floor(CELL_SIZE * 0.5 * (2 / 5)); // 30
     this._index = index;
     this._state = 'inactive';
@@ -38,14 +38,17 @@ export default class Indicator extends CanvasObject {
 
     if (reversi.legalActions().includes(this._index) && isFirstPlayer) {
       this._state = 'active';
+      this.visible = true;
     } else {
       this._state = 'inactive';
+      this.visible = false;
     }
 
     const index = Math.floor(mouseX / CELL_SIZE) + Math.floor(mouseY / CELL_SIZE) * CELL_COUNT;
 
     if (this._index === index && this._state === 'active') {
       this._state = 'hover';
+      this.visible = true;
     }
   }
 }

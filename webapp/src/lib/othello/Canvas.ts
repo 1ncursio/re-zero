@@ -34,7 +34,7 @@ export default class Canvas {
 
   draw(): void {
     this.clear();
-    this.canvasObjects.forEach((obj) => obj.draw());
+    this.canvasObjects.filter((obj) => obj.visible).forEach((obj) => obj.draw());
   }
 
   update(reversi: Reversi): void {

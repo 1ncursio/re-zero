@@ -12,8 +12,8 @@ import CanvasObject from './CanvasObject';
 import Reversi from './Reversi';
 
 export default class Background extends CanvasObject {
-  constructor(ctx: CanvasRenderingContext2D) {
-    super(ctx);
+  constructor(ctx: CanvasRenderingContext2D, visible = true) {
+    super(ctx, visible);
   }
 
   public draw() {
@@ -38,6 +38,24 @@ export default class Background extends CanvasObject {
 
       this.ctx.stroke();
       this.ctx.closePath();
+    }
+
+    // draw dots
+    for (let i = 2; i < CELL_COUNT; i += CELL_COUNT - 4) {
+      for (let j = 2; j < CELL_COUNT; j += CELL_COUNT - 4) {
+        this.ctx.beginPath();
+        this.ctx.arc(
+          CELL_SIZE * i + COORDINATE_SIZE,
+          CELL_SIZE * j + COORDINATE_SIZE,
+          CELL_SIZE * (1 / 24),
+          0,
+          Math.PI * 2,
+          false,
+        );
+        this.ctx.fillStyle = GRID_COLOR;
+        this.ctx.fill();
+        this.ctx.closePath();
+      }
     }
 
     // coordinate

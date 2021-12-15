@@ -43,10 +43,8 @@ const OthelloAlphaZero = () => {
   function render() {
     if (!reversiRef.current || !bgCanvas.current || !gameCanvas.current) return;
 
-    bgCanvas.current.draw();
     gameCanvas.current.draw();
 
-    bgCanvas.current.update(reversiRef.current);
     gameCanvas.current.update(reversiRef.current);
 
     requestRef.current = requestAnimationFrame(render);
@@ -248,6 +246,7 @@ const OthelloAlphaZero = () => {
     const background = new Background(bgCanvas.current.context);
 
     bgCanvas.current.addCanvasObjects([background]);
+    bgCanvas.current.draw();
   }, []);
 
   useEffect(() => {

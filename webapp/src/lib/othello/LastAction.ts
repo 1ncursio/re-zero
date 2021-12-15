@@ -11,8 +11,8 @@ export default class LastAction extends CanvasObject {
 
   private _y: number;
 
-  constructor(ctx: CanvasRenderingContext2D) {
-    super(ctx);
+  constructor(ctx: CanvasRenderingContext2D, visible = true) {
+    super(ctx, visible);
     this._width = Math.floor(CELL_SIZE * 0.1);
     this._index = -1;
     this._x = -10;

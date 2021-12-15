@@ -40,6 +40,7 @@
     "camelcase": 0,
     "semi": "off",
     "no-use-before-define": "off",
+    "@typescript-eslint/no-inferrable-types": 0,
     "@typescript-eslint/no-use-before-define": ["error"],
     "prettier/prettier": ["error", {"endOfLine": "auto"}]
   }

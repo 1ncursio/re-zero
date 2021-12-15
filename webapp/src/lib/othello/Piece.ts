@@ -23,8 +23,8 @@ export default class Piece extends CanvasObject {
 
   private _state: 'empty' | 'black' | 'white';
 
-  constructor(ctx: CanvasRenderingContext2D, index: number) {
-    super(ctx);
+  constructor(ctx: CanvasRenderingContext2D, index: number, visible: boolean = true) {
+    super(ctx, visible);
     this._index = index;
     this._radius = Math.floor(CELL_SIZE * 0.5 * (3 / 4)); // 30
     this._state = 'empty';
@@ -70,11 +70,14 @@ export default class Piece extends CanvasObject {
     if (reversi.pieces[this._index] === 1) {
       this._state = isFirstPlayer ? 'black' : 'white';
       this._color = isFirstPlayer ? BLACK_PIECE_COLOR : WHITE_PIECE_COLOR;
+      this.visible = true;
     } else if (reversi.enemyPieces[this._index] === 1) {
       this._state = isFirstPlayer ? 'white' : 'black';
       this._color = isFirstPlayer ? WHITE_PIECE_COLOR : BLACK_PIECE_COLOR;
+      this.visible = true;
     } else {
       this._state = 'empty';
+      this.visible = false;
     }
   }
 }
