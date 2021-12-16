@@ -1,3 +1,4 @@
+import * as tf from '@tensorflow/tfjs';
 import { throttle } from 'lodash';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
@@ -9,6 +10,7 @@ import RequireLogIn from '../../components/RequireLogin/RequireLogin';
 import useAIHistoriesSWR from '../../hooks/swr/useAIHistoriesSWR';
 import useUsersAIHistoriesSWR from '../../hooks/swr/useUsersAIHistoriesSWR';
 import useUserSWR from '../../hooks/swr/useUserSWR';
+import useModel from '../../hooks/useModel';
 import createAIHistory from '../../lib/api/othello/createAIHistory';
 import requestNextState, { TState } from '../../lib/api/othello/requestNextState';
 import Background from '../../lib/othello/Background';
@@ -16,10 +18,13 @@ import Canvas from '../../lib/othello/Canvas';
 import Indicator from '../../lib/othello/Indicator';
 import LastAction from '../../lib/othello/LastAction';
 import Piece from '../../lib/othello/Piece';
+import pvMctsAction from '../../lib/othello/pvMcts';
 import Reversi from '../../lib/othello/Reversi';
 import { CELL_COUNT, CELL_SIZE, TOTAL_CELL_COUNT } from '../../lib/othelloConfig';
 
 const OthelloAlphaZero = () => {
+  const model = useModel();
+  const nextAction = useRef<(state: Reversi) => Promise<number> | null>(null);
   const [piecesCount, setPiecesCount] = useState<number>(0);
   const [enemyPiecesCount, setEnemyPiecesCount] = useState<number>(0);
   const [isDone, setIsDone] = useState<boolean>(false);
@@ -254,6 +259,19 @@ const OthelloAlphaZero = () => {
     return () => cancelAnimationFrame(requestRef.current as number);
   }, []);
 
+  const prediction = useCallback(async () => {
+    if (!gameCanvas.current || !reversiRef.current || !userData || !model || !nextAction.current) return;
+    const action = await nextAction.current(reversiRef.current);
+    console.log({ action });
+  }, [model, reversiRef, gameCanvas, userData, nextAction]);
+
+  useEffect(() => {
+    if (!model) return;
+    // @ts-ignore
+    nextAction.current = pvMctsAction(model, 0);
+    console.log({ nextAction });
+  }, [model]);
+
   const coloredPiecesCount = (x: number, y: number) => (
     <span className={x > y ? 'text-emerald-500' : ''}>{x}</span>
   );
@@ -329,6 +347,9 @@ const OthelloAlphaZero = () => {
           </div>
         </div>
         <AIHistory />
+        <button type="button" onClick={prediction}>
+          ㅇㅇ
+        </button>
       </div>
     </div>
   );
