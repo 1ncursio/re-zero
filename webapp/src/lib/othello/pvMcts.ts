@@ -4,7 +4,7 @@
 
 // 패키지 임포트
 import * as tf from '@tensorflow/tfjs';
-import { sum } from 'lodash';
+import { cloneDeep, sum } from 'lodash';
 import MNode from './MNode';
 import Reversi from './Reversi';
 
@@ -63,15 +63,24 @@ async function pvMctsScores(model: tf.LayersModel, state: Reversi, temperature: 
   // 몬테카를로 트리 탐색 노드 정의
 
   // 현재 국면의 노드 생성
+  console.log({ state });
   const rootNode = new MNode(state, 0);
 
   const _ = new Array<number>(PV_EVALUATE_COUNT).fill(0);
 
+  console.log({ state });
   // 여러 차례 평가 실행
   // eslint-disable-next-line no-restricted-syntax
-  for await (const __ of _) {
-    await rootNode.evaluate(model);
+  // for await (const __ of _) {
+  //   await rootNode.evaluate(model);
+  // }
+  let i = 0;
+  while (i < PV_EVALUATE_COUNT) {
+    // evaluate를 하지 않으면 state 오류가 발생하지 않는다.
+    // await rootNode.evaluate(model);
+    i += 1;
   }
+  console.log({ state });
 
   console.log({ rootNode });
   // 합법적인 수의 확률 분포
@@ -106,15 +115,15 @@ function randomChoice(legalActions: number[], p: number[]) {
 // 몬테카를로 트리 탐색을 활용한 행동 선택
 function pvMctsAction(model: tf.LayersModel, temperature = 0.0) {
   async function _pvMctsAction(reversi: Reversi) {
-    const newReversi = new Reversi(
-      reversi.pieces.slice(),
-      reversi.enemyPieces.slice(),
-      reversi.depth,
-      reversi.histories,
-      reversi.lastAction,
-    );
-    const legalActions = newReversi.legalActions();
-    const scores = await pvMctsScores(model, newReversi, temperature);
+    const legalActions = reversi.legalActions();
+    const deepCopy = cloneDeep(reversi);
+    console.log({ deepCopy });
+
+    const ddeepCopy = cloneDeep(reversi);
+    console.log({ ddeepCopy });
+
+    // pvMctsScores 에 들어가면 이상하게 동작하는 것 같음. 이유는 모르겠음.
+    const scores = await pvMctsScores(model, ddeepCopy, temperature);
     const choiced = randomChoice(legalActions, scores);
     console.log({ legalActions, scores });
     console.log({ choiced });

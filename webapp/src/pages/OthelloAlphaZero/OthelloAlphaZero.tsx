@@ -1,5 +1,4 @@
-import * as tf from '@tensorflow/tfjs';
-import { throttle } from 'lodash';
+import { cloneDeep, throttle } from 'lodash';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 // @ts-ignore
@@ -18,13 +17,11 @@ import Canvas from '../../lib/othello/Canvas';
 import Indicator from '../../lib/othello/Indicator';
 import LastAction from '../../lib/othello/LastAction';
 import Piece from '../../lib/othello/Piece';
-import pvMctsAction from '../../lib/othello/pvMcts';
 import Reversi from '../../lib/othello/Reversi';
 import { CELL_COUNT, CELL_SIZE, TOTAL_CELL_COUNT } from '../../lib/othelloConfig';
 
 const OthelloAlphaZero = () => {
-  const model = useModel();
-  const nextAction = useRef<(state: Reversi) => Promise<number>>(null);
+  const { model, nextAction } = useModel();
   const [piecesCount, setPiecesCount] = useState<number>(0);
   const [enemyPiecesCount, setEnemyPiecesCount] = useState<number>(0);
   const [isDone, setIsDone] = useState<boolean>(false);
@@ -36,7 +33,8 @@ const OthelloAlphaZero = () => {
   const bgRef = useRef<HTMLCanvasElement>(null);
 
   const requestRef = useRef<number | null>(null);
-  const reversiRef = useRef<Reversi | null>(null);
+  // const reversi = useRef<Reversi | null>(null);
+  let reversi = new Reversi();
 
   const bgCanvas = useRef<Canvas | null>(null);
   const gameCanvas = useRef<Canvas | null>(null);
@@ -46,31 +44,31 @@ const OthelloAlphaZero = () => {
   const { mutate: mutateUsersAIHistories } = useUsersAIHistoriesSWR();
 
   function render() {
-    if (!reversiRef.current || !bgCanvas.current || !gameCanvas.current) return;
+    if (!reversi || !bgCanvas.current || !gameCanvas.current) return;
 
     gameCanvas.current.draw();
 
-    gameCanvas.current.update(reversiRef.current);
+    gameCanvas.current.update(reversi);
 
     requestRef.current = requestAnimationFrame(render);
   }
 
   const onRestart = useCallback(() => {
-    if (!reversiRef.current) return;
+    if (!reversi) return;
 
-    reversiRef.current = new Reversi();
+    // reversi = new Reversi();
     setPiecesCount(2);
     setEnemyPiecesCount(2);
     setIsDone(false);
     setIsDraw(false);
     setIsLoss(false);
-  }, [reversiRef, setPiecesCount, setEnemyPiecesCount, setIsDone, setIsDraw, setIsLoss]);
+  }, [reversi, setPiecesCount, setEnemyPiecesCount, setIsDone, setIsDraw, setIsLoss]);
 
   const onMouseUp = useCallback(
     async (e: React.MouseEvent<HTMLCanvasElement>) => {
-      if (!gameCanvas.current || !reversiRef.current || !userData) return;
+      if (!gameCanvas.current || !reversi || !userData) return;
 
-      if (reversiRef.current.isDone() || !reversiRef.current.isFirstPlayer()) {
+      if (reversi.isDone() || !reversi.isFirstPlayer()) {
         console.log('forbidden to play');
         return;
       }
@@ -82,7 +80,7 @@ const OthelloAlphaZero = () => {
       if (action >= TOTAL_CELL_COUNT || action < 0) return;
 
       while (true) {
-        const legalActions = reversiRef.current.legalActions();
+        const legalActions = reversi.legalActions();
         if (legalActions[0] === TOTAL_CELL_COUNT) {
           action = TOTAL_CELL_COUNT;
         }
@@ -91,19 +89,19 @@ const OthelloAlphaZero = () => {
           return;
         }
 
-        reversiRef.current = reversiRef.current.next(action);
-        console.log(reversiRef.current.historiesToNotation());
+        reversi = reversi.next(action);
+        console.log(reversi.historiesToNotation());
         new Audio(blop).play();
 
-        setPiecesCount(reversiRef.current.piecesCount(reversiRef.current.enemyPieces));
-        setEnemyPiecesCount(reversiRef.current.piecesCount(reversiRef.current.pieces));
+        setPiecesCount(reversi.piecesCount(reversi.enemyPieces));
+        setEnemyPiecesCount(reversi.piecesCount(reversi.pieces));
 
-        if (reversiRef.current.isDone()) {
+        if (reversi.isDone()) {
           setIsDone(true);
-          setIsDraw(reversiRef.current.isDraw());
-          setIsLoss(!reversiRef.current.isLoss());
+          setIsDraw(reversi.isDraw());
+          setIsLoss(!reversi.isLoss());
 
-          if (reversiRef.current.isDraw()) {
+          if (reversi.isDraw()) {
             const history = await createAIHistory({
               blackId: userData.id,
               whiteId: null,
@@ -111,7 +109,7 @@ const OthelloAlphaZero = () => {
             });
             mutateAIHistories();
             mutateUsersAIHistories();
-          } else if (reversiRef.current.isLoss()) {
+          } else if (reversi.isLoss()) {
             const history = await createAIHistory({
               blackId: userData.id,
               whiteId: null,
@@ -119,7 +117,7 @@ const OthelloAlphaZero = () => {
             });
             mutateAIHistories();
             mutateUsersAIHistories();
-          } else if (!reversiRef.current.isLoss()) {
+          } else if (!reversi.isLoss()) {
             const history = await createAIHistory({
               blackId: userData.id,
               whiteId: null,
@@ -139,20 +137,20 @@ const OthelloAlphaZero = () => {
           pass_end,
           action: _action,
         }: TState = await requestNextState({
-          pieces: reversiRef.current.pieces,
-          enemyPieces: reversiRef.current.enemyPieces,
-          depth: reversiRef.current.depth,
+          pieces: reversi.pieces,
+          enemyPieces: reversi.enemyPieces,
+          depth: reversi.depth,
         });
         setIsCalculating(false);
 
-        reversiRef.current = reversiRef.current.next(_action);
+        reversi = reversi.next(_action);
         new Audio(blop).play();
-        console.log(reversiRef.current.historiesToNotation());
-        setPiecesCount(reversiRef.current.piecesCount(reversiRef.current.pieces));
-        setEnemyPiecesCount(reversiRef.current.piecesCount(reversiRef.current.enemyPieces));
+        console.log(reversi.historiesToNotation());
+        setPiecesCount(reversi.piecesCount(reversi.pieces));
+        setEnemyPiecesCount(reversi.piecesCount(reversi.enemyPieces));
 
-        reversiRef.current.setPassEnd(pass_end);
-        if (reversiRef.current.legalActions()[0] !== 36 || is_done) {
+        reversi.setPassEnd(pass_end);
+        if (reversi.legalActions()[0] !== 36 || is_done) {
           if (is_done) {
             setIsDone(true);
             console.log('is done');
@@ -196,7 +194,7 @@ const OthelloAlphaZero = () => {
     },
     [
       gameCanvas,
-      reversiRef,
+      reversi,
       setPiecesCount,
       setEnemyPiecesCount,
       userData,
@@ -207,7 +205,7 @@ const OthelloAlphaZero = () => {
 
   const onMouseMove = useCallback(
     throttle((e: React.MouseEvent<HTMLCanvasElement>) => {
-      if (!gameCanvas.current || !reversiRef.current || !userData) return;
+      if (!gameCanvas.current || !reversi || !userData) return;
 
       const { left, top } = gameCanvas.current.canvas.getBoundingClientRect();
       const x = e.clientX - left;
@@ -216,25 +214,25 @@ const OthelloAlphaZero = () => {
       gameCanvas.current.mouseX = x;
       gameCanvas.current.mouseY = y;
     }, 20),
-    [gameCanvas, reversiRef, userData],
+    [gameCanvas, reversi, userData],
   );
 
   const onMouseLeave = useCallback(() => {
-    if (!gameCanvas.current || !reversiRef.current || !userData) return;
+    if (!gameCanvas.current || !reversi || !userData) return;
 
     gameCanvas.current.mouseX = -1;
     gameCanvas.current.mouseY = -1;
-  }, [gameCanvas, reversiRef, userData]);
+  }, [gameCanvas, reversi, userData]);
 
   useEffect(() => {
     if (!gameRef.current || !bgRef.current) return;
-    reversiRef.current = new Reversi();
+    reversi = new Reversi();
 
     bgCanvas.current = new Canvas(bgRef.current);
     gameCanvas.current = new Canvas(gameRef.current);
 
-    setPiecesCount(reversiRef.current.piecesCount(reversiRef.current.pieces));
-    setEnemyPiecesCount(reversiRef.current.piecesCount(reversiRef.current.enemyPieces));
+    setPiecesCount(reversi.piecesCount(reversi.pieces));
+    setEnemyPiecesCount(reversi.piecesCount(reversi.enemyPieces));
 
     // game objects init
     const lastAction = new LastAction(gameCanvas.current.context);
@@ -260,16 +258,25 @@ const OthelloAlphaZero = () => {
   }, []);
 
   const prediction = useCallback(async () => {
-    if (!gameCanvas.current || !reversiRef.current || !userData || !model || !nextAction.current) return;
-    const action = await nextAction.current(reversiRef.current);
-    console.log({ action });
-  }, [model, reversiRef, gameCanvas, userData, nextAction]);
+    if (!gameCanvas.current || !reversi || !userData || !model || !nextAction) return;
+    // const newReversi = new Reversi(
+    //   reversiRef.current.pieces.slice(),
+    //   reversiRef.current.enemyPieces.slice(),
+    //   reversiRef.current.depth,
+    // );
 
-  useEffect(() => {
-    if (!model) return;
-    // @ts-ignore
-    nextAction.current = pvMctsAction(model, 0);
-  }, [model]);
+    // 딥 클론 했는데 왜 다르지? nextAction 으로 보내면 보내기 전에도 이상해지는 것 같다.
+    console.log({ reversi });
+    const cloned = cloneDeep(reversi);
+    console.log({ cloned });
+    const dcloned = cloneDeep(reversi);
+    console.log({ dcloned });
+    const ddcloned = new Reversi(reversi.pieces.slice(), reversi.enemyPieces.slice(), reversi.depth);
+    console.log({ ddcloned });
+
+    const action = await nextAction(ddcloned);
+    console.log({ action });
+  }, [model, reversi, gameCanvas, userData, nextAction]);
 
   const coloredPiecesCount = (x: number, y: number) => (
     <span className={x > y ? 'text-emerald-500' : ''}>{x}</span>

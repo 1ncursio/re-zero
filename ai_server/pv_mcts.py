@@ -82,6 +82,7 @@ def pv_mcts_scores(model, state, temperature):
             else:
                 # 아크 평갓값이 가장 큰 자녀 노드를 평가해 가치 얻기
                 value = -self.next_child_node().evaluate()
+                print(value)
 
                 # 누계 가치와 시행 횟수 갱신
                 self.w += value
