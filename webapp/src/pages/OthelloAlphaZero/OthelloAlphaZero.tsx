@@ -24,7 +24,7 @@ import { CELL_COUNT, CELL_SIZE, TOTAL_CELL_COUNT } from '../../lib/othelloConfig
 
 const OthelloAlphaZero = () => {
   const model = useModel();
-  const nextAction = useRef<(state: Reversi) => Promise<number> | null>(null);
+  const nextAction = useRef<(state: Reversi) => Promise<number>>(null);
   const [piecesCount, setPiecesCount] = useState<number>(0);
   const [enemyPiecesCount, setEnemyPiecesCount] = useState<number>(0);
   const [isDone, setIsDone] = useState<boolean>(false);
@@ -269,7 +269,6 @@ const OthelloAlphaZero = () => {
     if (!model) return;
     // @ts-ignore
     nextAction.current = pvMctsAction(model, 0);
-    console.log({ nextAction });
   }, [model]);
 
   const coloredPiecesCount = (x: number, y: number) => (

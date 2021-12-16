@@ -83,8 +83,10 @@ export default class Reversi {
 
   // 다음 상태 얻기
   public next(action: number) {
+    const coord = this.actionToCoord(action);
+    this.histories.push(coord);
     const reversi = new Reversi(this.pieces, this.enemyPieces, this.depth + 1, this.histories, action);
-    if (action != TOTAL_CELL_COUNT) {
+    if (action !== TOTAL_CELL_COUNT) {
       reversi._isLegalActionXy(action % CELL_COUNT, Math.floor(action / CELL_COUNT), true);
     } else {
       console.log('스킵');
@@ -97,8 +99,6 @@ export default class Reversi {
       reversi._passEnd = true;
     }
 
-    const coord = reversi.actionToCoord(action);
-    this.histories.push(coord);
     return reversi;
   }
 

@@ -33,6 +33,7 @@ export async function predict(model: tf.LayersModel, state: Reversi) {
 
   // 정책 얻기
   const legalActions = state.legalActions();
+  // console.log({ legalActions });
   const [y1Array] = (await y1.array()) as number[][];
 
   let policies = y1Array.filter((_, i) => legalActions.includes(i));
@@ -42,8 +43,6 @@ export async function predict(model: tf.LayersModel, state: Reversi) {
 
   // policies 를 합계 1의 확률 분포로 변환
   policies = sumPolicies ? policies.map((p) => p / sumPolicies) : policies;
-
-  console.log({ policies });
 
   return { policies, value };
 }
@@ -66,17 +65,25 @@ async function pvMctsScores(model: tf.LayersModel, state: Reversi, temperature: 
   // 현재 국면의 노드 생성
   const rootNode = new MNode(state, 0);
 
+  const _ = new Array<number>(PV_EVALUATE_COUNT).fill(0);
+
   // 여러 차례 평가 실행
-  for (let i = 0; i < PV_EVALUATE_COUNT; i += 1) {
-    rootNode.evaluate(model);
+  // eslint-disable-next-line no-restricted-syntax
+  for await (const __ of _) {
+    await rootNode.evaluate(model);
   }
+
+  console.log({ rootNode });
   // 합법적인 수의 확률 분포
   let scores: number[] = nodesToScores(rootNode.childNodes);
-  console.log({ scores });
   if (temperature === 0) {
     // 최대값인 경우에만 1
     const action = (await tf.argMax(scores).data())[0];
-    return scores.map((_, i) => (i === action ? 1 : 0));
+    console.log({ action });
+    // return scores.map((_, i) => (i === action ? 1 : 0));
+    const _scores = (await tf.zeros([scores.length]).array()) as number[];
+    _scores[action] = 1;
+    return _scores;
   }
   // 볼츠만 분포를 기반으로 분산 추가
   scores = boltzman(scores, temperature);
@@ -99,10 +106,17 @@ function randomChoice(legalActions: number[], p: number[]) {
 // 몬테카를로 트리 탐색을 활용한 행동 선택
 function pvMctsAction(model: tf.LayersModel, temperature = 0.0) {
   async function _pvMctsAction(reversi: Reversi) {
-    const newReversi = new Reversi(reversi.pieces.slice(), reversi.enemyPieces.slice(), reversi.depth);
+    const newReversi = new Reversi(
+      reversi.pieces.slice(),
+      reversi.enemyPieces.slice(),
+      reversi.depth,
+      reversi.histories,
+      reversi.lastAction,
+    );
+    const legalActions = newReversi.legalActions();
     const scores = await pvMctsScores(model, newReversi, temperature);
-    console.log({ Scores: scores });
-    const choiced = randomChoice(newReversi.legalActions(), scores);
+    const choiced = randomChoice(legalActions, scores);
+    console.log({ legalActions, scores });
     console.log({ choiced });
     return choiced;
   }

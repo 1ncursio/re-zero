@@ -78,7 +78,7 @@ def pv_mcts_scores(model, state, temperature):
                     self.child_nodes.append(Node(self.state.next(action), policy))
                 return value
 
-            # 자녀 노드가 존재하지 않는 경우
+            # 자녀 노드가 존재하는 경우
             else:
                 # 아크 평갓값이 가장 큰 자녀 노드를 평가해 가치 얻기
                 value = -self.next_child_node().evaluate()
@@ -87,6 +87,11 @@ def pv_mcts_scores(model, state, temperature):
                 self.w += value
                 self.n += 1
                 return value
+
+        def __repr__(self):
+            return "Node(state={}, p={}, w={}, n={})".format(
+                self.state, self.p, self.w, self.n
+            )
 
         # 아크 평가가 가장 큰 자녀 노드 얻기
         def next_child_node(self):
@@ -109,6 +114,8 @@ def pv_mcts_scores(model, state, temperature):
     # 여러 차례 평가 실행
     for _ in range(PV_EVALUATE_COUNT):
         root_node.evaluate()
+
+    print(root_node)
 
     # 합법적인 수의 확률 분포
     scores = nodes_to_scores(root_node.child_nodes)
