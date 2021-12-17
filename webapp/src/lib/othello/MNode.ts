@@ -14,7 +14,6 @@ export default class MNode {
 
   public childNodes: MNode[];
 
-  // 노드 초기화
   constructor(state: Reversi, p: number) {
     this.state = state; // 상태
     this.p = p; // 정책
@@ -38,7 +37,6 @@ export default class MNode {
     // 자녀 노드가 존재하지 않는 경우
     if (this.childNodes.length === 0) {
       // 뉴럴 네트워크 추론을 활용한 정책과 가치 얻기
-
       const { policies, value } = await predict(model, this.state);
 
       // 누계 가치와 시행 횟수 갱신
@@ -58,7 +56,6 @@ export default class MNode {
     // 아크 평갓값이 가장 큰 자녀 노드를 평가해 가치 얻기
     const nextChildNode = await this.nextChildNode();
     const value: number = (await nextChildNode.evaluate(model)) * -1;
-    console.log({ value });
 
     // 누계 가치와 시행 횟수 갱신
     this.w += value;
@@ -66,7 +63,6 @@ export default class MNode {
     return value;
   }
 
-  // 문제 없음
   // 아크 평가가 가장 큰 자녀 노드 얻기
   async nextChildNode() {
     // 아크 평가 계산

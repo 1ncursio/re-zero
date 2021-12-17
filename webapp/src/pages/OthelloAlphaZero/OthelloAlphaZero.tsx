@@ -33,7 +33,6 @@ const OthelloAlphaZero = () => {
   const bgRef = useRef<HTMLCanvasElement>(null);
 
   const requestRef = useRef<number | null>(null);
-  // const reversi = useRef<Reversi | null>(null);
   let reversi = new Reversi();
 
   const bgCanvas = useRef<Canvas | null>(null);
@@ -259,22 +258,8 @@ const OthelloAlphaZero = () => {
 
   const prediction = useCallback(async () => {
     if (!gameCanvas.current || !reversi || !userData || !model || !nextAction) return;
-    // const newReversi = new Reversi(
-    //   reversiRef.current.pieces.slice(),
-    //   reversiRef.current.enemyPieces.slice(),
-    //   reversiRef.current.depth,
-    // );
 
-    // 딥 클론 했는데 왜 다르지? nextAction 으로 보내면 보내기 전에도 이상해지는 것 같다.
-    console.log({ reversi });
-    const cloned = cloneDeep(reversi);
-    console.log({ cloned });
-    const dcloned = cloneDeep(reversi);
-    console.log({ dcloned });
-    const ddcloned = new Reversi(reversi.pieces.slice(), reversi.enemyPieces.slice(), reversi.depth);
-    console.log({ ddcloned });
-
-    const action = await nextAction(ddcloned);
+    const action = await nextAction(reversi);
     console.log({ action });
   }, [model, reversi, gameCanvas, userData, nextAction]);
 
