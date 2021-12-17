@@ -16,6 +16,11 @@ export default function useModel() {
       setNextAction(() => pvMctsAction(mod, 0));
     }
     loadModel();
+    return () => {
+      model?.dispose();
+      setModel(null);
+      setNextAction(null);
+    };
   }, []);
 
   return { model, nextAction };

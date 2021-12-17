@@ -4,14 +4,13 @@
 
 // 패키지 임포트
 import * as tf from '@tensorflow/tfjs';
-import { cloneDeep, sum } from 'lodash';
+import { sum } from 'lodash';
 import MNode from './MNode';
 import Reversi from './Reversi';
 
 // 파라미터 준비
 const PV_EVALUATE_COUNT = 50; // 추론 1회당 시뮬레이션 횟수(오리지널: 1600회)
 const DN_INPUT_SHAPE = [6, 6, 2];
-const SP_TEMPERATURE = 1.0;
 
 // 볼츠만 분포
 function boltzman(xs: number[], temperature: number) {
@@ -30,6 +29,7 @@ export async function predict(model: tf.LayersModel, state: Reversi) {
 
   // 추론
   const [y1, y2] = model.predict(x, { batchSize: 1 }) as tf.Tensor<tf.Rank>[];
+  x.dispose();
 
   // 정책 얻기
   const legalActions = state.legalActions();
@@ -43,26 +43,23 @@ export async function predict(model: tf.LayersModel, state: Reversi) {
   // policies 를 합계 1의 확률 분포로 변환
   policies = sumPolicies ? policies.map((p) => p / sumPolicies) : policies;
 
+  y1.dispose();
+  y2.dispose();
+
   return { policies, value };
 }
 
 // 노드 리스트를 시행 횟수 리스트로 변환
 export function nodesToScores(nodes: MNode[]) {
-  if (nodes.length === 0) {
-    return [];
-  }
-
-  const scores = nodes.map((node) => node.n);
-
-  return scores;
+  return nodes.map((node) => node.n);
 }
 
 // 몬테카를로 트리 탐색 스코어 얻기
-async function pvMctsScores(model: tf.LayersModel, state: Reversi, temperature: number) {
+async function pvMctsScores(model: tf.LayersModel, reversi: Reversi, temperature: number) {
   // 몬테카를로 트리 탐색 노드 정의
 
   // 현재 국면의 노드 생성
-  const rootNode = new MNode(state, 0);
+  const rootNode = new MNode(reversi, 0);
 
   const _ = new Array<number>(PV_EVALUATE_COUNT).fill(0);
 
@@ -72,15 +69,14 @@ async function pvMctsScores(model: tf.LayersModel, state: Reversi, temperature: 
     await rootNode.evaluate(model);
   }
 
-  console.log({ rootNode });
   // 합법적인 수의 확률 분포
   let scores: number[] = nodesToScores(rootNode.childNodes);
   if (temperature === 0) {
     // 최대값인 경우에만 1
     const action = (await tf.argMax(scores).data())[0];
-    const _scores = (await tf.zeros([scores.length]).array()) as number[];
-    _scores[action] = 1;
-    return _scores;
+    scores = (await tf.zeros([scores.length]).array()) as number[];
+    scores[action] = 1;
+    return scores;
   }
   // 볼츠만 분포를 기반으로 분산 추가
   scores = boltzman(scores, temperature);
@@ -103,9 +99,8 @@ function randomChoice(legalActions: number[], p: number[]) {
 // 몬테카를로 트리 탐색을 활용한 행동 선택
 function pvMctsAction(model: tf.LayersModel, temperature = 0.0) {
   async function _pvMctsAction(reversi: Reversi) {
-    const legalActions = reversi.legalActions();
     const scores = await pvMctsScores(model, reversi, temperature);
-    const choiced = randomChoice(legalActions, scores);
+    const choiced = randomChoice(reversi.legalActions(), scores);
     return choiced;
   }
 
