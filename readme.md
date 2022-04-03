@@ -7,6 +7,10 @@ Lathello is a web application that can play Reversi against AI based on the Alph
 - Play against AlphaZero
 - You can also write posts
 
+# Architecture
+
+<img src="./architecture.png"></img>
+
 # Project Stack
 
 ## Client
