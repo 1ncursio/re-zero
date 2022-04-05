@@ -30,9 +30,11 @@ Lathello is a web application that can play Reversi against AI based on the Alph
 │   └── src
 │       ├── components      # React components
 │       ├── lib
-│       │   └── api         # Ajax calls to the server
+│       │   ├── api         # Ajax calls to the server
+│       │   ├── othello     # Reversi game logic for the webapp
+│       │   └── ...
 │       ├── pages           # React pages
-│       ├── store           # Zustand store
+│       ├── store           # Zustand store (Does not used yet)
 │       ├── assets          # React assets
 │       ├── hooks           # React hooks
 │       ├── typings         # type definitions
@@ -59,8 +61,7 @@ Lathello is a web application that can play Reversi against AI based on the Alph
 
 ### ~~Server (for AZ)~~ Deprecated
 
-    Since the AZ is now running on the client using the TensorFlow.js,
-    The server is no longer needed. but it is still used for the training.
+> Since the AZ is now running on the client using the TensorFlow.js, The server is no longer needed. but it is still used for the training.
 
 - Python
 - TensorFlow
