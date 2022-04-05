@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { mountStoreDevtool } from 'simple-zustand-devtools';
 import create, { GetState, SetState, StoreApi } from 'zustand';
 import Reversi from '../lib/othello/Reversi';
 import { TOTAL_CELL_COUNT } from '../lib/othelloConfig';
@@ -67,5 +68,10 @@ const useStore = create<AppState, SetState<AppState>, GetState<AppState>, StoreA
       ),
   },
 }));
+
+if (process.env.NODE_ENV === 'development') {
+  // @ts-ignore
+  mountStoreDevtool('Store', useStore);
+}
 
 export default useStore;
