@@ -52,35 +52,106 @@ Lathello is a web application that can play Reversi against AI based on the Alph
 └── README.md
 ```
 
-## Project Stack
+## Built With
 
 ### Frontend
 
-- React
-- React Router
-- TypeScript
-- SWR
-- Tailwind CSS
-- Emotion
+- [TypeScript](https://www.typescriptlang.org)
+- [React](https://reactjs.org)
+- [axios](https://axios-http.com/)
+- [SWR](https://swr.vercel.app)
+- [Tailwind CSS](https://tailwindcss.com)
+- [Emotion](https://emotion.sh)
+- [TensorFlow.js](https://www.tensorflow.org/js)
 
 ### Backend
 
-- PHP
-- Laravel
-- Google OAuth 2.0
+- [PHP](https://www.php.net)
+- [Laravel](https://laravel.com)
+- [Google OAuth 2.0](https://developers.google.com/identity/protocols/OAuth2)
 
 ### AlphaZero
 
-- Python
-- TensorFlow
-- Keras
-- NumPy
+- [Python](https://www.python.org)
+- [TensorFlow](https://www.tensorflow.org)
+- [Keras](https://keras.io)
+- [NumPy](https://www.numpy.org)
+
+## Getting Started
+
+This is an example of how you may give instructions on setting up Lathello locally. To get a local copy up and running follow these simple example steps.
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org) (version >= 14.x)
+- [PHP](https://www.php.net) (version >= 8.1)
+- [Python](https://www.python.org) (version >= 3.9)
+- [Yarn](https://yarnpkg.com) (version >= 1.22) (recommended)
+
+### Installation
+
+1. Clone the repository
+
+```bash
+git clone https://github.com/1ncursio/laravel-othello.git
+```
+
+2. Install NPM dependencies for the frontend
+
+```bash
+cd laravel-othello/webapp
+yarn
+```
+
+3. Run the frontend server
+
+```bash
+yarn start
+```
+
+4. Install Composer dependencies for the backend
+
+```bash
+cd laravel-othello/server
+composer require
+```
+
+5. Migrate the database
+
+```bash
+php artisan migrate
+```
+
+6. Copy `.env.example` to `.env` and fill in the required values
+
+```bash
+cp .env.example .env
+```
+
+7. Run the backend server
+
+```bash
+php artisan serve
+```
+
+Then open your browser and navigate to http://localhost:3000/
 
 ## Future Plans
 
 - [ ] Refactor the code to use the Zustand
+- [ ] Write tests
 - [ ] Deploy the project
-- [ ] Add multi-player mode
-- [ ] Change Backend Framework (e.g. Nest.js, fastify, django, etc.)
+- [ ] Implement multi-player mode
+- [ ] Migrate Backend Framework (e.g. Nest.js, fastify, django, etc.)
 - [ ] Support i18n
 - [ ] Support PWA
+- [ ] Implement Scalable Game Board (e.g. 6x6, 8x8, 10x10, etc.)
+
+## License
+
+Distributed under the MIT License. See LICENSE for more information.
+
+## Contact
+
+[![Linkedin Badge](https://img.shields.io/badge/-LinkedIn-blue?style=flat-square&logo=Linkedin&logoColor=white&link=https://www.linkedin.com/in/seong-yun-byeon-8183a8113/)](https://www.linkedin.com/in/yechan-kim-710186230/)
+[![Gmail Badge](https://img.shields.io/badge/Gmail-d14836?style=flat-square&logo=Gmail&logoColor=white&link=mailto:snugyun01@gmail.com)](mailto:ckswn1323@g.yju.ac.kr)
