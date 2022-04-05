@@ -24,6 +24,7 @@ import useStore from '../../store';
 const OthelloAlphaZero = () => {
   // const { resetPiecesCount, rState, resetRState } = useStore((state) => state.reversi);
   const { nextAction } = useModel();
+
   // const nextAction = useRef<(state: Reversi) => Promise<number> | null>(null);
   const [piecesCount, setPiecesCount] = useState<number>(0);
   const [enemyPiecesCount, setEnemyPiecesCount] = useState<number>(0);
