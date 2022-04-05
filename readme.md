@@ -1,11 +1,15 @@
 # Lathello
 
+<img src="./gameplay.gif"></img>
+
 Lathello is a web application that can play Reversi against AI based on the AlphaZero (AZ) algorithm.
+
+> Note: Lathello is a work in progress. In the future, Lathello will be able to play against other players.
 
 ## Features
 
 - Play against AZ
-- You can also write posts
+- You can also write posts and comments on the community
 
 ## Architecture
 
@@ -44,7 +48,7 @@ Lathello is a web application that can play Reversi against AI based on the Alph
 
 ## Project Stack
 
-### Client
+### Frontend
 
 - React
 - React Router
@@ -53,18 +57,25 @@ Lathello is a web application that can play Reversi against AI based on the Alph
 - Tailwind CSS
 - Emotion
 
-### Server (Laravel)
+### Backend
 
 - PHP
 - Laravel
 - Google OAuth 2.0
 
-### ~~Server (for AZ)~~ Deprecated
-
-> Since the AZ is now running on the client using the TensorFlow.js, The server is no longer needed. but it is still used for the training.
+### AlphaZero
 
 - Python
 - TensorFlow
 - Keras
-- NumPy
 - Flask
+- NumPy
+
+## Future Plans
+
+- [ ] Refactor the code to use the Zustand
+- [ ] Deploy the project
+- [ ] Add multi-player mode
+- [ ] Change Backend Framework (e.g. Nest.js, fastify, django, etc.)
+- [ ] Support i18n
+- [ ] Support PWA
