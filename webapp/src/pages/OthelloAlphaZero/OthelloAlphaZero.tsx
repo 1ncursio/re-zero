@@ -17,14 +17,16 @@ import Canvas from '../../lib/othello/Canvas';
 import Indicator from '../../lib/othello/Indicator';
 import LastAction from '../../lib/othello/LastAction';
 import Piece from '../../lib/othello/Piece';
+import Reversi from '../../lib/othello/Reversi';
 import { CELL_COUNT, CELL_SIZE, TOTAL_CELL_COUNT } from '../../lib/othelloConfig';
 import useStore from '../../store';
 
 const OthelloAlphaZero = () => {
-  const { piecesCount, enemyPiecesCount, resetPiecesCount, rState, resetRState } = useStore(
-    (state) => state.reversi,
-  );
+  // const { resetPiecesCount, rState, resetRState } = useStore((state) => state.reversi);
   const { nextAction } = useModel();
+  // const nextAction = useRef<(state: Reversi) => Promise<number> | null>(null);
+  const [piecesCount, setPiecesCount] = useState<number>(0);
+  const [enemyPiecesCount, setEnemyPiecesCount] = useState<number>(0);
   const [play] = useSound(blop);
   const [isDone, setIsDone] = useState<boolean>(false);
   const [isDraw, setIsDraw] = useState<boolean>(false);
@@ -35,7 +37,7 @@ const OthelloAlphaZero = () => {
   const bgRef = useRef<HTMLCanvasElement>(null);
 
   const requestRef = useRef<number | null>(null);
-  // const reversiRef = useRef<Reversi | null>(null);
+  const reversiRef = useRef<Reversi | null>(null);
 
   const bgCanvas = useRef<Canvas | null>(null);
   const gameCanvas = useRef<Canvas | null>(null);
@@ -45,30 +47,30 @@ const OthelloAlphaZero = () => {
   const { mutate: mutateUsersAIHistories } = useUsersAIHistoriesSWR();
 
   function render() {
-    if (!rState || !bgCanvas.current || !gameCanvas.current) return;
+    if (!reversiRef.current || !bgCanvas.current || !gameCanvas.current) return;
 
     gameCanvas.current.draw();
-    gameCanvas.current.update(rState);
+
+    gameCanvas.current.update(reversiRef.current);
 
     requestRef.current = requestAnimationFrame(render);
   }
 
   const onRestart = useCallback(() => {
-    // if (!reversiRef) return;
-
-    // rState = new Reversi();
-    resetRState();
-    resetPiecesCount(2, 2);
+    if (!reversiRef.current) return;
+    reversiRef.current = new Reversi();
+    setPiecesCount(2);
+    setEnemyPiecesCount(2);
     setIsDone(false);
     setIsDraw(false);
     setIsLoss(false);
-  }, [setIsDone, setIsDraw, setIsLoss, resetRState, resetPiecesCount]);
+  }, [reversiRef, setPiecesCount, setEnemyPiecesCount, setIsDone, setIsDraw, setIsLoss]);
 
   const onMouseUp = useCallback(
     async (e: React.MouseEvent<HTMLCanvasElement>) => {
-      if (!gameCanvas.current || !userData || !nextAction) return;
+      if (!gameCanvas.current || !reversiRef.current || !userData || !nextAction) return;
 
-      if (rState.isDone() || !rState.isFirstPlayer()) {
+      if (reversiRef.current.isDone() || !reversiRef.current.isFirstPlayer()) {
         console.log('forbidden to play');
         return;
       }
@@ -80,7 +82,7 @@ const OthelloAlphaZero = () => {
       if (action >= TOTAL_CELL_COUNT || action < 0) return;
 
       while (true) {
-        const legalActions = rState.legalActions();
+        const legalActions = reversiRef.current.legalActions();
         if (legalActions[0] === TOTAL_CELL_COUNT) {
           action = TOTAL_CELL_COUNT;
         }
@@ -89,21 +91,20 @@ const OthelloAlphaZero = () => {
           return;
         }
 
-        // rState = rState.next(action);
-        console.log({ rState });
-        resetRState(rState.next(action));
-        console.log({ rState });
-        // console.log(rState.historiesToNotation());
+        reversiRef.current = reversiRef.current.next(action);
+        console.log(reversiRef.current.historiesToNotation());
         play();
 
-        resetPiecesCount(rState.piecesCount(rState.enemyPieces), rState.piecesCount(rState.pieces));
+        // resetPiecesCount(rState.piecesCount(rState.enemyPieces), rState.piecesCount(rState.pieces));
+        setPiecesCount(reversiRef.current.piecesCount(reversiRef.current.enemyPieces));
+        setEnemyPiecesCount(reversiRef.current.piecesCount(reversiRef.current.pieces));
 
-        if (rState.isDone()) {
+        if (reversiRef.current.isDone()) {
           setIsDone(true);
-          setIsDraw(rState.isDraw());
-          setIsLoss(!rState.isLoss());
+          setIsDraw(reversiRef.current.isDraw());
+          setIsLoss(!reversiRef.current.isLoss());
 
-          if (rState.isDraw()) {
+          if (reversiRef.current.isDraw()) {
             const history = await createAIHistory({
               blackId: userData.id,
               whiteId: null,
@@ -111,7 +112,7 @@ const OthelloAlphaZero = () => {
             });
             mutateAIHistories();
             mutateUsersAIHistories();
-          } else if (rState.isLoss()) {
+          } else if (reversiRef.current.isLoss()) {
             const history = await createAIHistory({
               blackId: userData.id,
               whiteId: null,
@@ -119,7 +120,7 @@ const OthelloAlphaZero = () => {
             });
             mutateAIHistories();
             mutateUsersAIHistories();
-          } else if (!rState.isLoss()) {
+          } else if (!reversiRef.current.isLoss()) {
             const history = await createAIHistory({
               blackId: userData.id,
               whiteId: null,
@@ -132,19 +133,21 @@ const OthelloAlphaZero = () => {
         }
 
         setIsCalculating(true);
-        const next = await nextAction(rState);
+        const next = await nextAction(reversiRef.current);
         setIsCalculating(false);
 
         // rState = rState.next(next);
-        resetRState(rState.next(next));
+        // resetRState(rState.next(next));
+        reversiRef.current = reversiRef.current.next(next);
         play();
-        console.log(rState.historiesToNotation());
-        resetPiecesCount(rState.piecesCount(rState.pieces), rState.piecesCount(rState.enemyPieces));
+        console.log(reversiRef.current.historiesToNotation());
+        setPiecesCount(reversiRef.current.piecesCount(reversiRef.current.pieces));
+        setEnemyPiecesCount(reversiRef.current.piecesCount(reversiRef.current.enemyPieces));
 
-        const is_done = rState.isDone();
-        const is_draw = rState.isDraw();
-        const is_loss = rState.isLoss();
-        if (rState.legalActions()[0] !== 36 || is_done) {
+        const is_done = reversiRef.current.isDone();
+        const is_draw = reversiRef.current.isDraw();
+        const is_loss = reversiRef.current.isLoss();
+        if (reversiRef.current.legalActions()[0] !== 36 || is_done) {
           if (is_done) {
             setIsDone(true);
             console.log('is done');
@@ -192,8 +195,8 @@ const OthelloAlphaZero = () => {
       mutateAIHistories,
       mutateUsersAIHistories,
       nextAction,
-      resetPiecesCount,
-      resetRState,
+      // resetPiecesCount,
+      // resetRState,
       setIsCalculating,
       setIsDone,
       setIsDraw,
@@ -225,11 +228,14 @@ const OthelloAlphaZero = () => {
   useEffect(() => {
     if (!gameRef.current || !bgRef.current) return;
     // rState = new Reversi();
+    reversiRef.current = new Reversi();
 
     bgCanvas.current = new Canvas(bgRef.current);
     gameCanvas.current = new Canvas(gameRef.current);
 
-    resetPiecesCount(rState.piecesCount(rState.pieces), rState.piecesCount(rState.enemyPieces));
+    // resetPiecesCount(rState.piecesCount(rState.pieces), rState.piecesCount(rState.enemyPieces));
+    setPiecesCount(reversiRef.current.piecesCount(reversiRef.current.pieces));
+    setEnemyPiecesCount(reversiRef.current.piecesCount(reversiRef.current.enemyPieces));
 
     // game objects init
     const lastAction = new LastAction(gameCanvas.current.context);

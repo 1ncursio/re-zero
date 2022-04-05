@@ -86,6 +86,7 @@
     "postcss": "^7",
     "prettier": "^2.4.1",
     "prettier-eslint": "^13.0.0",
+    "simple-zustand-devtools": "^1.0.1",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat"
   }
 }
