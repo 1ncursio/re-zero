@@ -1,6 +1,6 @@
 # Lathello
 
-<img src="./gameplay.gif"></img>
+<img src="./images/gameplay.gif"></img>
 
 Lathello is a web application that can play Reversi against AI based on the AlphaZero (AZ) algorithm.
 
@@ -11,9 +11,13 @@ Lathello is a web application that can play Reversi against AI based on the Alph
 - Play against AZ
 - You can also write posts and comments on the community
 
-## Architecture
+## System Architecture
 
-<img src="./architecture.png"></img>
+<img src="./images/system-architecture.png"></img>
+
+## Network Architecture
+
+<img src="./images/network-architecture.png"></img>
 
 ## Folder Structure
 

@@ -13,6 +13,7 @@ export default function useModel() {
     async function loadModel() {
       const mod = await tf.loadLayersModel('/model.json');
       setModel(mod);
+      console.log('Model loaded', { mod });
       setNextAction(() => pvMctsAction(mod, 0));
     }
     loadModel();
