@@ -243,7 +243,7 @@ export default class Reversi {
     this._passEnd = passEnd;
   }
 
-  public actionToCoord(action: number): number {
+  public actionToCoord(action: number): string {
     if (action === TOTAL_CELL_COUNT) return '--';
 
     const x = String.fromCharCode((action % CELL_COUNT) + 65);
