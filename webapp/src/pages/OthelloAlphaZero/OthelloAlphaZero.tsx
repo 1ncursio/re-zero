@@ -57,6 +57,18 @@ const OthelloAlphaZero = () => {
     requestRef.current = requestAnimationFrame(render);
   }
 
+  const setPiecesCounts = useCallback(
+    (reversed: boolean) => {
+      if (!reversiRef.current) return;
+      const count = reversiRef.current.piecesCount(reversiRef.current.pieces);
+      const enemyCount = reversiRef.current.piecesCount(reversiRef.current.enemyPieces);
+
+      setPiecesCount(reversed ? enemyCount : count);
+      setEnemyPiecesCount(reversed ? count : enemyCount);
+    },
+    [reversiRef, setPiecesCount, setEnemyPiecesCount],
+  );
+
   const onRestart = useCallback(() => {
     if (!reversiRef.current) return;
     reversiRef.current = new Reversi();
@@ -71,6 +83,7 @@ const OthelloAlphaZero = () => {
     async (e: React.MouseEvent<HTMLCanvasElement>) => {
       if (!gameCanvas.current || !reversiRef.current || !userData || !nextAction) return;
 
+      // 게임이 끝났거나 플레이어의 턴이 아니면 막기
       if (reversiRef.current.isDone() || !reversiRef.current.isFirstPlayer()) {
         console.log('forbidden to play');
         return;
@@ -82,6 +95,7 @@ const OthelloAlphaZero = () => {
       let action = Math.floor(x / CELL_SIZE) + Math.floor(y / CELL_SIZE) * CELL_COUNT;
       if (action >= TOTAL_CELL_COUNT || action < 0) return;
 
+      // 자신의 턴이 아닐 때까지 반복
       while (true) {
         const legalActions = reversiRef.current.legalActions();
         if (legalActions[0] === TOTAL_CELL_COUNT) {
@@ -94,11 +108,12 @@ const OthelloAlphaZero = () => {
 
         reversiRef.current = reversiRef.current.next(action);
         console.log(reversiRef.current.historiesToNotation());
+
+        // 소리 재생
         play();
 
         // resetPiecesCount(rState.piecesCount(rState.enemyPieces), rState.piecesCount(rState.pieces));
-        setPiecesCount(reversiRef.current.piecesCount(reversiRef.current.enemyPieces));
-        setEnemyPiecesCount(reversiRef.current.piecesCount(reversiRef.current.pieces));
+        setPiecesCounts(true);
 
         if (reversiRef.current.isDone()) {
           setIsDone(true);
@@ -142,8 +157,7 @@ const OthelloAlphaZero = () => {
         reversiRef.current = reversiRef.current.next(next);
         play();
         console.log(reversiRef.current.historiesToNotation());
-        setPiecesCount(reversiRef.current.piecesCount(reversiRef.current.pieces));
-        setEnemyPiecesCount(reversiRef.current.piecesCount(reversiRef.current.enemyPieces));
+        setPiecesCounts(false);
 
         const is_done = reversiRef.current.isDone();
         const is_draw = reversiRef.current.isDraw();
@@ -235,8 +249,7 @@ const OthelloAlphaZero = () => {
     gameCanvas.current = new Canvas(gameRef.current);
 
     // resetPiecesCount(rState.piecesCount(rState.pieces), rState.piecesCount(rState.enemyPieces));
-    setPiecesCount(reversiRef.current.piecesCount(reversiRef.current.pieces));
-    setEnemyPiecesCount(reversiRef.current.piecesCount(reversiRef.current.enemyPieces));
+    setPiecesCounts(false);
 
     // game objects init
     const lastAction = new LastAction(gameCanvas.current.context);
