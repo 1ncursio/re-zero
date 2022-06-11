@@ -15,7 +15,7 @@ Lathello is a web application that can play Reversi against AI based on the Alph
 
 <img src="./images/system-architecture.png"></img>
 
-## Network Architecture
+## Neural Network Architecture
 
 <img src="./images/network-architecture.png"></img>
 
