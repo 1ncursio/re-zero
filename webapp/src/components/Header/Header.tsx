@@ -32,12 +32,12 @@ const Header = () => {
       <div className="flex items-center gap-16">
         <div>
           <Link to="/">
-            <h1 className="text-xl font-bold text-blueGray-600">Lathello</h1>
+            <Icon name="rezero" />
           </Link>
         </div>
         <div className="flex gap-8">
-          <Link to="/othello" className="text-blueGray-400 hover:text-blueGray-600 transition link-underline">
-            오셀로 게임
+          <Link to="/reversi" className="text-blueGray-400 hover:text-blueGray-600 transition link-underline">
+            리버시 게임
           </Link>
           <Link
             to="/community"

@@ -12,6 +12,7 @@ import { ReactComponent as outlinedUpArrow } from './outlined_up_arrow.svg';
 import { ReactComponent as pvp } from './pvp.svg';
 import { ReactComponent as subdirectoryArrowRight } from './subdirectory_arrow_right.svg';
 import { ReactComponent as loading } from './loading.svg';
+import { ReactComponent as rezero } from './rezero_logo.svg';
 
 export {
   google,
@@ -28,4 +29,5 @@ export {
   subdirectoryArrowRight,
   outlinedSearch,
   loading,
+  rezero,
 };

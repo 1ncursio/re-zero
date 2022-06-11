@@ -7,7 +7,7 @@ type PvpRoomCardProps = {
 
 const PvpRoomCard: FC<PvpRoomCardProps> = ({ room }) => {
   return (
-    <Link to={`/othello/pvp/${room.uuid}`} className="flex justify-between border-2 rounded-lg p-4">
+    <Link to={`/reversi/pvp/${room.uuid}`} className="flex justify-between border-2 rounded-lg p-4">
       <div>
         <span>{room.name}</span>
       </div>

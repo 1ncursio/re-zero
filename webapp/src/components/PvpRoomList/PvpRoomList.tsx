@@ -20,7 +20,7 @@ const PvpRoomList = () => {
     {
       id: 2,
       uuid: '7a19809c-36eb-4d4d-a20c-319118693626',
-      name: '즐거운 오셀로 해요~',
+      name: '즐거운 리버시 해요~',
       users: [
         {
           id: 1,

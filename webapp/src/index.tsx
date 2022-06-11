@@ -10,7 +10,7 @@ ReactDOM.render(
   <React.StrictMode>
     <HelmetProvider>
       <Helmet>
-        <title>Laravel Othello</title>
+        <title>Re:zero</title>
       </Helmet>
       <Router>
         <App />

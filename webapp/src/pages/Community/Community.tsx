@@ -70,7 +70,7 @@ const Community = () => {
   return (
     <div className="lg:w-[calc(768px-2rem)] w-md mx-auto md:w-full md:px-4 flex flex-col gap-4">
       <Helmet>
-        <title>Community | Lathello</title>
+        <title>커뮤니티 - Re:zero</title>
       </Helmet>
       <div className="flex justify-end">
         <button

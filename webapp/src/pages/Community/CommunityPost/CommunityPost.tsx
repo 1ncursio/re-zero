@@ -98,7 +98,7 @@ const CommunityPost = () => {
   return (
     <div className="lg:w-[calc(768px-2rem)] w-md mx-auto md:w-full md:px-4">
       <Helmet>
-        <title>{postData.title} | Lathello </title>
+        <title>{postData.title} - Re:zero </title>
       </Helmet>
       <div className="min-h-[24rem]">
         <header className="p-4 border-b border-blueGray-200">

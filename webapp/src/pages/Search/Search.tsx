@@ -49,7 +49,7 @@ const Search = () => {
   return (
     <div className="lg:w-[calc(768px-2rem)] w-md mx-auto md:w-full md:px-4">
       <Helmet>
-        <title>{q ? `"${q}" 검색결과 | Lathello` : 'Lathello'}</title>
+        <title>{q ? `"${q}" 검색결과 - Re:zero` : 'Re:zero'}</title>
       </Helmet>
       <form
         onSubmit={handleSubmit(onSearch)}

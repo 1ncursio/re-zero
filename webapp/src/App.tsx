@@ -10,7 +10,6 @@ import AccountProfile from './pages/AccountProfile';
 import Community from './pages/Community';
 import CommunityPost from './pages/Community/CommunityPost';
 import NewCommunityPost from './pages/Community/NewCommunityPost';
-import Home from './pages/Home';
 import OthelloAlphaZero from './pages/OthelloAlphaZero';
 import OthelloMain from './pages/OthelloMain';
 import PvpWaitingRoom from './pages/PvpWaitingRoom';
@@ -34,15 +33,15 @@ function App() {
           <Switch>
             <Route exact path="/">
               {/* <Home /> */}
-              <Redirect to="/othello" />
+              <Redirect to="/reversi" />
             </Route>
-            <Route exact path="/othello">
+            <Route exact path="/reversi">
               <OthelloMain />
             </Route>
-            <Route exact path="/othello/pvp">
+            <Route exact path="/reversi/pvp">
               <PvpWaitingRoom />
             </Route>
-            <Route exact path="/othello/alphazero">
+            <Route exact path="/reversi/alphazero">
               <OthelloAlphaZero />
             </Route>
             <Route exact path="/community">

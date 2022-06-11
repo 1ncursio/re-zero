@@ -69,7 +69,7 @@ const AccountProfile = () => {
   return (
     <div className="lg:w-[calc(768px-2rem)] w-md mx-auto md:w-full md:px-4">
       <Helmet>
-        <title>프로필 설정 | Lathello</title>
+        <title>프로필 설정 - Re:zero</title>
       </Helmet>
       <h2 className="text-blueGray-600 text-lg mb-6">내 프로필 설정</h2>
       <div className="flex md:flex-col">
