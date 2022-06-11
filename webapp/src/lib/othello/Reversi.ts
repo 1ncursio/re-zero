@@ -22,7 +22,7 @@ export default class Reversi {
     histories: string[] = [],
     lastAction = -1,
   ) {
-    // 방향 정수
+    // 방향 벡터
     this._dxy = [
       [1, 0],
       [1, 1],
@@ -52,7 +52,7 @@ export default class Reversi {
   }
 
   // 초기 돌 설정
-  private _initPieces() {
+  private _initPieces(): void {
     this.pieces[CELL_COUNT * 0.5 - 1 + (CELL_COUNT * 0.5 - 1) * CELL_COUNT] = 1;
     this.pieces[CELL_COUNT * 0.5 + CELL_COUNT * 0.5 * CELL_COUNT] = 1;
     this.enemyPieces[CELL_COUNT * 0.5 - 1 + (CELL_COUNT * 0.5 - 1) * CELL_COUNT + 1] = 1;
@@ -60,29 +60,29 @@ export default class Reversi {
   }
 
   // 돌의 수 얻기
-  public piecesCount(pieces: number[]) {
+  public piecesCount(pieces: number[]): number {
     return pieces.filter((v) => v === 1).length;
   }
 
   // 패배 여부 판정
-  public isLoss() {
+  public isLoss(): boolean {
     return this.isDone() && this.piecesCount(this.pieces) < this.piecesCount(this.enemyPieces);
   }
 
   // 무승부 여부 판정
-  public isDraw() {
+  public isDraw(): boolean {
     return this.isDone() && this.piecesCount(this.pieces) === this.piecesCount(this.enemyPieces);
   }
 
   // 게임 종료 여부 판정
-  public isDone() {
+  public isDone(): boolean {
     return (
       this.piecesCount(this.pieces) + this.piecesCount(this.enemyPieces) === TOTAL_CELL_COUNT || this._passEnd
     );
   }
 
   // 다음 상태 얻기
-  public next(action: number) {
+  public next(action: number): Reversi {
     // const coord = this.actionToCoord(action);
     // this.histories.push(coord);
     const reversi = new Reversi(
@@ -98,9 +98,10 @@ export default class Reversi {
       console.log('스킵');
     }
 
+    // 턴을 넘기면서 자신의 돌과 상대 돌을 바꿔줌
     [reversi.pieces, reversi.enemyPieces] = [reversi.enemyPieces, reversi.pieces];
 
-    // 2회 연속 패스 판정
+    // 2회 연속 패스 발생 시 pass end 설정
     if (action === TOTAL_CELL_COUNT && reversi.legalActions()[0] === TOTAL_CELL_COUNT) {
       reversi._passEnd = true;
     }
@@ -113,7 +114,7 @@ export default class Reversi {
   }
 
   // 합법적인 수 리스트 얻기
-  public legalActions() {
+  public legalActions(): number[] {
     const actions = [];
 
     for (let j = 0; j < CELL_COUNT; j += 1) {
@@ -131,13 +132,17 @@ export default class Reversi {
     return actions;
   }
 
-  // 임의의 매스가 합법적인 수인지 판정
-  private _isLegalActionXy(x: number, y: number, flip = false) {
-    // 임의의 매스에서 임의의 방향이 합법적인 수인지 판정
+  /**
+   * 특정 칸에 둘 수 있는지 판정
+   *
+   */
+  private _isLegalActionXy(x: number, y: number, flip = false): boolean {
+    // 특정 칸에서 임의의 방향이 합법적인 수인지 판정
     const _isLegalActionXyDxy = (x: number, y: number, dx: number, dy: number) => {
       // １번째 상대의 돌
       x += dx;
       y += dy;
+
       if (
         y < 0 ||
         CELL_COUNT - 1 < y ||
@@ -205,7 +210,7 @@ export default class Reversi {
   }
 
   // 선 수 여부 확인
-  public isFirstPlayer() {
+  public isFirstPlayer(): boolean {
     return this.depth % 2 === 0;
   }
 
@@ -234,11 +239,11 @@ export default class Reversi {
   //   // }
   // }
 
-  public setPassEnd(passEnd: boolean) {
+  public setPassEnd(passEnd: boolean): void {
     this._passEnd = passEnd;
   }
 
-  public actionToCoord(action: number) {
+  public actionToCoord(action: number): number {
     if (action === TOTAL_CELL_COUNT) return '--';
 
     const x = String.fromCharCode((action % CELL_COUNT) + 65);
@@ -246,7 +251,7 @@ export default class Reversi {
     return x + y;
   }
 
-  public historiesToNotation() {
+  public historiesToNotation(): string {
     // history 두 개씩 묶어서 변환
     const histories = this.histories.reduce((acc: string[][], cur: string, i: number) => {
       if (i % 2 === 0) {
