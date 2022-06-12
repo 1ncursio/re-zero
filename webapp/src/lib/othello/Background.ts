@@ -39,14 +39,29 @@ export default class Background extends CanvasObject {
     this.drawDots();
   }
 
+  public roundRect(x: number, y: number, width: number, height: number, radius: number): void {
+    if (width < 2 * radius) radius = width / 2;
+    if (height < 2 * radius) radius = height / 2;
+
+    this.ctx.beginPath();
+    this.ctx.moveTo(x + radius, y);
+    this.ctx.arcTo(x + width, y, x + width, y + height, radius);
+    this.ctx.arcTo(x + width, y + height, x, y + height, radius);
+    this.ctx.arcTo(x, y + height, x, y, radius);
+    this.ctx.arcTo(x, y, x + width, y, radius);
+    this.ctx.closePath();
+  }
+
   public drawBackground(): void {
     // border
     this.ctx.fillStyle = this.borderColor;
-    this.ctx.fillRect(0, 0, BACKGROUND_CANVAS_SIZE, BACKGROUND_CANVAS_SIZE);
+    this.roundRect(0, 0, BACKGROUND_CANVAS_SIZE, BACKGROUND_CANVAS_SIZE, 0);
+    this.ctx.fill();
 
     // background A tile
     this.ctx.fillStyle = this.backgroundAColor;
-    this.ctx.fillRect(COORDINATE_SIZE, COORDINATE_SIZE, GAME_CANVAS_SIZE, GAME_CANVAS_SIZE);
+    this.roundRect(COORDINATE_SIZE, COORDINATE_SIZE, GAME_CANVAS_SIZE, GAME_CANVAS_SIZE, 0);
+    this.ctx.fill();
 
     // background B tile
     this.ctx.fillStyle = this.backgroundBColor;
