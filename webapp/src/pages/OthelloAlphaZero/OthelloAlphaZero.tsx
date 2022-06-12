@@ -362,14 +362,26 @@ const OthelloAlphaZero = () => {
         <AIHistory />
       </div>
       <div>
-        <span>테마 변경</span>
-        <select onChange={onChangeTheme}>
-          {Object.keys(theme).map((key) => (
-            <option key={key} value={key}>
-              {key}
-            </option>
-          ))}
-        </select>
+        <div>
+          <span>테마 변경</span>
+          <select onChange={onChangeTheme}>
+            {Object.keys(theme).map((key) => (
+              <option key={key} value={key}>
+                {key}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <button
+            type="button"
+            onClick={onRestart}
+            disabled={isCalculating}
+            className="bg-white border border-blueGray-500 hover:border-emerald-500 text-blueGray-500 hover:text-emerald-500 py-1 px-4"
+          >
+            다시 시작
+          </button>
+        </div>
       </div>
     </div>
   );
