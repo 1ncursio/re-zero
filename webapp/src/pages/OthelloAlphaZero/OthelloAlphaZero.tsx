@@ -7,6 +7,7 @@ import blop from '../../assets/audios/blop.mp3';
 import AIHistory from '../../components/AIHistory';
 import Icon from '../../components/Icon';
 import RequireLogIn from '../../components/RequireLogin/RequireLogin';
+import theme, { ThemeName } from '../../config/theme';
 import useAIHistoriesSWR from '../../hooks/swr/useAIHistoriesSWR';
 import useUsersAIHistoriesSWR from '../../hooks/swr/useUsersAIHistoriesSWR';
 import useUserSWR from '../../hooks/swr/useUserSWR';
@@ -19,10 +20,11 @@ import LastAction from '../../lib/othello/LastAction';
 import Piece from '../../lib/othello/Piece';
 import Reversi from '../../lib/othello/Reversi';
 import { CELL_COUNT, CELL_SIZE, TOTAL_CELL_COUNT } from '../../lib/othelloConfig';
-import useStore from '../../store';
+import useStore from '../../store/useStore';
 
 const OthelloAlphaZero = () => {
   // const { resetPiecesCount, rState, resetRState } = useStore((state) => state.reversi);
+  const { changeTheme } = useStore((state) => state.config);
   const { nextAction } = useModel();
 
   // const nextAction = useRef<(state: Reversi) => Promise<number> | null>(null);
@@ -56,6 +58,15 @@ const OthelloAlphaZero = () => {
 
     requestRef.current = requestAnimationFrame(render);
   }
+
+  const onChangeTheme = useCallback(
+    (e) => {
+      if (!bgCanvas.current || !gameCanvas.current) return;
+
+      changeTheme(bgCanvas.current, gameCanvas.current, e.target.value as ThemeName);
+    },
+    [bgCanvas.current, gameCanvas.current],
+  );
 
   const setPiecesCounts = useCallback(
     (reversed: boolean) => {
@@ -349,6 +360,16 @@ const OthelloAlphaZero = () => {
           </div>
         </div>
         <AIHistory />
+      </div>
+      <div>
+        <span>테마 변경</span>
+        <select onChange={onChangeTheme}>
+          {Object.keys(theme).map((key) => (
+            <option key={key} value={key}>
+              {key}
+            </option>
+          ))}
+        </select>
       </div>
     </div>
   );

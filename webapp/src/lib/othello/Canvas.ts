@@ -28,20 +28,24 @@ export default class Canvas {
     this.context.scale(ratio, ratio);
   }
 
-  clear(): void {
+  public clear(): void {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
-  draw(): void {
+  public draw(): void {
     this.clear();
     this.canvasObjects.filter((obj) => obj.visible).forEach((obj) => obj.draw());
   }
 
-  update(reversi: Reversi): void {
+  public update(reversi: Reversi): void {
     this.canvasObjects.forEach((obj) => obj.update(reversi, this.mouseX, this.mouseY));
   }
 
-  addCanvasObjects(objs: CanvasObject[]): void {
+  public addCanvasObjects(objs: CanvasObject[]): void {
     this.canvasObjects.push(...objs);
+  }
+
+  public setTheme(): void {
+    this.canvasObjects.forEach((obj) => obj.setTheme());
   }
 }
