@@ -1,4 +1,5 @@
 import { CELL_COUNT, TOTAL_CELL_COUNT } from '../othelloConfig';
+import sleep from '../utils/sleep';
 
 export default class Reversi {
   private _dxy: number[][];
@@ -13,6 +14,8 @@ export default class Reversi {
 
   public enemyPieces: number[];
 
+  public differedFlipQueue: number[];
+
   // public histories: string[];
 
   constructor(
@@ -24,14 +27,14 @@ export default class Reversi {
   ) {
     // 방향 벡터
     this._dxy = [
-      [1, 0],
-      [1, 1],
-      [0, 1],
       [-1, 1],
-      [-1, 0],
-      [-1, -1],
-      [0, -1],
+      [0, 1],
+      [1, 1],
+      [1, 0],
       [1, -1],
+      [0, -1],
+      [-1, -1],
+      [-1, 0],
     ];
 
     // 연속 패스에 따른 종료
@@ -49,6 +52,8 @@ export default class Reversi {
       this.enemyPieces = new Array(TOTAL_CELL_COUNT).fill(0);
       this._initPieces();
     }
+
+    this.differedFlipQueue = [];
   }
 
   // 초기 돌 설정
@@ -82,18 +87,18 @@ export default class Reversi {
   }
 
   // 다음 상태 얻기
-  public next(action: number): Reversi {
+  public next(action: number, differed: boolean): Reversi {
     // const coord = this.actionToCoord(action);
     // this.histories.push(coord);
     const reversi = new Reversi(
-      this.pieces.slice(),
-      this.enemyPieces.slice(),
+      [...this.pieces],
+      [...this.enemyPieces],
       this.depth + 1,
       // this.histories,
       action,
     );
     if (action !== TOTAL_CELL_COUNT) {
-      reversi._isLegalActionXy(action % CELL_COUNT, Math.floor(action / CELL_COUNT), true);
+      reversi._isLegalActionXy(action % CELL_COUNT, Math.floor(action / CELL_COUNT), true, differed);
     } else {
       console.log('스킵');
     }
@@ -119,7 +124,7 @@ export default class Reversi {
 
     for (let j = 0; j < CELL_COUNT; j += 1) {
       for (let i = 0; i < CELL_COUNT; i += 1) {
-        if (this._isLegalActionXy(i, j)) {
+        if (this._isLegalActionXy(i, j, false, false)) {
           actions.push(i + j * CELL_COUNT);
         }
       }
@@ -134,79 +139,95 @@ export default class Reversi {
 
   /**
    * 특정 칸에 둘 수 있는지 판정
-   *
    */
-  private _isLegalActionXy(x: number, y: number, flip = false): boolean {
-    // 특정 칸에서 임의의 방향이 합법적인 수인지 판정
-    const _isLegalActionXyDxy = (x: number, y: number, dx: number, dy: number) => {
-      // １번째 상대의 돌
-      x += dx;
-      y += dy;
-
-      if (
-        y < 0 ||
-        CELL_COUNT - 1 < y ||
-        x < 0 ||
-        CELL_COUNT - 1 < x ||
-        this.enemyPieces[x + y * CELL_COUNT] !== 1
-      ) {
-        return false;
-      }
-
-      // 2번째 이후
-      for (let j = 0; j < CELL_COUNT; j += 1) {
-        // 빈 칸
-        if (
-          y < 0 ||
-          CELL_COUNT - 1 < y ||
-          x < 0 ||
-          CELL_COUNT - 1 < x ||
-          (this.enemyPieces[x + y * CELL_COUNT] === 0 && this.pieces[x + y * CELL_COUNT] === 0)
-        ) {
-          return false;
-        }
-
-        // 자신의 돌
-        if (this.pieces[x + y * CELL_COUNT] === 1) {
-          //
-          if (flip) {
-            for (let i = 0; i < CELL_COUNT; i += 1) {
-              x -= dx;
-              y -= dy;
-              if (this.pieces[x + y * CELL_COUNT] === 1) {
-                return true;
-              }
-              this.pieces[x + y * CELL_COUNT] = 1;
-              this.enemyPieces[x + y * CELL_COUNT] = 0;
-            }
-          }
-          return true;
-        }
-        // 상대의 돌
-        x += dx;
-        y += dy;
-      }
-      return false;
-    };
-
-    // 빈칸 없음
-    if (this.enemyPieces[x + y * CELL_COUNT] === 1 || this.pieces[x + y * CELL_COUNT] === 1) {
+  private _isLegalActionXy(x: number, y: number, flip: boolean, differed: boolean): boolean {
+    const index = x + y * CELL_COUNT;
+    // 빈칸이 아닐 경우
+    if (this.enemyPieces[index] === 1 || this.pieces[index] === 1) {
       return false;
     }
 
     // 돌을 놓음
     if (flip) {
-      this.pieces[x + y * CELL_COUNT] = 1;
+      this.pieces[index] = 1;
     }
 
     // 임의의 위치의 합법적인 수 여부 확인
     let flag = false;
+    // eslint-disable-next-line no-restricted-syntax
     for (const [dx, dy] of this._dxy) {
-      if (_isLegalActionXyDxy(x, y, dx, dy)) {
+      if (this._isLegalActionXyDxy(x, y, dx, dy, flip, differed)) {
         flag = true;
       }
     }
     return flag;
+  }
+
+  private _isLegalActionXyDxy(
+    x: number,
+    y: number,
+    dx: number,
+    dy: number,
+    flip: boolean,
+    differed: boolean,
+  ): boolean {
+    // １번째 상대의 돌
+    x += dx;
+    y += dy;
+
+    // out of range 체크 / 내 돌 바로 옆에 상대 돌이 존재하는지 체크
+    if (
+      y < 0 ||
+      CELL_COUNT - 1 < y ||
+      x < 0 ||
+      CELL_COUNT - 1 < x ||
+      this.enemyPieces[x + y * CELL_COUNT] !== 1
+    ) {
+      return false;
+    }
+
+    // 2번째 이후
+    for (let j = 0; j < CELL_COUNT; j += 1) {
+      // out of range 체크 / 해당 index에 내 돌과 상대 돌 아무것도 없는지 체크
+      if (
+        y < 0 ||
+        CELL_COUNT - 1 < y ||
+        x < 0 ||
+        CELL_COUNT - 1 < x ||
+        (this.enemyPieces[x + y * CELL_COUNT] === 0 && this.pieces[x + y * CELL_COUNT] === 0)
+      ) {
+        return false;
+      }
+
+      // 자신의 돌이 있으면 그 사이에 있는 상대 돌을 모두 뒤집음
+      if (this.pieces[x + y * CELL_COUNT] === 1) {
+        if (flip) {
+          for (let i = 0; i < CELL_COUNT; i += 1) {
+            x -= dx;
+            y -= dy;
+            // 중간에 막히면 더이상 뒤집지 않음
+            if (this.pieces[x + y * CELL_COUNT] === 1) {
+              return true;
+            }
+            if (differed) {
+              this.differedFlipQueue.push(x + y * CELL_COUNT);
+            }
+            this.flip(x + y * CELL_COUNT);
+          }
+        }
+        return true;
+      }
+      // 상대의 돌
+      x += dx;
+      y += dy;
+    }
+    return false;
+  }
+
+  public flip(index: number): void {
+    const temp = this.pieces[index];
+    this.pieces[index] = this.enemyPieces[index];
+    this.enemyPieces[index] = temp;
   }
 
   // 선 수 여부 확인

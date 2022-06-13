@@ -11095,6 +11095,11 @@ simple-swizzle@^0.2.2:
   dependencies:
     is-arrayish "^0.3.1"
 
+simple-zustand-devtools@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/simple-zustand-devtools/-/simple-zustand-devtools-1.0.1.tgz#0586c00190f52c842f7b25e4390730ec435cf85f"
+  integrity sha512-/+g+XA7ojPRa+ZDPy1dHBwtf+nBn+ZWN5RUTRgz1lNl5ZTqETo2uhjCl7KzQWlKzLO7CfQrmxK+dTI/5iAF3/Q==
+
 sisteransi@^1.0.5:
   version "1.0.5"
   resolved "https://registry.npmjs.org/sisteransi/-/sisteransi-1.0.5.tgz"

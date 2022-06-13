@@ -47,7 +47,7 @@ export default class MNode {
 
       for (let i = 0; i < legalActions.length; i += 1) {
         const [legalAction, policy] = [legalActions[i], policies[i]];
-        this.childNodes.push(new MNode(this.state.next(legalAction), policy));
+        this.childNodes.push(new MNode(this.state.next(legalAction, false), policy));
       }
 
       return value;

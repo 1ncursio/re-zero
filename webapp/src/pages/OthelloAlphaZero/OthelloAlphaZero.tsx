@@ -20,6 +20,7 @@ import LastAction from '../../lib/othello/LastAction';
 import Piece from '../../lib/othello/Piece';
 import Reversi from '../../lib/othello/Reversi';
 import { CELL_COUNT, CELL_SIZE, TOTAL_CELL_COUNT } from '../../lib/othelloConfig';
+import sleep from '../../lib/utils/sleep';
 import useStore from '../../store/useStore';
 
 const OthelloAlphaZero = () => {
@@ -115,13 +116,22 @@ const OthelloAlphaZero = () => {
           return;
         }
 
-        reversiRef.current = reversiRef.current.next(action);
-        // console.log(reversiRef.current.historiesToNotation());
+        const nextReversi = reversiRef.current.next(action, true);
 
+        reversiRef.current.pieces[action] = 1;
         // 소리 재생
         play();
 
-        // resetPiecesCount(rState.piecesCount(rState.enemyPieces), rState.piecesCount(rState.pieces));
+        // eslint-disable-next-line no-restricted-syntax
+        for await (const s of nextReversi.differedFlipQueue.reverse()) {
+          await sleep(100);
+          console.log({ s });
+          reversiRef.current.flip(s);
+        }
+
+        reversiRef.current = nextReversi;
+        // console.log(reversiRef.current.historiesToNotation());
+
         setPiecesCounts(true);
 
         if (reversiRef.current.isDone()) {
@@ -161,9 +171,15 @@ const OthelloAlphaZero = () => {
         const next = await nextAction(reversiRef.current);
         setIsCalculating(false);
 
-        // rState = rState.next(next);
-        // resetRState(rState.next(next));
-        reversiRef.current = reversiRef.current.next(next);
+        const nextDoubleReversi = reversiRef.current.next(next, true);
+        reversiRef.current.pieces[next] = 1;
+        // eslint-disable-next-line no-restricted-syntax
+        for await (const s of nextDoubleReversi.differedFlipQueue.reverse()) {
+          await sleep(100);
+          console.log({ s });
+          reversiRef.current.flip(s);
+        }
+        reversiRef.current = nextDoubleReversi;
         play();
         // console.log(reversiRef.current.historiesToNotation());
         setPiecesCounts(false);
@@ -219,8 +235,6 @@ const OthelloAlphaZero = () => {
       mutateAIHistories,
       mutateUsersAIHistories,
       nextAction,
-      // resetPiecesCount,
-      // resetRState,
       setIsCalculating,
       setIsDone,
       setIsDraw,
@@ -251,13 +265,11 @@ const OthelloAlphaZero = () => {
 
   useEffect(() => {
     if (!gameRef.current || !bgRef.current) return;
-    // rState = new Reversi();
     reversiRef.current = new Reversi();
 
     bgCanvas.current = new Canvas(bgRef.current);
     gameCanvas.current = new Canvas(gameRef.current);
 
-    // resetPiecesCount(rState.piecesCount(rState.pieces), rState.piecesCount(rState.enemyPieces));
     setPiecesCounts(false);
 
     // game objects init

@@ -1,4 +1,5 @@
 import { enableMapSet } from 'immer';
+import { mountStoreDevtool } from 'simple-zustand-devtools';
 import create, { GetState, SetState } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import createConfigSlice, { ConfigSlice } from './configSlice';
@@ -24,5 +25,11 @@ const useStore = create<AppState>(
   //   },
   // ),)
 );
+
+if (process.env.NODE_ENV === 'development') {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  mountStoreDevtool('Store', useStore);
+}
 
 export default useStore;
