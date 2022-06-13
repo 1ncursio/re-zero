@@ -23,11 +23,9 @@ import { CELL_COUNT, CELL_SIZE, TOTAL_CELL_COUNT } from '../../lib/othelloConfig
 import useStore from '../../store/useStore';
 
 const OthelloAlphaZero = () => {
-  // const { resetPiecesCount, rState, resetRState } = useStore((state) => state.reversi);
   const { changeTheme } = useStore((state) => state.config);
   const { nextAction } = useModel();
 
-  // const nextAction = useRef<(state: Reversi) => Promise<number> | null>(null);
   const [piecesCount, setPiecesCount] = useState<number>(0);
   const [enemyPiecesCount, setEnemyPiecesCount] = useState<number>(0);
   const [play] = useSound(blop);
@@ -63,7 +61,7 @@ const OthelloAlphaZero = () => {
     (e) => {
       if (!bgCanvas.current || !gameCanvas.current) return;
 
-      changeTheme(bgCanvas.current, gameCanvas.current, e.target.value as ThemeName);
+      changeTheme(e.target.value as ThemeName, bgCanvas.current, gameCanvas.current);
     },
     [bgCanvas.current, gameCanvas.current],
   );
@@ -118,7 +116,7 @@ const OthelloAlphaZero = () => {
         }
 
         reversiRef.current = reversiRef.current.next(action);
-        console.log(reversiRef.current.historiesToNotation());
+        // console.log(reversiRef.current.historiesToNotation());
 
         // 소리 재생
         play();
@@ -167,7 +165,7 @@ const OthelloAlphaZero = () => {
         // resetRState(rState.next(next));
         reversiRef.current = reversiRef.current.next(next);
         play();
-        console.log(reversiRef.current.historiesToNotation());
+        // console.log(reversiRef.current.historiesToNotation());
         setPiecesCounts(false);
 
         const is_done = reversiRef.current.isDone();

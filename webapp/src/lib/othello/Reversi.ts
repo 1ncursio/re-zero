@@ -13,13 +13,13 @@ export default class Reversi {
 
   public enemyPieces: number[];
 
-  public histories: string[];
+  // public histories: string[];
 
   constructor(
     pieces?: number[],
     enemyPieces?: number[],
     depth = 0,
-    histories: string[] = [],
+    // histories: string[] = [],
     lastAction = -1,
   ) {
     // 방향 벡터
@@ -37,7 +37,7 @@ export default class Reversi {
     // 연속 패스에 따른 종료
     this._passEnd = false;
     this.depth = depth;
-    this.histories = histories;
+    // this.histories = histories;
     this._lastAction = lastAction;
 
     // 돌의 초기 배치
@@ -90,7 +90,7 @@ export default class Reversi {
       this.enemyPieces.slice(),
       this.depth + 1,
       // this.histories,
-      // action,
+      action,
     );
     if (action !== TOTAL_CELL_COUNT) {
       reversi._isLegalActionXy(action % CELL_COUNT, Math.floor(action / CELL_COUNT), true);
@@ -251,31 +251,31 @@ export default class Reversi {
     return x + y;
   }
 
-  public historiesToNotation(): string {
-    // history 두 개씩 묶어서 변환
-    const histories = this.histories.reduce((acc: string[][], cur: string, i: number) => {
-      if (i % 2 === 0) {
-        acc.push([cur, this.histories[i + 1] ?? '']);
-      }
-      return acc;
-    }, []);
+  // public historiesToNotation(): string {
+  //   // history 두 개씩 묶어서 변환
+  //   const histories = this.histories.reduce((acc: string[][], cur: string, i: number) => {
+  //     if (i % 2 === 0) {
+  //       acc.push([cur, this.histories[i + 1] ?? '']);
+  //     }
+  //     return acc;
+  //   }, []);
 
-    // 변환
-    const notation = histories.map((history, i) => {
-      const [actionCoord, nextCoord] = history;
-      return `${i + 1}. ${actionCoord} ${nextCoord}`;
-    });
+  //   // 변환
+  //   const notation = histories.map((history, i) => {
+  //     const [actionCoord, nextCoord] = history;
+  //     return `${i + 1}. ${actionCoord} ${nextCoord}`;
+  //   });
 
-    // split by line every 6
-    const notationWithLine = notation.reduce((acc: string[], cur: string, i: number) => {
-      if (i % CELL_COUNT === 0 && i !== 0) {
-        acc[acc.length - 1] += `\n${cur}`;
-      } else {
-        acc.push(cur);
-      }
-      return acc;
-    }, []);
+  //   // split by line every 6
+  //   const notationWithLine = notation.reduce((acc: string[], cur: string, i: number) => {
+  //     if (i % CELL_COUNT === 0 && i !== 0) {
+  //       acc[acc.length - 1] += `\n${cur}`;
+  //     } else {
+  //       acc.push(cur);
+  //     }
+  //     return acc;
+  //   }, []);
 
-    return notationWithLine.join(' ');
-  }
+  //   return notationWithLine.join(' ');
+  // }
 }

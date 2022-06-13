@@ -14,72 +14,61 @@ export default class Piece extends CanvasObject {
 
   private _state: 'empty' | 'black' | 'white';
 
-  public blackPieceInnerColor: string;
-
-  public blackPieceOuterColor: string;
-
-  public whitePieceInnerColor: string;
-
-  public whitePieceOuterColor: string;
-
   public pieceShadowColor: string;
+
+  public blackPieceImage: HTMLImageElement;
+
+  public whitePieceImage: HTMLImageElement;
 
   constructor(ctx: CanvasRenderingContext2D, index: number, visible: boolean = true) {
     super(ctx, visible);
+    this._radius = 0;
     this._index = index;
-    this._radius = Math.floor(CELL_SIZE * 0.5 * (3 / 4)); // 30
     this._state = 'empty';
     this._x = ((this._index % CELL_COUNT) + 0.5) * CELL_SIZE;
     this._y = (Math.floor(this._index / CELL_COUNT) + 0.5) * CELL_SIZE;
 
-    this.blackPieceInnerColor = '';
-    this.blackPieceOuterColor = '';
-    this.whitePieceInnerColor = '';
-    this.whitePieceOuterColor = '';
     this.pieceShadowColor = '';
+    this.blackPieceImage = new Image();
+    this.whitePieceImage = new Image();
+
     this.setTheme();
   }
 
   public draw() {
     if (this._state === 'empty') return;
 
+    this.drawPiece();
+  }
+
+  public drawPiece(): void {
     this.ctx.shadowBlur = 4;
     this.ctx.shadowColor = this.pieceShadowColor;
     this.ctx.shadowOffsetY = 4;
 
-    // draw piece
-    this.ctx.beginPath();
-    this.ctx.arc(this._x, this._y, this._radius, 0, Math.PI * 2, false);
-    this.ctx.fillStyle = this._state === 'black' ? this.blackPieceOuterColor : this.whitePieceOuterColor;
-    this.ctx.fill();
-    this.ctx.closePath();
+    this.ctx.drawImage(
+      this._state === 'black' ? this.blackPieceImage : this.whitePieceImage,
+      this._x - this._radius,
+      this._y - this._radius,
+      this._radius * 2,
+      this._radius * 2,
+    );
 
     this.ctx.shadowBlur = 0;
     this.ctx.shadowColor = 'transparent';
     this.ctx.shadowOffsetY = 0;
-
-    // draw a inner stroke
-    // this.ctx.strokeStyle = INNER_STROKE_COLOR;
-    this.ctx.fillStyle = this._state === 'black' ? this.blackPieceInnerColor : this.whitePieceInnerColor;
-    this.ctx.beginPath();
-    this.ctx.arc(this._x, this._y, Math.floor(this._radius * (5 / 6)), 0, Math.PI * 2, false);
-    this.ctx.fill();
-    this.ctx.closePath();
   }
 
   public setTheme(): void {
-    const {
-      blackPieceInnerColor,
-      blackPieceOuterColor,
-      whitePieceInnerColor,
-      whitePieceOuterColor,
-      pieceShadowColor,
-    } = useStore.getState().config.theme.colors;
-    this.blackPieceInnerColor = blackPieceInnerColor;
-    this.blackPieceOuterColor = blackPieceOuterColor;
-    this.whitePieceInnerColor = whitePieceInnerColor;
-    this.whitePieceOuterColor = whitePieceOuterColor;
+    const { blackPieceImageSrc, whitePieceImageSrc, pieceShadowColor } =
+      useStore.getState().config.theme.colors;
+    const { piece } = useStore.getState().config.theme.size;
+
+    this.blackPieceImage.src = blackPieceImageSrc;
+    this.whitePieceImage.src = whitePieceImageSrc;
+
     this.pieceShadowColor = pieceShadowColor;
+    this._radius = Math.floor(CELL_SIZE * 0.5 * piece);
   }
 
   public update(reversi: Reversi) {

@@ -1,29 +1,12 @@
 import produce from 'immer';
-import theme, { ThemeName } from '../config/theme';
-import Background from '../lib/othello/Background';
+import theme, { Theme, ThemeName } from '../config/theme';
 import Canvas from '../lib/othello/Canvas';
 import { AppSlice, AppState } from './useStore';
 
 export interface ConfigSlice {
   config: {
-    theme: {
-      colors: {
-        backgroundAColor: string;
-        backgroundBColor: string;
-        gridColor: string;
-        borderColor: string;
-        coordinateTextColor: string;
-        blackPieceInnerColor: string;
-        blackPieceOuterColor: string;
-        whitePieceInnerColor: string;
-        whitePieceOuterColor: string;
-        indicatorColor: string;
-        indicatorHoverColor: string;
-        pieceShadowColor: string;
-        lastActionColor: string;
-      };
-    };
-    changeTheme: (bgCanvas: Canvas, gameCanvas: Canvas, themeName: ThemeName) => void;
+    theme: Theme;
+    changeTheme: (themeName: ThemeName, ...canvases: Canvas[]) => void;
   };
 }
 
@@ -31,18 +14,19 @@ const createConfigSlice: AppSlice<ConfigSlice> = (set, get) => ({
   config: {
     theme: {
       name: 'default',
-      colors: theme.default.colors,
+      ...theme.default,
     },
-    changeTheme: (bgCanvas: Canvas, gameCanvas: Canvas, themeName: ThemeName) => {
+    changeTheme(themeName: ThemeName, ...canvases: Canvas[]) {
       set(
         produce((state: AppState) => {
-          state.config.theme.colors = theme[themeName].colors;
+          state.config.theme = theme[themeName];
         }),
       );
 
-      bgCanvas.setTheme();
-      gameCanvas.setTheme();
-      bgCanvas.draw();
+      canvases.forEach((canvas) => {
+        canvas.setTheme();
+        canvas.draw();
+      });
     },
   },
 });
