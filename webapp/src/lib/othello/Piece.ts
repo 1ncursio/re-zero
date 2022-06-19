@@ -85,7 +85,7 @@ export default class Piece extends CanvasObject {
   }
 
   public update(reversi: Reversi) {
-    const isFirstPlayer = reversi.isFirstPlayer();
+    const isBlackTurn = reversi.isBlackTurn();
 
     // 내 돌인 경우
     if (reversi.pieces[this._index]) {
@@ -95,7 +95,7 @@ export default class Piece extends CanvasObject {
       }
       // 내 돌이고 가만히 있는 경우
       else {
-        this._state = isFirstPlayer ? 'black' : 'white';
+        this._state = isBlackTurn ? 'black' : 'white';
         this.visible = true;
       }
     }
@@ -107,7 +107,7 @@ export default class Piece extends CanvasObject {
       }
       // 상대 돌이고 가만히 있는 경우
       else {
-        this._state = isFirstPlayer ? 'white' : 'black';
+        this._state = isBlackTurn ? 'white' : 'black';
         this.visible = true;
       }
     } else {

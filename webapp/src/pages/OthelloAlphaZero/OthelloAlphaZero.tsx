@@ -5,6 +5,7 @@ import useSound from 'use-sound';
 // @ts-ignore
 import blop from '../../assets/audios/blop.mp3';
 import AIHistory from '../../components/AIHistory';
+import HistoryTable from '../../components/HistoryTable';
 import Icon from '../../components/Icon';
 import RequireLogIn from '../../components/RequireLogin/RequireLogin';
 import theme, { ThemeName } from '../../config/theme';
@@ -25,6 +26,7 @@ import useStore from '../../store/useStore';
 
 const OthelloAlphaZero = () => {
   const { changeTheme } = useStore((state) => state.config);
+  const { addHistory, clearHistory } = useStore((state) => state.reversi);
   const { nextAction } = useModel();
 
   const [piecesCount, setPiecesCount] = useState<number>(0);
@@ -87,14 +89,15 @@ const OthelloAlphaZero = () => {
     setIsDone(false);
     setIsDraw(false);
     setIsLoss(false);
-  }, [reversiRef, setPiecesCount, setEnemyPiecesCount, setIsDone, setIsDraw, setIsLoss]);
+    clearHistory();
+  }, [reversiRef, setPiecesCount, setEnemyPiecesCount, setIsDone, setIsDraw, setIsLoss, clearHistory]);
 
   const onMouseUp = useCallback(
     async (e: React.MouseEvent<HTMLCanvasElement>) => {
       if (!gameCanvas.current || !reversiRef.current || !userData || !nextAction) return;
 
       // 게임이 끝났거나 플레이어의 턴이 아니면 막기
-      if (reversiRef.current.isDone() || !reversiRef.current.isFirstPlayer()) {
+      if (reversiRef.current.isDone() || !reversiRef.current.isBlackTurn()) {
         console.log('forbidden to play');
         return;
       }
@@ -117,6 +120,7 @@ const OthelloAlphaZero = () => {
         }
 
         const nextReversi = reversiRef.current.next(action, true);
+        addHistory(nextReversi, action);
 
         reversiRef.current.pieces[action] = 1;
         // 소리 재생
@@ -172,16 +176,15 @@ const OthelloAlphaZero = () => {
         setIsCalculating(false);
 
         const nextDoubleReversi = reversiRef.current.next(next, true);
+        addHistory(nextDoubleReversi, next);
         reversiRef.current.pieces[next] = 1;
         // eslint-disable-next-line no-restricted-syntax
         for await (const s of nextDoubleReversi.differedFlipQueue.reverse()) {
           await sleep(100);
-          console.log({ s });
           reversiRef.current.flip(s);
         }
         reversiRef.current = nextDoubleReversi;
         play();
-        // console.log(reversiRef.current.historiesToNotation());
         setPiecesCounts(false);
 
         const is_done = reversiRef.current.isDone();
@@ -309,6 +312,7 @@ const OthelloAlphaZero = () => {
         <title>AI 대전 - Re:zero</title>
       </Helmet>
       <div className="flex gap-4">
+        <AIHistory />
         <div className="flex flex-col gap-2">
           <div className="flex justify-between px-2">
             <div className="flex items-center gap-2">
@@ -369,7 +373,7 @@ const OthelloAlphaZero = () => {
             />
           </div>
         </div>
-        <AIHistory />
+        <HistoryTable />
       </div>
       <div>
         <div>

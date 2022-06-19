@@ -16,15 +16,7 @@ export default class Reversi {
 
   public differedFlipQueue: number[];
 
-  // public histories: string[];
-
-  constructor(
-    pieces?: number[],
-    enemyPieces?: number[],
-    depth = 0,
-    // histories: string[] = [],
-    lastAction = -1,
-  ) {
+  constructor(pieces?: number[], enemyPieces?: number[], depth = 0, lastAction = -1) {
     // 방향 벡터
     this._dxy = [
       [-1, 1],
@@ -40,7 +32,6 @@ export default class Reversi {
     // 연속 패스에 따른 종료
     this._passEnd = false;
     this.depth = depth;
-    // this.histories = histories;
     this._lastAction = lastAction;
 
     // 돌의 초기 배치
@@ -90,13 +81,7 @@ export default class Reversi {
   public next(action: number, differed: boolean): Reversi {
     // const coord = this.actionToCoord(action);
     // this.histories.push(coord);
-    const reversi = new Reversi(
-      [...this.pieces],
-      [...this.enemyPieces],
-      this.depth + 1,
-      // this.histories,
-      action,
-    );
+    const reversi = new Reversi([...this.pieces], [...this.enemyPieces], this.depth + 1, action);
     if (action !== TOTAL_CELL_COUNT) {
       reversi._isLegalActionXy(action % CELL_COUNT, Math.floor(action / CELL_COUNT), true, differed);
     } else {
@@ -231,7 +216,7 @@ export default class Reversi {
   }
 
   // 선 수 여부 확인
-  public isFirstPlayer(): boolean {
+  public isBlackTurn(): boolean {
     return this.depth % 2 === 0;
   }
 
@@ -262,14 +247,6 @@ export default class Reversi {
 
   public setPassEnd(passEnd: boolean): void {
     this._passEnd = passEnd;
-  }
-
-  public actionToCoord(action: number): string {
-    if (action === TOTAL_CELL_COUNT) return '--';
-
-    const x = String.fromCharCode((action % CELL_COUNT) + 65);
-    const y = Math.floor(action / CELL_COUNT) + 1;
-    return x + y;
   }
 
   // public historiesToNotation(): string {

@@ -49,9 +49,9 @@ export default class Indicator extends CanvasObject {
   }
 
   public update(reversi: Reversi, mouseX: number, mouseY: number): void {
-    const isFirstPlayer = reversi.isFirstPlayer();
+    const isBlackTurn = reversi.isBlackTurn();
 
-    if (reversi.legalActions().includes(this._index) && isFirstPlayer) {
+    if (reversi.legalActions().includes(this._index) && isBlackTurn) {
       this._state = 'active';
       this.visible = true;
     } else {
