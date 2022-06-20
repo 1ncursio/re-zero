@@ -24,6 +24,7 @@
   "plugins": ["@typescript-eslint", "react", "jsx-a11y", "import"],
   "rules": {
     "react/jsx-filename-extension": 0,
+    "react/function-component-definition": 0,
     "linebreak-style": 0,
     "import/no-unresolved": 0,
     "import/extensions": 0,
