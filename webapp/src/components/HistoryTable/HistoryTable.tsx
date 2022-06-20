@@ -4,14 +4,19 @@ import useStore from '../../store/useStore';
 const HistoryTable = () => {
   const { histories, convertActionToNotation } = useStore((state) => state.reversi);
   return (
-    <div className="flex flex-col gap-2">
-      <span>Move</span>
-      {histories.map((history) => (
-        <span key={history.action} className="text-sm text-blueGray-600">
-          {convertActionToNotation(history.action)}
-        </span>
-      ))}
-    </div>
+    <section className="flex flex-col gap-2 w-32">
+      <div className="inline-flex justify-center items-center">MOVES</div>
+      <div>
+        {histories.map((history) => (
+          <div
+            key={history.action}
+            className="text-sm text-blueGray-600 border border-black inline-flex justify-center items-center w-1/2"
+          >
+            {convertActionToNotation(history.action)}
+          </div>
+        ))}
+      </div>
+    </section>
   );
 };
 
