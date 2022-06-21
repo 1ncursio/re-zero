@@ -16,7 +16,7 @@ import relativeCreatedAt from '@lib/relativeCreatedAt';
 import { Editor } from '@tinymce/tinymce-react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React, { useCallback, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 
 const CommunityPost = () => {
   const [title, onChangeTitle, setTitle] = useInput('');

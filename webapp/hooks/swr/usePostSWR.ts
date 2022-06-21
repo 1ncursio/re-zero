@@ -1,7 +1,7 @@
 import useSWR, { SWRConfiguration, SWRResponse } from 'swr';
-import fetcher from '../../lib/api/fetcher';
-import { Post } from '../../typings/post';
-import { User } from '../../typings/user';
+import fetcher from '@lib/api/fetcher';
+import { Post } from '@typings/post';
+import { User } from '@typings/user';
 import useUserSWR from './useUserSWR';
 
 export default function usePostSWR(postId: string, options: SWRConfiguration = {}): SWRResponse<Post, Error> {

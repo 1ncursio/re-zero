@@ -1,9 +1,8 @@
-import React, { FC, useCallback, useEffect } from 'react';
+import useUserSWR from '@hooks/swr/useUserSWR';
+import useBoolean from '@hooks/useBoolean';
+import { Comment } from '@typings/comment';
+import { FC, useCallback, useEffect } from 'react';
 import { usePopperTooltip } from 'react-popper-tooltip';
-import useUserSWR from '../../hooks/swr/useUserSWR';
-import useBoolean from '../../hooks/useBoolean';
-import { Comment } from '../../typings/comment';
-// import Icon from '../Icon';
 
 type ReplyLikeButtonProps = {
   toggleLikeReply: () => void;

@@ -7,30 +7,28 @@ import usePostsSWR from '@hooks/swr/usePostsSWR';
 import useUserSWR from '@hooks/swr/useUserSWR';
 import useBoolean from '@hooks/useBoolean';
 import useInput from '@hooks/useInput';
-import useQuery from '@hooks/useQuery';
 import uploadImage from '@lib/api/comments/uploadImage';
 import createPost from '@lib/api/posts/createPost';
 import { Editor } from '@tinymce/tinymce-react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React, { useCallback, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 
 const Community = () => {
   const [title, onChangeTitle] = useInput('');
   const [isOpen, openModal, closeModal] = useBoolean(false);
-  const query = useQuery();
   const router = useRouter();
-  const page = Number(query.get('page')) || 1;
+  const { page } = router.query;
   const editorRef = useRef<Editor>(null);
 
   const { data: userData, isLoading: isLoadingUserData } = useUserSWR();
 
   const { data: postsData, links: linksData } = usePostsSWR({
-    page,
+    page: page ? Number(page) : 1,
   });
 
   // for ux purpose only (pagination)
-  usePostsSWR({ page: page + 1 });
+  usePostsSWR({ page: (page ? Number(page) : 1) + 1 });
 
   const onUploadImage = useCallback(async (blobInfo, success, failure) => {
     try {

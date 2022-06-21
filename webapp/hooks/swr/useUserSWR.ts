@@ -1,6 +1,6 @@
 import useSWR, { SWRConfiguration, SWRResponse } from 'swr';
-import fetcher from '../../lib/api/fetcher';
-import { User } from '../../typings/user';
+import fetcher from '@lib/api/fetcher';
+import { User } from '@typings/user';
 
 export default function useUserSWR(
   options: SWRConfiguration = {},

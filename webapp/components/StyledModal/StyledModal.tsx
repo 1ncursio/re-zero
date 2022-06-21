@@ -1,5 +1,5 @@
 // import { css, Global } from '@emotion/react';
-import React, { FC } from 'react';
+import { FC } from 'react';
 import Modal from 'react-modal';
 // import tw from 'twin.macro';
 

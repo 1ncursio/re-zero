@@ -1,4 +1,3 @@
-import React from 'react';
 // import Icon, { IconType } from '../Icon/Icon';
 
 export type ButtonProps = {

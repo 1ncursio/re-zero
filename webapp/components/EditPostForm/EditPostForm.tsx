@@ -1,6 +1,6 @@
 import { Editor } from '@tinymce/tinymce-react';
 import { useRouter } from 'next/router';
-import React, { Dispatch, forwardRef, SetStateAction, useCallback, useEffect } from 'react';
+import { Dispatch, forwardRef, SetStateAction, useCallback, useEffect } from 'react';
 import usePostSWR from '@hooks/swr/usePostSWR';
 import uploadImage from '@lib/api/comments/uploadImage';
 import TinyEditor from '../TinyEditor';

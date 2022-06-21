@@ -1,6 +1,6 @@
 import useSWR, { SWRConfiguration, SWRResponse } from 'swr';
-import fetcher from '../../lib/api/fetcher';
-import { IAIHistory } from '../../typings/IAIHistory';
+import fetcher from '@lib/api/fetcher';
+import { IAIHistory } from '@typings/IAIHistory';
 
 export interface AIHistoriesSWR {
   histories: IAIHistory[];

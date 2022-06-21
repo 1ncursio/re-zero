@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import React, { FC } from 'react';
+import { FC } from 'react';
 import useCommentsSWR from '@hooks/swr/useCommentsSWR';
 import CommentItem from '../CommentItem';
 

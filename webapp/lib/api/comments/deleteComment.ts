@@ -1,6 +1,6 @@
 import produce from 'immer';
 import { KeyedMutator } from 'swr';
-import { Comment } from '../../../typings/comment';
+import { Comment } from '@typings/comment';
 import client from '../client';
 
 export default async function deleteComment({
@@ -15,18 +15,14 @@ export default async function deleteComment({
   mutateComments(
     produce((comments?: Comment[]) => {
       if (!comments) return;
-      const commentIndex = comments.findIndex(
-        (comment) => comment.id === commentId,
-      );
+      const commentIndex = comments.findIndex((comment) => comment.id === commentId);
       if (commentIndex === -1) return;
       comments.splice(commentIndex, 1);
     }),
     false,
   );
 
-  const response = await client.delete(
-    `/api/posts/${postId}/comments/${commentId}`,
-  );
+  const response = await client.delete(`/api/posts/${postId}/comments/${commentId}`);
 
   mutateComments();
 

@@ -1,10 +1,9 @@
+import usePostSWR from '@hooks/swr/usePostSWR';
+import useBoolean from '@hooks/useBoolean';
 import { useRouter } from 'next/router';
-import React, { FC, useCallback } from 'react';
+import { FC, useCallback } from 'react';
 import { usePopperTooltip } from 'react-popper-tooltip';
 import 'react-popper-tooltip/dist/styles.css';
-import usePostSWR from '../../hooks/swr/usePostSWR';
-import useBoolean from '../../hooks/useBoolean';
-// import Icon from '../Icon';
 
 type PostLikeButtonProps = {
   toggleLikePost: () => void;

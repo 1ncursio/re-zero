@@ -1,7 +1,5 @@
-import produce from 'immer';
-import { KeyedMutator } from 'swr';
-import useUserSWR from '../../../hooks/swr/useUserSWR';
 import { Post } from '@typings/post';
+import { KeyedMutator } from 'swr';
 import client from '../client';
 
 export default async function toggleLikePost({

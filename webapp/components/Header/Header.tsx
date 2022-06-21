@@ -1,10 +1,9 @@
 import useUserSWR from '@hooks/swr/useUserSWR';
 import useToggle from '@hooks/useToggle';
 import Link from 'next/link';
-import React, { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import HeaderUserIcon from '../HeaderUserIcon';
 import HeaderUserMenu from '../HeaderUserMenu';
-// import RezeroIcon from '../Icon/svg/rezero_logo.svg';
 import LogInButton from '../LogInButton';
 
 const Header = () => {

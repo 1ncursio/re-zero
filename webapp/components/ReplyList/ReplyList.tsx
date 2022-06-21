@@ -1,5 +1,5 @@
-import React, { FC } from 'react';
-import { Comment } from '../../typings/comment';
+import { Comment } from '@typings/comment';
+import { FC } from 'react';
 import ReplyItem from '../ReplyItem';
 
 type ReplyListProps = {

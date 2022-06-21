@@ -1,4 +1,3 @@
-import React from 'react';
 import useBoolean from '@hooks/useBoolean';
 import Link from 'next/link';
 import Button from '@components/Button';

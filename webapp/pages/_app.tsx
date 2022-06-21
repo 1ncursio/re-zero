@@ -1,10 +1,10 @@
-import React from 'react';
-import '../styles/globals.css';
+import { appWithTranslation } from 'next-i18next';
 import type { AppProps } from 'next/app';
 import { SWRConfig } from 'swr';
 import AppLayout from '../components/AppLayout';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
+import '../styles/globals.css';
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
   return (
@@ -30,4 +30,4 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   );
 };
 
-export default MyApp;
+export default appWithTranslation(MyApp);

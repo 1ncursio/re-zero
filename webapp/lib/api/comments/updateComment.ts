@@ -1,6 +1,6 @@
 import produce from 'immer';
 import { KeyedMutator } from 'swr';
-import { Comment } from '../../../typings/comment';
+import { Comment } from '@typings/comment';
 import client from '../client';
 
 export default async function updateComment({
@@ -24,12 +24,9 @@ export default async function updateComment({
     false,
   );
 
-  const response = await client.put(
-    `/api/posts/${postId}/comments/${commentId}`,
-    {
-      content,
-    },
-  );
+  const response = await client.put(`/api/posts/${postId}/comments/${commentId}`, {
+    content,
+  });
 
   mutateComments();
   return response.data.payload;

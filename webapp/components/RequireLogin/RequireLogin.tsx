@@ -1,6 +1,5 @@
 import Image from 'next/image';
-import React, { FC } from 'react';
-// import { undrawLogin } from '../../assets/images';
+import { FC } from 'react';
 
 const RequireLogIn: FC = () => {
   return (

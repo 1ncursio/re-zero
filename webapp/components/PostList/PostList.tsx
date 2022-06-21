@@ -1,10 +1,8 @@
-import React, { FC } from 'react';
+import optimizeImage from '@lib/optimizeImage';
+import relativeCreatedAt from '@lib/relativeCreatedAt';
+import { Post } from '@typings/post';
 import Link from 'next/link';
-// import { userThumbnail } from '../../assets/images';
-import optimizeImage from '../../lib/optimizeImage';
-import relativeCreatedAt from '../../lib/relativeCreatedAt';
-import { Post } from '../../typings/post';
-// import Icon from '../Icon';
+import { FC } from 'react';
 
 type PostListProps = {
   posts: Post[];

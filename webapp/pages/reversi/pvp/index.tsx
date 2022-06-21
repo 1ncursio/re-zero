@@ -1,4 +1,3 @@
-import React from 'react';
 import PvpMatchingButton from '@components/PvpMatchingButton';
 import PvpRoomList from '@components/PvpRoomList';
 import PvpUserInfoCard from '@components/PvpUserInfoCard';

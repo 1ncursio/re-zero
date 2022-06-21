@@ -1,7 +1,7 @@
 import produce from 'immer';
 import { KeyedMutator } from 'swr';
-import { Comment } from '../../../typings/comment';
-import { User } from '../../../typings/user';
+import { Comment } from '@typings/comment';
+import { User } from '@typings/user';
 import client from '../client';
 
 type CreateReplyParams = {
@@ -52,12 +52,9 @@ export default async function createReply({
     false,
   );
 
-  const response = await client.post(
-    `/api/posts/${postId}/comments/${commentId}/replies`,
-    {
-      content,
-    },
-  );
+  const response = await client.post(`/api/posts/${postId}/comments/${commentId}/replies`, {
+    content,
+  });
 
   mutateReplies();
   mutateComments();

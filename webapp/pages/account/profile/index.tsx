@@ -1,13 +1,12 @@
-import produce from 'immer';
-import React, { useCallback, useEffect, useRef } from 'react';
-import Head from 'next/head';
-import { useForm } from 'react-hook-form';
-// import { userThumbnail } from '../../../public/assets/images';
 import useUserSWR from '@hooks/swr/useUserSWR';
 import updateUserImage from '@lib/api/users/updateUserImage';
 import updateUserProfile from '@lib/api/users/updateUserProfile';
 import optimizeImage from '@lib/optimizeImage';
 import { User } from '@typings/user';
+import produce from 'immer';
+import Head from 'next/head';
+import { useCallback, useEffect, useRef } from 'react';
+import { useForm } from 'react-hook-form';
 
 const AccountProfile = () => {
   const { data: userData, mutate: mutateUser } = useUserSWR();
@@ -46,7 +45,7 @@ const AccountProfile = () => {
         false,
       );
     },
-    [userData, mutateUser],
+    [mutateUser],
   );
 
   const onSubmitProfile = useCallback(
@@ -63,7 +62,7 @@ const AccountProfile = () => {
         false,
       );
     },
-    [userData],
+    [mutateUser],
   );
 
   return (

@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import React, { FC, useCallback, useEffect } from 'react';
+import { FC, useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import useCommentsSWR from '@hooks/swr/useCommentsSWR';
 import updateComment from '@lib/api/comments/updateComment';

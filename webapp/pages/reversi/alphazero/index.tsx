@@ -1,12 +1,11 @@
 import { throttle } from 'lodash';
 import Head from 'next/head';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import useSound from 'use-sound';
 // @ts-ignore
 // import blop from '../../assets/audios/blop.mp3';
 import AIHistory from '@components/AIHistory';
 import HistoryTable from '@components/HistoryTable';
-// import Icon from '../../../components/Icon';
 import RequireLogIn from '@components/RequireLogin/RequireLogin';
 import useAIHistoriesSWR from '@hooks/swr/useAIHistoriesSWR';
 import useUsersAIHistoriesSWR from '@hooks/swr/useUsersAIHistoriesSWR';

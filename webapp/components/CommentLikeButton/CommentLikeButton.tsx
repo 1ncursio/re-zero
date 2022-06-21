@@ -1,8 +1,7 @@
-import React, { FC, useCallback } from 'react';
+import useBoolean from '@hooks/useBoolean';
+import { Comment } from '@typings/comment';
+import { FC, useCallback } from 'react';
 import { usePopperTooltip } from 'react-popper-tooltip';
-import useBoolean from '../../hooks/useBoolean';
-import { Comment } from '../../typings/comment';
-// import Icon from '../Icon';
 
 type CommentLikeButtonProps = {
   toggleLikeComment: () => void;

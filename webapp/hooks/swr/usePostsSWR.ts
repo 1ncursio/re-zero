@@ -1,6 +1,6 @@
 import useSWR, { SWRConfiguration, SWRResponse } from 'swr';
-import fetcher from '../../lib/api/fetcher';
-import { Post } from '../../typings/post';
+import fetcher from '@lib/api/fetcher';
+import { Post } from '@typings/post';
 import useUserSWR from './useUserSWR';
 
 export interface ILink {

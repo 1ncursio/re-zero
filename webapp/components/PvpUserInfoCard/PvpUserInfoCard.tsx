@@ -1,5 +1,3 @@
-import React from 'react';
-
 const PvpUserInfoCard = () => {
   return (
     <div className="border-2 rounded-lg p-2">

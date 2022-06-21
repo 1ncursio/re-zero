@@ -1,6 +1,6 @@
 import useSWR, { SWRConfiguration, SWRResponse } from 'swr';
-import fetcher from '../../lib/api/fetcher';
-import { Comment } from '../../typings/comment';
+import fetcher from '@lib/api/fetcher';
+import { Comment } from '@typings/comment';
 import useUserSWR from './useUserSWR';
 
 export default function useCommentsSWR(

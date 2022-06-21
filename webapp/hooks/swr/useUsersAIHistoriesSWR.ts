@@ -1,6 +1,6 @@
 import useSWR, { SWRConfiguration, SWRResponse } from 'swr';
-import fetcher from '../../lib/api/fetcher';
-import { IAIHistory } from '../../typings/IAIHistory';
+import fetcher from '@lib/api/fetcher';
+import { IAIHistory } from '@typings/IAIHistory';
 
 export interface UsersAIHistoriesSWR {
   histories: IAIHistory[];
@@ -15,13 +15,9 @@ export interface UsersAIHistoriesSWR {
 export default function useUsersAIHistoriesSWR(
   options: SWRConfiguration = {},
 ): SWRResponse<UsersAIHistoriesSWR, Error> {
-  const response = useSWR<UsersAIHistoriesSWR>(
-    '/api/history/ai/user',
-    fetcher,
-    {
-      ...options,
-    },
-  );
+  const response = useSWR<UsersAIHistoriesSWR>('/api/history/ai/user', fetcher, {
+    ...options,
+  });
 
   return response;
 }

@@ -1,8 +1,7 @@
+import useUserSWR from '@hooks/swr/useUserSWR';
+import optimizeImage from '@lib/optimizeImage';
 import Image from 'next/image';
-import React, { FC } from 'react';
-import useUserSWR from '../../hooks/swr/useUserSWR';
-// import { userThumbnail } from '../../public/assets/images';
-import optimizeImage from '../../lib/optimizeImage';
+import { FC } from 'react';
 
 type HeaderUserIconProps = {
   onClick: (e: React.MouseEvent) => void;

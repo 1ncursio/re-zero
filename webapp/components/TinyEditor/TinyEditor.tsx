@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 
 type BlobInfo = {
@@ -42,5 +42,7 @@ const TinyEditor = forwardRef<Editor, TinyEditorProps>(({ onUploadImage, initial
     />
   );
 });
+
+TinyEditor.displayName = 'TinyEditor';
 
 export default TinyEditor;

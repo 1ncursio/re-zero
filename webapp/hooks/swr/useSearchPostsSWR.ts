@@ -1,6 +1,6 @@
 import useSWR, { SWRConfiguration, SWRResponse } from 'swr';
-import fetcher from '../../lib/api/fetcher';
-import { Post } from '../../typings/post';
+import fetcher from '@lib/api/fetcher';
+import { Post } from '@typings/post';
 import useUserSWR from './useUserSWR';
 
 export interface ILink {
@@ -13,13 +13,9 @@ export default function useSearchPostsSWR(
   { q, page }: { q: string | null; page: number | string },
   options: SWRConfiguration = {},
 ): SWRResponse<Post[], Error> & { links: ILink[]; total: number } {
-  const response = useSWR<any>(
-    q ? `/api/search?q=${q}&page=${page}` : null,
-    fetcher,
-    {
-      ...options,
-    },
-  );
+  const response = useSWR<any>(q ? `/api/search?q=${q}&page=${page}` : null, fetcher, {
+    ...options,
+  });
   const { data: userData } = useUserSWR();
 
   return {

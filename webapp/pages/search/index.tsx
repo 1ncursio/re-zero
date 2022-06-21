@@ -1,21 +1,18 @@
-// import { css } from '@emotion/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React, { useCallback, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-// import Icon from '../../../components/Icon';
 import Pagination from '@components/Pagination';
 import SearchPostList from '@components/SearchPostList';
 import useSearchPostsSWR from '@hooks/swr/useSearchPostsSWR';
 import useBoolean from '@hooks/useBoolean';
-import useQuery from '@hooks/useQuery';
 
 const Search = () => {
-  const query = useQuery();
-  const page = Number(query.get('page')) || 1;
-  // const history = useHistory();
   const router = useRouter();
-  const q = query.get('q') !== null ? query.get('q') : '';
+  const { page, q } = router.query;
+  // const page = Number(query.get('page')) || 1;
+  // const history = useHistory();
+  // const q = query.get('q') !== null ? query.get('q') : '';
   const [isFocus, focus, blur] = useBoolean(false);
   const {
     register,
@@ -27,7 +24,7 @@ const Search = () => {
   const { data: postsData, links: linksData, total } = useSearchPostsSWR({ page, q });
 
   // for ux purpose only (pagination)
-  useSearchPostsSWR({ page: page + 1, q });
+  useSearchPostsSWR({ page: (page ? Number(page) : 1) + 1, q: (q as string) ?? '' });
 
   useEffect(() => {
     setFocus('q');

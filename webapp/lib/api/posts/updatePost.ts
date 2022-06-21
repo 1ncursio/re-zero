@@ -1,6 +1,6 @@
 import produce from 'immer';
 import { KeyedMutator } from 'swr';
-import { Post } from '../../../typings/post';
+import { Post } from '@typings/post';
 import client from '../client';
 
 export default async function updatePost({

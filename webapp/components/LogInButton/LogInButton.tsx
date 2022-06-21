@@ -1,8 +1,7 @@
 import useBoolean from '@hooks/useBoolean';
 import Image from 'next/image';
-import React from 'react';
+
 import { AiFillGoogleCircle } from 'react-icons/ai';
-// import Icon from '../Icon';
 import StyledModal from '../StyledModal';
 
 const LogInButton = () => {

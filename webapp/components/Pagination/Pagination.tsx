@@ -1,4 +1,4 @@
-import React, { FC, useCallback } from 'react';
+import { FC, useCallback } from 'react';
 import Link from 'next/link';
 import { ILink } from '@hooks/swr/usePostsSWR';
 
@@ -10,10 +10,6 @@ type PaginationProps = {
 const Pagination: FC<PaginationProps> = ({ links, referrerUrl }) => {
   const currentPage = (url: string) => new URL(url).searchParams.get('page');
 
-  if (links.length < 3) {
-    return null;
-  }
-
   const to = useCallback(
     (link: string) => {
       referrerUrl.searchParams.set('page', currentPage(link) || '1');
@@ -21,6 +17,10 @@ const Pagination: FC<PaginationProps> = ({ links, referrerUrl }) => {
     },
     [referrerUrl],
   );
+
+  if (links.length < 3) {
+    return null;
+  }
 
   return (
     <div className="flex justify-center gap-1">

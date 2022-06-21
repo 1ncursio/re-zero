@@ -1,19 +1,17 @@
+import optimizeImage from '@lib/optimizeImage';
+import relativeCreatedAt from '@lib/relativeCreatedAt';
+import { Post } from '@typings/post';
 import Link from 'next/link';
-import React, { FC } from 'react';
-// import { userThumbnail } from '../../public/assets/images';
-import useQuery from '@hooks/useQuery';
-import optimizeImage from '../../lib/optimizeImage';
-import relativeCreatedAt from '../../lib/relativeCreatedAt';
-import { Post } from '../../typings/post';
-// import Icon from '../Icon';
+import { useRouter } from 'next/router';
+import { FC } from 'react';
 
 type SearchPostListProps = {
   posts: Post[];
 };
 
 const SearchPostList: FC<SearchPostListProps> = ({ posts }) => {
-  const query = useQuery();
-  const q = query.get('q');
+  const router = useRouter();
+  const { q } = router.query;
 
   const getHighlightedText = (text: string, highlight: string | null) => {
     // Split on highlight term and include term into parts, ignore case
@@ -52,10 +50,12 @@ const SearchPostList: FC<SearchPostListProps> = ({ posts }) => {
           <div className="flex justify-between my-4">
             {/* eslint-disable-next-line prefer-template */}
             <span className="flex items-center ml-2 gap-2">
-              {hasImage(post.content) && <Icon name="outlinedImage" className="w-4 h-4" />}
+              {hasImage(post.content) &&
+                // <Icon name="outlinedImage" className="w-4 h-4" />
+                'outlinedImage'}
               <Link href={`/community/${post.id}`}>
                 <a>
-                  <h1 className="text-blueGray-700">{getHighlightedText(post.title, q)}</h1>
+                  <h1 className="text-blueGray-700">{getHighlightedText(post.title, q as string)}</h1>
                 </a>
               </Link>
             </span>

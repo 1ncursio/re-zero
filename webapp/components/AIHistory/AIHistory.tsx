@@ -1,6 +1,6 @@
 /* eslint-disable indent */
 import { ArcElement, Chart, Tooltip } from 'chart.js';
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import useAIHistoriesSWR from '@hooks/swr/useAIHistoriesSWR';
 import useUsersAIHistoriesSWR from '@hooks/swr/useUsersAIHistoriesSWR';

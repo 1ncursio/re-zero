@@ -147,5 +147,7 @@ export default class Background extends CanvasObject {
     this.coordinateTextColor = coordinateTextColor;
   }
 
-  public update(state: Reversi): void {}
+  public update(state: Reversi): void {
+    return;
+  }
 }

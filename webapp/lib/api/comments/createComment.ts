@@ -1,4 +1,4 @@
-import { Comment } from '../../../typings/comment';
+import { Comment } from '@typings/comment';
 import client from '../client';
 
 export default async function createComment({

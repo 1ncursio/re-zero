@@ -1,11 +1,11 @@
+import useCommentsSWR from '@hooks/swr/useCommentsSWR';
+import useRepliesSWR from '@hooks/swr/useRepliesSWR';
+import useUserSWR from '@hooks/swr/useUserSWR';
+import createReply from '@lib/api/replies/createReply';
+import optimizeImage from '@lib/optimizeImage';
 import { useRouter } from 'next/router';
-import React, { FC, useCallback, useEffect } from 'react';
+import { FC, useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import useCommentsSWR from '../../hooks/swr/useCommentsSWR';
-import useRepliesSWR from '../../hooks/swr/useRepliesSWR';
-import useUserSWR from '../../hooks/swr/useUserSWR';
-import createReply from '../../lib/api/replies/createReply';
-import optimizeImage from '../../lib/optimizeImage';
 
 type ReplyFormProps = {
   commentId: number;

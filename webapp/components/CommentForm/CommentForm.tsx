@@ -1,14 +1,11 @@
+import useUserSWR from '@hooks/swr/useUserSWR';
+import useComment from '@hooks/useComment';
+import optimizeImage from '@lib/optimizeImage';
 import { useRouter } from 'next/router';
-import React, { useCallback, useEffect, VFC } from 'react';
+import { FC, useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-// import { useParams } from 'react-router-dom';
-// import { userThumbnail } from '../../assets/images';
-import useUserSWR from '../../hooks/swr/useUserSWR';
-import useComment from '../../hooks/useComment';
-import optimizeImage from '../../lib/optimizeImage';
 
-// eslint-disable-next-line no-undef
-const CommentForm: VFC = () => {
+const CommentForm: FC = () => {
   const {
     register,
     handleSubmit,
