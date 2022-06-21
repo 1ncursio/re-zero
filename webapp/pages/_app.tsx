@@ -1,11 +1,12 @@
 import React from 'react';
+import '../styles/globals.css';
+import type { AppProps } from 'next/app';
 import { SWRConfig } from 'swr';
 import AppLayout from '../components/AppLayout';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
-import '../styles/globals.css';
 
-const MyApp = ({ Component, pageProps }) => {
+const MyApp = ({ Component, pageProps }: AppProps) => {
   return (
     <SWRConfig
       value={{
@@ -19,14 +20,6 @@ const MyApp = ({ Component, pageProps }) => {
           <Header />
         </AppLayout.Head>
         <AppLayout.Main>
-          {/* <Switch>
-            <Route exact path="/">
-              <Redirect to="/reversi" />
-            </Route>
-            <Route exact path="/community/:postId">
-              <CommunityPost />
-            </Route>
-          </Switch> */}
           <Component {...pageProps} />
         </AppLayout.Main>
         <AppLayout.Footer>

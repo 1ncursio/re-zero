@@ -1,4 +1,4 @@
-import useStore from '../../../store/useStore';
+import useStore from '@store/useStore';
 import { CELL_COUNT, CELL_SIZE, FRAME_SIZE } from '../othelloConfig';
 import CanvasObject from './CanvasObject';
 import Reversi from './Reversi';

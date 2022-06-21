@@ -17,7 +17,7 @@ const Button = ({ icon, text, onClick, className = '', iconClassName = '' }: But
       className={`rounded-full border-2 border-gray-200 shadow-md ${className} flex justify-center items-center`}
     >
       {/* {icon && <Icon name={icon} className={iconClassName} />} */}
-      {text}
+      {text ?? ''}
     </button>
   );
 };

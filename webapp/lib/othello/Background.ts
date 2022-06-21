@@ -1,4 +1,4 @@
-import useStore from '../../../store/useStore';
+import useStore from '@store/useStore';
 import {
   BACKGROUND_CANVAS_SIZE,
   CELL_COUNT,

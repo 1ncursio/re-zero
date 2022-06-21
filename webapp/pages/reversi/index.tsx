@@ -24,15 +24,15 @@ const OthelloMain = () => {
             </a>
           </Link>
 
-          {/* <Link to="/reversi/pvp"> */}
           <button type="button" onClick={openModal} className="opacity-30 cursor-not-allowed">
             <div className="flex flex-col justify-center items-center gap-2">
-              <Button
+              {/* <Button
                 icon="pvp"
                 onClick={() => {}}
                 className="w-32 h-32 cursor-not-allowed"
                 iconClassName="w-full h-full"
-              />
+              /> */}
+              버튼
               <span>PVP</span>
             </div>
           </button>

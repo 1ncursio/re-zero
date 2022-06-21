@@ -31,7 +31,6 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "preserve",
-    "jsxImportSource": "react",
     "incremental": true,
     "downlevelIteration": true
   },
