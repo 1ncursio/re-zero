@@ -1,6 +1,8 @@
 import useBoolean from '@hooks/useBoolean';
 import Link from 'next/link';
 import Button from '@components/Button';
+import type { GetStaticProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 // import StyledModal from '@components/StyledModal';
 
 const OthelloMain = () => {
@@ -14,7 +16,7 @@ const OthelloMain = () => {
           <p className="text-lg text-blueGray-500">실시간으로 리버시 게임을 즐겨보세요!</p>
         </div>
         <div className="my-28 flex gap-16 justify-center text-lg">
-          <Link href="/reversi/alphazero">
+          <Link href="/play/computer">
             <a>
               <div className="flex flex-col justify-center items-center gap-2">
                 <Button icon="ai" onClick={() => {}} className="w-32 h-32" iconClassName="w-2/3 h-2/3" />
@@ -50,6 +52,16 @@ const OthelloMain = () => {
       </StyledModal> */}
     </>
   );
+};
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  const initialLocale = locale || 'ko';
+
+  return {
+    props: {
+      ...(await serverSideTranslations(initialLocale, ['common', 'navbar'])),
+    },
+  };
 };
 
 export default OthelloMain;

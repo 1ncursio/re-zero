@@ -14,6 +14,8 @@ import updatePost from '@lib/api/posts/updatePost';
 import optimizeImage from '@lib/optimizeImage';
 import relativeCreatedAt from '@lib/relativeCreatedAt';
 import { Editor } from '@tinymce/tinymce-react';
+import { GetStaticProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useCallback, useRef } from 'react';
@@ -232,5 +234,15 @@ const CommunityPost = () => {
 //     margin-inline-end: 0px;
 //   }
 // `;
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  const initialLocale = locale || 'ko';
+
+  return {
+    props: {
+      ...(await serverSideTranslations(initialLocale, ['common'])),
+    },
+  };
+};
 
 export default CommunityPost;

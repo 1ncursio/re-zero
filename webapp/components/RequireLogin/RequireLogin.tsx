@@ -1,13 +1,17 @@
-import Image from 'next/image';
+import { AspectRatio, Box, Center, Group, Image, Stack, Text } from '@mantine/core';
+// import Image from 'next/image';
 import { FC } from 'react';
 
 const RequireLogIn: FC = () => {
   return (
-    <div className="flex flex-col items-center gap-4 mt-24 md:mt-16">
-      {/* <img src={undrawLogin} alt="" className="w-[36rem] md:w-96" /> */}
-      <Image src="/assets/images/undraw_login.svg" width="100%" height="100%" alt="require-login" />
-      <p className="text-blueGray-600 text-lg md:text-base">로그인 후 이용해주세요.</p>
-    </div>
+    <Box sx={{ textAlign: 'center', marginTop: 180 }}>
+      <AspectRatio ratio={870 / 520} sx={{ maxWidth: 600 }} mx="auto" mb="xl">
+        <Image src="/assets/images/undraw_login.svg" alt="require-login" />
+      </AspectRatio>
+      <Text size="lg" align="center">
+        로그인 후 이용해주세요.
+      </Text>
+    </Box>
   );
 };
 

@@ -6,7 +6,6 @@ import StyledModal from '../StyledModal';
 
 const LogInButton = () => {
   const [isOpen, openModal, closeModal] = useBoolean(false);
-  const { REACT_APP_AUTH_URL } = process.env;
 
   return (
     <>
@@ -28,7 +27,7 @@ const LogInButton = () => {
             <h2 className="text-xl text-gray-600 font-medium">간편 로그인</h2>
             <div className="w-1/2 flex justify-around items-center">
               <a
-                href={REACT_APP_AUTH_URL}
+                href={process.env.NEXT_PUBLIC_AUTH_URL}
                 className="rounded-full border-2 border-blueGray-200 flex justify-center items-center"
               >
                 {/* <Icon name="google" className="w-12 h-12" /> */}

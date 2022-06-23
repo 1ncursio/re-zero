@@ -42,7 +42,9 @@ const Pagination: FC<PaginationProps> = ({ links, referrerUrl }) => {
                   ? 'px-3 py-2 text-xs border border-white bg-emerald-400 text-white'
                   : 'px-3 py-2 text-xs hover:border-emerald-400 border border-white hover:text-emerald-400'
               }
-            />
+            >
+              <a></a>
+            </Link>
           )}
         </div>
       ))}

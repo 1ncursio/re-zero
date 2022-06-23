@@ -1,13 +1,16 @@
-import Head from 'next/head';
-import { useRouter } from 'next/router';
-import { useCallback, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
 import Pagination from '@components/Pagination';
 import SearchPostList from '@components/SearchPostList';
 import useSearchPostsSWR from '@hooks/swr/useSearchPostsSWR';
 import useBoolean from '@hooks/useBoolean';
+import { GetStaticProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
+import { useCallback, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { Search } from 'tabler-icons-react';
 
-const Search = () => {
+const SearchPostsPage = () => {
   const router = useRouter();
   const { page, q } = router.query;
   // const page = Number(query.get('page')) || 1;
@@ -57,8 +60,7 @@ const Search = () => {
             : 'text-blueGray-600 flex items-center border-b border-blueGray-200 bg-white p-2 w-full justify-center'
         }
       >
-        {/* <Icon name="outlinedSearch" className="w-6 h-6 mr-2" /> */}
-        outlinedSearch 아이콘
+        <Search />
         <input
           type="search"
           {...register('q', { required: true })}
@@ -93,4 +95,14 @@ const Search = () => {
 //   }
 // `;
 
-export default Search;
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  const initialLocale = locale || 'ko';
+
+  return {
+    props: {
+      ...(await serverSideTranslations(initialLocale, ['common'])),
+    },
+  };
+};
+
+export default SearchPostsPage;

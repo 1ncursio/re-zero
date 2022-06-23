@@ -22,6 +22,8 @@ import { CELL_COUNT, CELL_SIZE, TOTAL_CELL_COUNT } from '@lib/othelloConfig';
 import sleep from '@lib/utils/sleep';
 import useStore from '@store/useStore';
 import theme, { ThemeName } from '../../../config/theme';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { GetStaticProps } from 'next';
 
 const OthelloAlphaZero = () => {
   const { changeTheme } = useStore((state) => state.config);
@@ -399,6 +401,16 @@ const OthelloAlphaZero = () => {
       </div>
     </div>
   );
+};
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  const initialLocale = locale || 'ko';
+
+  return {
+    props: {
+      ...(await serverSideTranslations(initialLocale, ['common', 'navbar'])),
+    },
+  };
 };
 
 export default OthelloAlphaZero;

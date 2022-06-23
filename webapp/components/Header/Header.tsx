@@ -1,7 +1,10 @@
 import useUserSWR from '@hooks/swr/useUserSWR';
 import useToggle from '@hooks/useToggle';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useEffect, useRef } from 'react';
+import { Search } from 'tabler-icons-react';
+import { AiOutlineSearch } from 'react-icons/ai';
 import HeaderUserIcon from '../HeaderUserIcon';
 import HeaderUserMenu from '../HeaderUserMenu';
 import LogInButton from '../LogInButton';
@@ -31,36 +34,23 @@ const Header = () => {
         <div>
           <Link href="/">
             <a>
-              {/* <Icon name="rezero" /> */}
-              리제로 아이콘
+              <Image src="/assets/svg/rezero_logo.svg" alt="rezero-logo" width="100%" height="100%" />
             </a>
           </Link>
         </div>
         <div className="flex gap-8">
-          <Link
-            href="/reversi"
-            className="text-blueGray-400 hover:text-blueGray-600 transition link-underline"
-          >
-            <a>리버시 게임</a>
+          <Link href="/play">
+            <a className="text-blueGray-400 hover:text-blueGray-600 transition link-underline">리버시 게임</a>
           </Link>
-          <Link
-            href="/community"
-            className="text-blueGray-400 hover:text-blueGray-600 transition link-underline"
-          >
-            <a>커뮤니티</a>
+          <Link href="/community">
+            <a className="text-blueGray-400 hover:text-blueGray-600 transition link-underline">커뮤니티</a>
           </Link>
         </div>
       </div>
       <div className="flex items-center">
-        <Link href="/search" className="mr-6">
-          <a>
-            {/* <Icon
-              name="outlinedSearch"
-              className="w-5 h-5 text-blueGray-600"
-              fill="none"
-              stroke="currentColor"
-            /> */}
-            검색 아이콘
+        <Link href="/search">
+          <a className="mr-6">
+            <Search size={24} className="text-blueGray-600" />
           </a>
         </Link>
         {userData && !isLoadingUserData ? (

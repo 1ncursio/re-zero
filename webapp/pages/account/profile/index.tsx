@@ -4,6 +4,8 @@ import updateUserProfile from '@lib/api/users/updateUserProfile';
 import optimizeImage from '@lib/optimizeImage';
 import { User } from '@typings/user';
 import produce from 'immer';
+import { GetStaticProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
 import { useCallback, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
@@ -120,6 +122,16 @@ const AccountProfile = () => {
       </div>
     </div>
   );
+};
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  const initialLocale = locale || 'ko';
+
+  return {
+    props: {
+      ...(await serverSideTranslations(initialLocale, ['common'])),
+    },
+  };
 };
 
 export default AccountProfile;

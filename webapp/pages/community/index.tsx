@@ -10,12 +10,15 @@ import useInput from '@hooks/useInput';
 import uploadImage from '@lib/api/comments/uploadImage';
 import createPost from '@lib/api/posts/createPost';
 import { Editor } from '@tinymce/tinymce-react';
+import { GetStaticProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 const Community = () => {
   const [title, onChangeTitle] = useInput('');
+  const [currentUrl, setCurrentUrl] = useState('');
   const [isOpen, openModal, closeModal] = useBoolean(false);
   const router = useRouter();
   const { page } = router.query;
@@ -59,7 +62,9 @@ const Community = () => {
     }
   }, [router, title, editorRef]);
 
-  const currentUrl = new URL((window as Window).location.href);
+  useEffect(() => {
+    setCurrentUrl(new URL(window.location.href));
+  }, []);
 
   if (!userData && !isLoadingUserData) {
     return <RequireLogIn />;
@@ -104,6 +109,16 @@ const Community = () => {
       <Pagination links={linksData} referrerUrl={currentUrl} />
     </div>
   );
+};
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  const initialLocale = locale || 'ko';
+
+  return {
+    props: {
+      ...(await serverSideTranslations(initialLocale, ['common'])),
+    },
+  };
 };
 
 export default Community;

@@ -1,3 +1,5 @@
+import { GetStaticProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
 
 const NewCommunityPost = () => {
@@ -9,6 +11,16 @@ const NewCommunityPost = () => {
       NewCommunityPost
     </div>
   );
+};
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  const initialLocale = locale || 'ko';
+
+  return {
+    props: {
+      ...(await serverSideTranslations(initialLocale, ['common'])),
+    },
+  };
 };
 
 export default NewCommunityPost;

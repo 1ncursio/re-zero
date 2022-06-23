@@ -1,6 +1,8 @@
 import PvpMatchingButton from '@components/PvpMatchingButton';
 import PvpRoomList from '@components/PvpRoomList';
 import PvpUserInfoCard from '@components/PvpUserInfoCard';
+import { GetStaticProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const PvpWaitingRoom = () => {
   return (
@@ -14,6 +16,16 @@ const PvpWaitingRoom = () => {
       </div>
     </div>
   );
+};
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  const initialLocale = locale || 'ko';
+
+  return {
+    props: {
+      ...(await serverSideTranslations(initialLocale, ['common'])),
+    },
+  };
 };
 
 export default PvpWaitingRoom;

@@ -4,6 +4,9 @@ export type AppLayoutProps = {
   children: React.ReactNode;
 };
 
+/**
+ * @deprecated use `_app.tsx` instead
+ */
 export default function AppLayout({ children }: AppLayoutProps): ReactElement {
   return <div className="w-full min-h-full flex flex-col">{children}</div>;
 }

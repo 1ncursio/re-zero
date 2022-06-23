@@ -12,17 +12,15 @@ const HeaderUserIcon: FC<HeaderUserIconProps> = ({ onClick }) => {
 
   return (
     <button onClick={onClick} className="cursor-pointer rounded-full" type="button">
-      {/* <img
-        src={optimizeImage(userData?.image_url ?? userThumbnail)}
-        alt="profile"
-        className="rounded-full w-10 h-10 object-cover"
-      /> */}
-      <Image
-        src={optimizeImage(userData?.image_url ?? '/assets/images/user-thumbnail.png')}
-        alt="profile"
-        className="rounded-full w-10 h-10"
-        objectFit="cover"
-      />
+      <div className="w-10 h-10 relative">
+        <Image
+          src={optimizeImage(userData?.image_url ?? '/assets/images/user-thumbnail.png')}
+          alt="profile"
+          layout="fill"
+          objectFit="cover"
+          className="rounded-full"
+        />
+      </div>
     </button>
   );
 };

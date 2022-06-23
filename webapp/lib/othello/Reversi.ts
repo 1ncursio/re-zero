@@ -1,5 +1,4 @@
 import { CELL_COUNT, TOTAL_CELL_COUNT } from '../othelloConfig';
-import sleep from '../utils/sleep';
 
 export default class Reversi {
   private _dxy: number[][];
