@@ -18,15 +18,34 @@ import Indicator from '@lib/othello/Indicator';
 import LastAction from '@lib/othello/LastAction';
 import Piece from '@lib/othello/Piece';
 import Reversi from '@lib/othello/Reversi';
-import { CELL_COUNT, CELL_SIZE, TOTAL_CELL_COUNT } from '@lib/othelloConfig';
+import {
+  BACKGROUND_CANVAS_SIZE,
+  CELL_COUNT,
+  CELL_SIZE,
+  GAME_CANVAS_SIZE,
+  TOTAL_CELL_COUNT,
+} from '@lib/othelloConfig';
 import sleep from '@lib/utils/sleep';
+import { ActionIcon, Button, Checkbox, Group, Modal, Select, Stack, Text } from '@mantine/core';
 import useStore from '@store/useStore';
-import theme, { ThemeName } from '../../../config/theme';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { GetStaticProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { Check, Settings } from 'tabler-icons-react';
+import theme from '../../../config/theme';
+import { showNotification } from '@mantine/notifications';
+import { useTranslation } from 'next-i18next';
 
 const OthelloAlphaZero = () => {
+  // i18n
+  const { t } = useTranslation(['common', 'navbar']);
+
+  // modal 내부 관련
+  const themeNames = Object.keys(theme);
+  const [selectedTheme, setSelectedTheme] = useState(themeNames[0]);
+  const [checkedSoundOn, setCheckedSoundOn] = useState(true);
+  const [openedSettingModal, setOpenedSettingModal] = useState(false);
   const { changeTheme } = useStore((state) => state.config);
+
   const { addHistory, clearHistory } = useStore((state) => state.reversi);
   const { nextAction } = useModel();
 
@@ -51,6 +70,15 @@ const OthelloAlphaZero = () => {
   const { mutate: mutateAIHistories } = useAIHistoriesSWR();
   const { mutate: mutateUsersAIHistories } = useUsersAIHistoriesSWR();
 
+  const onChangeTheme = useCallback(
+    (value: string) => {
+      if (!bgCanvas.current || !gameCanvas.current) return;
+
+      changeTheme(value, bgCanvas.current, gameCanvas.current);
+    },
+    [changeTheme],
+  );
+
   function render() {
     if (!reversiRef.current || !bgCanvas.current || !gameCanvas.current) return;
 
@@ -60,15 +88,6 @@ const OthelloAlphaZero = () => {
 
     requestRef.current = requestAnimationFrame(render);
   }
-
-  const onChangeTheme = useCallback(
-    (e) => {
-      if (!bgCanvas.current || !gameCanvas.current) return;
-
-      changeTheme(e.target.value as ThemeName, bgCanvas.current, gameCanvas.current);
-    },
-    [bgCanvas.current, gameCanvas.current],
-  );
 
   const setPiecesCounts = useCallback(
     (reversed: boolean) => {
@@ -308,30 +327,29 @@ const OthelloAlphaZero = () => {
   }
 
   return (
-    <div className="lg:w-[calc(768px-2rem)] w-md mx-auto md:w-full md:px-4 flex flex-col gap-4 items-center">
+    <div className="flex flex-col gap-4 items-center">
       <Head>
         <title>AI 대전 - Re:zero</title>
       </Head>
       <div className="flex gap-4">
         <AIHistory />
         <div className="flex flex-col gap-2">
+          <ActionIcon variant="default" onClick={() => setOpenedSettingModal(true)}>
+            <Settings size={18} />
+          </ActionIcon>
           <div className="flex justify-between px-2">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-[#404040] border border-blueGray-600 rounded-full" />
-              <span className="text-sm text-blueGray-600">{userData?.name ?? 'GUEST'}</span>
-              <span className="text-lg text-blueGray-600 font-bold">
-                {coloredPiecesCount(piecesCount, enemyPiecesCount)}
-              </span>
+              <Text size="sm">{userData?.name ?? t('guest')}</Text>
+              <Text weight={500}>{coloredPiecesCount(piecesCount, enemyPiecesCount)}</Text>
             </div>
             <div className="flex items-center gap-2 flex-row-reverse">
               <div className="w-8 h-8 bg-white border border-blueGray-600 rounded-full" />
-              <span className="text-sm text-blueGray-600">알파제로</span>
-              <span className="text-lg text-blueGray-600 font-bold">
-                {coloredPiecesCount(enemyPiecesCount, piecesCount)}
-              </span>
+              <Text size="sm">알파제로</Text>
+              <Text weight={500}>{coloredPiecesCount(enemyPiecesCount, piecesCount)}</Text>
             </div>
           </div>
-          <div className="relative w-[calc(480px+32px)] h-[calc(480px+32px)]">
+          <div className="relative" style={{ width: BACKGROUND_CANVAS_SIZE, height: BACKGROUND_CANVAS_SIZE }}>
             {isCalculating && (
               <div className="absolute text-white top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 z-30">
                 {/* <Icon
@@ -371,34 +389,55 @@ const OthelloAlphaZero = () => {
               onMouseUp={onMouseUp}
               onMouseMove={onMouseMove}
               onMouseLeave={onMouseLeave}
-              className="w-[480px] h-[480px] absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 z-20"
+              style={{ width: GAME_CANVAS_SIZE, height: GAME_CANVAS_SIZE }}
+              className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 z-20"
             />
           </div>
         </div>
-        <HistoryTable />
+        <HistoryTable onRestart={onRestart} isCalculating={isCalculating} />
       </div>
-      <div>
-        <div>
-          <span>테마 변경</span>
-          <select onChange={onChangeTheme}>
-            {Object.keys(theme).map((key) => (
-              <option key={key} value={key}>
-                {key}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <button
-            type="button"
-            onClick={onRestart}
-            disabled={isCalculating}
-            className="bg-white border border-blueGray-500 hover:border-emerald-500 text-blueGray-500 hover:text-emerald-500 py-1 px-4"
-          >
-            다시 시작
-          </button>
-        </div>
-      </div>
+      <Modal
+        opened={openedSettingModal}
+        centered
+        onClose={() => setOpenedSettingModal(false)}
+        title="게임 설정"
+      >
+        <Stack>
+          <Select
+            label="테마"
+            value={selectedTheme}
+            data={themeNames}
+            onChange={(value) => {
+              if (!value) return setSelectedTheme(themeNames[0]);
+              setSelectedTheme(value);
+              onChangeTheme(value);
+            }}
+          />
+          <Checkbox
+            label="소리 재생"
+            checked={checkedSoundOn}
+            onChange={(e) => setCheckedSoundOn(e.currentTarget.checked)}
+          />
+          <Group position="right">
+            <Button variant="default" onClick={() => setOpenedSettingModal(false)}>
+              취소
+            </Button>
+            <Button
+              onClick={() => {
+                setOpenedSettingModal(false);
+                showNotification({
+                  title: '설정 저장 완료',
+                  message: '설정이 저장되었습니다.',
+                  color: 'blue',
+                  icon: <Check size={16} />,
+                });
+              }}
+            >
+              저장
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
     </div>
   );
 };

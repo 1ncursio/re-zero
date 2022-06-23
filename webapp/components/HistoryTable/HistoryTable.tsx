@@ -1,10 +1,17 @@
+import { Button, Stack } from '@mantine/core';
 import useStore from '@store/useStore';
+import { Refresh } from 'tabler-icons-react';
 
-const HistoryTable = () => {
+type HistoryTableProps = {
+  onRestart: () => void;
+  isCalculating: boolean;
+};
+
+export default function HistoryTable({ onRestart, isCalculating }: HistoryTableProps) {
   const { histories, convertActionToNotation } = useStore((state) => state.reversi);
+
   return (
-    <section className="flex flex-col gap-2 w-32">
-      <div className="inline-flex justify-center items-center">MOVES</div>
+    <Stack>
       <div>
         {histories.map((history) => (
           <div
@@ -15,8 +22,9 @@ const HistoryTable = () => {
           </div>
         ))}
       </div>
-    </section>
+      <Button variant="outline" leftIcon={<Refresh size={16} />} onClick={onRestart} disabled={isCalculating}>
+        다시 시작
+      </Button>
+    </Stack>
   );
-};
-
-export default HistoryTable;
+}

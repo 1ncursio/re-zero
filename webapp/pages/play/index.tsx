@@ -1,41 +1,47 @@
-import useBoolean from '@hooks/useBoolean';
-import Link from 'next/link';
-import Button from '@components/Button';
+import AI from '@components/AI';
+import { Button, Stack, Text, ThemeIcon, Title } from '@mantine/core';
+import { useModals } from '@mantine/modals';
 import type { GetStaticProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import Link from 'next/link';
+import { Cpu, Network } from 'tabler-icons-react';
 // import StyledModal from '@components/StyledModal';
 
-const OthelloMain = () => {
-  const [isOpen, openModal, closeModal] = useBoolean(false);
+const PlayPage = () => {
+  const modals = useModals();
+
+  const openReadyModal = () => {
+    modals.openModal({
+      title: '준비 중',
+      children: <Text size="sm">준비 중입니다.</Text>,
+    });
+  };
 
   return (
     <>
-      <div className="lg:w-[calc(768px-2rem)] w-md mx-auto md:w-full md:px-4">
+      <div>
         <div className="mt-10 text-center">
-          <h1 className="text-4xl font-bold text-blueGray-600 mb-4">리버시 게임</h1>
-          <p className="text-lg text-blueGray-500">실시간으로 리버시 게임을 즐겨보세요!</p>
+          <Title order={1}>리버시 플레이</Title>
         </div>
         <div className="my-28 flex gap-16 justify-center text-lg">
           <Link href="/play/computer">
             <a>
-              <div className="flex flex-col justify-center items-center gap-2">
-                <Button icon="ai" onClick={() => {}} className="w-32 h-32" iconClassName="w-2/3 h-2/3" />
-                <span>AI 대전</span>
-              </div>
+              <Stack align="center">
+                <ThemeIcon variant="outline" size="xl" radius="xl">
+                  <Cpu />
+                </ThemeIcon>
+                <Text>컴퓨터</Text>
+              </Stack>
             </a>
           </Link>
 
-          <button type="button" onClick={openModal} className="opacity-30 cursor-not-allowed">
-            <div className="flex flex-col justify-center items-center gap-2">
-              {/* <Button
-                icon="pvp"
-                onClick={() => {}}
-                className="w-32 h-32 cursor-not-allowed"
-                iconClassName="w-full h-full"
-              /> */}
-              버튼
-              <span>PVP</span>
-            </div>
+          <button type="button" onClick={openReadyModal} className="opacity-30 cursor-not-allowed">
+            <Stack align="center">
+              <ThemeIcon variant="outline" size="xl" radius="xl">
+                <Network />
+              </ThemeIcon>
+              <Text>온라인</Text>
+            </Stack>
           </button>
         </div>
       </div>
@@ -64,4 +70,4 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
   };
 };
 
-export default OthelloMain;
+export default PlayPage;

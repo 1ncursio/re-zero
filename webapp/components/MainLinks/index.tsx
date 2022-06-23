@@ -2,7 +2,7 @@ import { Group, Text, ThemeIcon, UnstyledButton } from '@mantine/core';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import React, { useMemo } from 'react';
-import { DeviceGamepad2, Users } from 'tabler-icons-react';
+import { DeviceGamepad2, History, Users } from 'tabler-icons-react';
 
 interface MainLinkProps {
   icon: React.ReactNode;
@@ -48,6 +48,7 @@ export function MainLinks() {
     () => [
       { icon: <DeviceGamepad2 size={16} />, color: 'blue', label: t('play'), href: '/play' },
       { icon: <Users size={16} />, color: 'teal', label: t('community'), href: '/community' },
+      { icon: <History size={16} />, color: 'violet', label: t('my-game-history'), href: '/history' },
       //   { icon: <Messages size={16} />, color: 'violet', label: 'Discussions' },
       //   { icon: <Database size={16} />, color: 'grape', label: 'Databases' },
     ],

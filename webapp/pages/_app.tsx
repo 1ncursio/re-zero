@@ -13,6 +13,8 @@ import {
   MediaQuery,
   useMantineTheme,
 } from '@mantine/core';
+import { ModalsProvider } from '@mantine/modals';
+import { NotificationsProvider } from '@mantine/notifications';
 import { getCookie, setCookies } from 'cookies-next';
 import type { GetServerSidePropsContext } from 'next';
 import { appWithTranslation } from 'next-i18next';
@@ -47,47 +49,60 @@ const App = (props: AppProps & { colorScheme: ColorScheme }) => {
       }}
     >
       <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
-        <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
-          <AppShell
-            padding="md"
-            navbarOffsetBreakpoint="sm"
-            fixed
-            navbar={<AppNavBar hidden={!opened} />}
-            header={
-              <Header height={60} p="md">
-                <Group position="apart" sx={{ height: '100%' }}>
-                  <Group sx={{ height: '100%' }}>
-                    <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
-                      <Burger
-                        opened={opened}
-                        onClick={() => setOpened((o) => !o)}
-                        size="sm"
-                        color={theme.colors.gray[6]}
-                        mr="lg"
-                      />
-                    </MediaQuery>
-                    <Link href="/play">
-                      <a>
-                        <Logo colorScheme={colorScheme} />
-                      </a>
-                    </Link>
-                  </Group>
-                  <Group sx={{ height: '100%' }}>
-                    <ActionIcon variant="default" onClick={() => toggleColorScheme()}>
-                      {colorScheme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
-                    </ActionIcon>
-                  </Group>
-                </Group>
-              </Header>
-            }
-            styles={(theme) => ({
-              main: {
-                backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0],
-              },
-            })}
-          >
-            <Component {...pageProps} />
-          </AppShell>
+        <MantineProvider
+          theme={{
+            colorScheme,
+            primaryColor: 'green',
+            fontFamily: "'Noto Sans KR', 'Noto Sans JP', -apple-system, sans-serif",
+          }}
+          withGlobalStyles
+          withNormalizeCSS
+        >
+          <NotificationsProvider>
+            <ModalsProvider>
+              <AppShell
+                padding="md"
+                navbarOffsetBreakpoint="sm"
+                fixed
+                navbar={<AppNavBar hidden={!opened} />}
+                header={
+                  <Header height={60} p="md">
+                    <Group position="apart" sx={{ height: '100%' }}>
+                      <Group sx={{ height: '100%' }}>
+                        <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
+                          <Burger
+                            opened={opened}
+                            onClick={() => setOpened((o) => !o)}
+                            size="sm"
+                            color={theme.colors.gray[6]}
+                            mr="lg"
+                          />
+                        </MediaQuery>
+                        <Link href="/play">
+                          <a>
+                            <Logo colorScheme={colorScheme} />
+                          </a>
+                        </Link>
+                      </Group>
+                      <Group sx={{ height: '100%' }}>
+                        <ActionIcon variant="default" onClick={() => toggleColorScheme()}>
+                          {colorScheme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+                        </ActionIcon>
+                      </Group>
+                    </Group>
+                  </Header>
+                }
+                styles={(theme) => ({
+                  main: {
+                    backgroundColor:
+                      theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0],
+                  },
+                })}
+              >
+                <Component {...pageProps} />
+              </AppShell>
+            </ModalsProvider>
+          </NotificationsProvider>
         </MantineProvider>
       </ColorSchemeProvider>
       <Global

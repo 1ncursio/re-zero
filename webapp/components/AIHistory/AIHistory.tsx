@@ -4,6 +4,7 @@ import { FC } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import useAIHistoriesSWR from '@hooks/swr/useAIHistoriesSWR';
 import useUsersAIHistoriesSWR from '@hooks/swr/useUsersAIHistoriesSWR';
+import { Text } from '@mantine/core';
 
 Chart.register(ArcElement, Tooltip);
 
@@ -15,10 +16,8 @@ const AIHistory: FC = () => {
     <div className="flex flex-col justify-evenly">
       {aiHistoriesData && (
         <div className="flex flex-col items-center w-48 gap-4">
-          <span className="text-blueGray-600">
-            <span>알파제로의 총 전적</span>
-          </span>
-          <span className="text-sm text-blueGray-600">{`${aiHistoriesData.histories.length}전 ${aiHistoriesData.count.white_win}승 ${aiHistoriesData.count.black_win}패 ${aiHistoriesData.count.draw}무`}</span>
+          <Text>알파제로의 총 전적</Text>
+          <Text size="sm">{`${aiHistoriesData.histories.length}전 ${aiHistoriesData.count.white_win}승 ${aiHistoriesData.count.black_win}패 ${aiHistoriesData.count.draw}무`}</Text>
           <div className="relative">
             <span className="absolute top-1/2 left-1/2 -translate-x-1/2  -translate-y-1/2 text-lg text-sky-500 cursor-default">{`${aiHistoriesData.white_win_rate}%`}</span>
             <Doughnut
@@ -55,10 +54,8 @@ const AIHistory: FC = () => {
 
       {usersAIHistoriesData && (
         <div className="flex flex-col items-center w-48 gap-4">
-          <span className="text-blueGray-600">
-            <span>나의 전적</span>
-          </span>
-          <span className="text-sm text-blueGray-600">{`${usersAIHistoriesData.histories.length}전 ${usersAIHistoriesData.count.black_win}승 ${usersAIHistoriesData.count.white_win}패 ${usersAIHistoriesData.count.draw}무`}</span>
+          <Text>나의 전적</Text>
+          <Text size="sm">{`${usersAIHistoriesData.histories.length}전 ${usersAIHistoriesData.count.black_win}승 ${usersAIHistoriesData.count.white_win}패 ${usersAIHistoriesData.count.draw}무`}</Text>
           <div className="relative">
             <span className="absolute top-1/2 left-1/2 -translate-x-1/2  -translate-y-1/2 text-lg text-sky-500 cursor-default">{`${usersAIHistoriesData.black_win_rate}%`}</span>
             <Doughnut
