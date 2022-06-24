@@ -77,20 +77,8 @@ export default class Piece extends CanvasObject {
       useStore.getState().config.theme.colors;
     const { piece } = useStore.getState().config.theme.size;
 
-    // this.blackPieceImage.src = blackPieceImageSrc;
-    // this.whitePieceImage.src = whitePieceImageSrc;
-    fetch('/assets/images/theme/default/black_piece.png')
-      .then((res) => res.blob())
-      .then((blob) => {
-        this.blackPieceImage.src = URL.createObjectURL(blob);
-      })
-      .catch((err) => console.error(err));
-    fetch('/assets/images/theme/default/white_piece.png')
-      .then((res) => res.blob())
-      .then((blob) => {
-        this.whitePieceImage.src = URL.createObjectURL(blob);
-      })
-      .catch((err) => console.error(err));
+    this.blackPieceImage.src = blackPieceImageSrc;
+    this.whitePieceImage.src = whitePieceImageSrc;
 
     this.pieceShadowColor = pieceShadowColor;
     this._radius = Math.floor(CELL_SIZE * 0.5 * piece);

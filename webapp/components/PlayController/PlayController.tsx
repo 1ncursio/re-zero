@@ -1,14 +1,15 @@
-import { Button, Stack } from '@mantine/core';
+import { Button, Stack, Text } from '@mantine/core';
+import convertActionToNotation from '@store/reversi/convertActionToNotation';
 import useStore from '@store/useStore';
 import { Refresh } from 'tabler-icons-react';
 
-type HistoryTableProps = {
+type PlayControllerProps = {
   onRestart: () => void;
   isCalculating: boolean;
 };
 
-export default function HistoryTable({ onRestart, isCalculating }: HistoryTableProps) {
-  const { histories, convertActionToNotation } = useStore((state) => state.reversi);
+export default function PlayController({ onRestart, isCalculating }: PlayControllerProps) {
+  const { histories } = useStore((state) => state.reversi);
 
   return (
     <Stack>
@@ -16,9 +17,9 @@ export default function HistoryTable({ onRestart, isCalculating }: HistoryTableP
         {histories.map((history) => (
           <div
             key={history.action}
-            className="text-sm text-blueGray-600 border border-black inline-flex justify-center items-center w-1/2"
+            className="border border-black inline-flex justify-center items-center w-1/2"
           >
-            {convertActionToNotation(history.action)}
+            <Text size="sm">{convertActionToNotation(history.action)}</Text>
           </div>
         ))}
       </div>

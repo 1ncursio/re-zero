@@ -48,7 +48,7 @@ export function MainLinks() {
     () => [
       { icon: <DeviceGamepad2 size={16} />, color: 'blue', label: t('play'), href: '/play' },
       { icon: <Users size={16} />, color: 'teal', label: t('community'), href: '/community' },
-      { icon: <History size={16} />, color: 'violet', label: t('my-game-history'), href: '/history' },
+      { icon: <History size={16} />, color: 'violet', label: t('my-games'), href: '/games' },
       //   { icon: <Messages size={16} />, color: 'violet', label: 'Discussions' },
       //   { icon: <Database size={16} />, color: 'grape', label: 'Databases' },
     ],

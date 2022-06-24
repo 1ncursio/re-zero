@@ -1,10 +1,3 @@
-// import seok98BlackPieceImage from './seok98/black_piece.png';
-// import seok98WhitePieceImage from './seok98/white_piece.png';
-// import defaultBlackPieceImage from './default/black_piece.png';
-// import defaultWhitePieceImage from './default/white_piece.png';
-// import pandaBlackPieceImage from './panda/black_piece.png';
-// import pandaWhitePieceImage from './panda/white_piece.png';
-
 const theme: Themes = {
   default: {
     colors: {
@@ -13,8 +6,8 @@ const theme: Themes = {
       gridColor: '#00000000',
       borderColor: '#4B5F45',
       coordinateTextColor: '#88B179',
-      blackPieceImageSrc: 'defaultBlackPieceImage',
-      whitePieceImageSrc: 'defaultWhitePieceImage',
+      blackPieceImageSrc: require('@theme/default/black_piece.png'),
+      whitePieceImageSrc: require('@theme/default/white_piece.png'),
       indicatorColor: 'rgba(255, 255, 255, 0.3)',
       indicatorHoverColor: 'rgba(0, 0, 0, 0.3)',
       pieceShadowColor: 'rgba(0, 0, 0, 0.3)',
@@ -31,8 +24,8 @@ const theme: Themes = {
       gridColor: '#242424',
       borderColor: '#242424',
       coordinateTextColor: '#ffffff',
-      blackPieceImageSrc: 'pandaBlackPieceImage',
-      whitePieceImageSrc: 'pandaWhitePieceImage',
+      blackPieceImageSrc: require('@theme/panda/black_piece.png'),
+      whitePieceImageSrc: require('@theme/panda/white_piece.png'),
       indicatorColor: 'rgba(255, 255, 255, 0.3)',
       indicatorHoverColor: 'rgba(0, 0, 0, 0.3)',
       pieceShadowColor: 'rgba(0, 0, 0, 0.3)',
@@ -49,8 +42,8 @@ const theme: Themes = {
       gridColor: '#00000000',
       borderColor: '#4B5F45',
       coordinateTextColor: '#88B179',
-      blackPieceImageSrc: 'seok98BlackPieceImage',
-      whitePieceImageSrc: 'seok98WhitePieceImage',
+      blackPieceImageSrc: require('@theme/seok98/white_piece.png'),
+      whitePieceImageSrc: require('@theme/seok98/black_piece.png'),
       indicatorColor: 'rgba(255, 255, 255, 0.3)',
       indicatorHoverColor: 'rgba(0, 0, 0, 0.3)',
       pieceShadowColor: 'rgba(0, 0, 0, 0.3)',
@@ -62,13 +55,11 @@ const theme: Themes = {
   },
 };
 
-export interface Themes {
-  [themeName: string]: Theme;
-}
+export type ThemeName = 'default' | 'panda' | 'seok98';
+
+export type Themes = Record<ThemeName, Theme>;
 
 export type Theme = ThemeColors & ThemeSize;
-
-export type ThemeName = keyof Themes;
 
 export interface ThemeColors {
   colors: {

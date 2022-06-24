@@ -11,6 +11,7 @@
       "@lib/*": ["lib/*"],
       "@hooks/*": ["hooks/*"],
       "@typings/*": ["typings/*"],
+      "@theme/*": ["public/assets/images/theme/*"],
       "~/*": ["*"]
     },
     "target": "es5",

@@ -2,10 +2,7 @@ import { throttle } from 'lodash';
 import Head from 'next/head';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import useSound from 'use-sound';
-// @ts-ignore
-// import blop from '../../assets/audios/blop.mp3';
-import AIHistory from '@components/AIHistory';
-import HistoryTable from '@components/HistoryTable';
+import HistoryTable from '@components/PlayController';
 import RequireLogIn from '@components/RequireLogin/RequireLogin';
 import useAIHistoriesSWR from '@hooks/swr/useAIHistoriesSWR';
 import useUsersAIHistoriesSWR from '@hooks/swr/useUsersAIHistoriesSWR';
@@ -27,15 +24,17 @@ import {
 } from '@lib/othelloConfig';
 import sleep from '@lib/utils/sleep';
 import { ActionIcon, Button, Checkbox, Group, Modal, Select, Stack, Text } from '@mantine/core';
-import useStore from '@store/useStore';
 import { GetStaticProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { Check, Settings } from 'tabler-icons-react';
 import theme from '../../../config/theme';
 import { showNotification } from '@mantine/notifications';
 import { useTranslation } from 'next-i18next';
+import changeTheme from '@store/config/changeTheme';
+import addHistory from '@store/reversi/addHistory';
+import clearHistory from '@store/reversi/clearHistory';
 
-const OthelloAlphaZero = () => {
+export default function PlayComputerPage() {
   // i18n
   const { t } = useTranslation(['common', 'navbar']);
 
@@ -44,14 +43,12 @@ const OthelloAlphaZero = () => {
   const [selectedTheme, setSelectedTheme] = useState(themeNames[0]);
   const [checkedSoundOn, setCheckedSoundOn] = useState(true);
   const [openedSettingModal, setOpenedSettingModal] = useState(false);
-  const { changeTheme } = useStore((state) => state.config);
 
-  const { addHistory, clearHistory } = useStore((state) => state.reversi);
   const { nextAction } = useModel();
 
+  const [play] = useSound('/assets/audios/blop.mp3');
   const [piecesCount, setPiecesCount] = useState<number>(0);
   const [enemyPiecesCount, setEnemyPiecesCount] = useState<number>(0);
-  const [play] = useSound('/assets/audios/blop.mp3');
   const [isDone, setIsDone] = useState<boolean>(false);
   const [isDraw, setIsDraw] = useState<boolean>(false);
   const [isLoss, setIsLoss] = useState<boolean>(false);
@@ -70,14 +67,11 @@ const OthelloAlphaZero = () => {
   const { mutate: mutateAIHistories } = useAIHistoriesSWR();
   const { mutate: mutateUsersAIHistories } = useUsersAIHistoriesSWR();
 
-  const onChangeTheme = useCallback(
-    (value: string) => {
-      if (!bgCanvas.current || !gameCanvas.current) return;
+  const onChangeTheme = useCallback((value: string) => {
+    if (!bgCanvas.current || !gameCanvas.current) return;
 
-      changeTheme(value, bgCanvas.current, gameCanvas.current);
-    },
-    [changeTheme],
-  );
+    changeTheme(value, bgCanvas.current, gameCanvas.current);
+  }, []);
 
   function render() {
     if (!reversiRef.current || !bgCanvas.current || !gameCanvas.current) return;
@@ -110,7 +104,7 @@ const OthelloAlphaZero = () => {
     setIsDraw(false);
     setIsLoss(false);
     clearHistory();
-  }, [reversiRef, setPiecesCount, setEnemyPiecesCount, setIsDone, setIsDraw, setIsLoss, clearHistory]);
+  }, [reversiRef, setPiecesCount, setEnemyPiecesCount, setIsDone, setIsDraw, setIsLoss]);
 
   const onMouseUp = useCallback(
     async (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -146,7 +140,6 @@ const OthelloAlphaZero = () => {
         // 소리 재생
         play();
 
-        // eslint-disable-next-line no-restricted-syntax
         for await (const s of nextReversi.differedFlipQueue.reverse()) {
           await sleep(100);
           console.log({ s });
@@ -154,7 +147,6 @@ const OthelloAlphaZero = () => {
         }
 
         reversiRef.current = nextReversi;
-        // console.log(reversiRef.current.historiesToNotation());
 
         setPiecesCounts(true);
 
@@ -198,7 +190,7 @@ const OthelloAlphaZero = () => {
         const nextDoubleReversi = reversiRef.current.next(next, true);
         addHistory(nextDoubleReversi, next);
         reversiRef.current.pieces[next] = 1;
-        // eslint-disable-next-line no-restricted-syntax
+
         for await (const s of nextDoubleReversi.differedFlipQueue.reverse()) {
           await sleep(100);
           reversiRef.current.flip(s);
@@ -262,6 +254,8 @@ const OthelloAlphaZero = () => {
       setIsDone,
       setIsDraw,
       setIsLoss,
+      play,
+      setPiecesCounts,
     ],
   );
 
@@ -332,7 +326,6 @@ const OthelloAlphaZero = () => {
         <title>AI 대전 - Re:zero</title>
       </Head>
       <div className="flex gap-4">
-        <AIHistory />
         <div className="flex flex-col gap-2">
           <ActionIcon variant="default" onClick={() => setOpenedSettingModal(true)}>
             <Settings size={18} />
@@ -352,12 +345,6 @@ const OthelloAlphaZero = () => {
           <div className="relative" style={{ width: BACKGROUND_CANVAS_SIZE, height: BACKGROUND_CANVAS_SIZE }}>
             {isCalculating && (
               <div className="absolute text-white top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 z-30">
-                {/* <Icon
-                  name="loading"
-                  className="animate-spin h-6 w-6 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                /> */}
                 loading
               </div>
             )}
@@ -440,7 +427,7 @@ const OthelloAlphaZero = () => {
       </Modal>
     </div>
   );
-};
+}
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
   const initialLocale = locale || 'ko';
@@ -451,5 +438,3 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
     },
   };
 };
-
-export default OthelloAlphaZero;
