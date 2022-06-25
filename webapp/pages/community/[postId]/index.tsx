@@ -14,7 +14,7 @@ import updatePost from '@lib/api/posts/updatePost';
 import optimizeImage from '@lib/optimizeImage';
 import relativeCreatedAt from '@lib/relativeCreatedAt';
 import { Editor } from '@tinymce/tinymce-react';
-import { GetStaticProps } from 'next';
+import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -235,12 +235,12 @@ const CommunityPost = () => {
 //   }
 // `;
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   const initialLocale = locale || 'ko';
 
   return {
     props: {
-      ...(await serverSideTranslations(initialLocale, ['common'])),
+      ...(await serverSideTranslations(initialLocale, ['common', 'navbar'])),
     },
   };
 };

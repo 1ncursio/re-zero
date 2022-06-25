@@ -1,5 +1,5 @@
 import { MainLinks } from '@components/MainLinks';
-import { UserMenu } from '@components/User';
+import { User } from '@components/User';
 import { Navbar } from '@mantine/core';
 
 export default function AppNavBar({ hidden }: { hidden: boolean }) {
@@ -9,7 +9,7 @@ export default function AppNavBar({ hidden }: { hidden: boolean }) {
         <MainLinks />
       </Navbar.Section>
       <Navbar.Section>
-        <UserMenu />
+        <User />
       </Navbar.Section>
     </Navbar>
   );

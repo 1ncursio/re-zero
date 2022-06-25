@@ -1,4 +1,5 @@
 {
     "hello": "Hello",
-    "email": "Email"
+    "email": "Email",
+    "restart": "Restart"
 }

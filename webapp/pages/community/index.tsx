@@ -1,4 +1,4 @@
-import Pagination from '@components/Pagination';
+// import Pagination from '@components/Pagination';
 import PostList from '@components/PostList/PostList';
 import RequireLogIn from '@components/RequireLogin/RequireLogin';
 import StyledModal from '@components/StyledModal';
@@ -7,14 +7,18 @@ import usePostsSWR from '@hooks/swr/usePostsSWR';
 import useUserSWR from '@hooks/swr/useUserSWR';
 import useBoolean from '@hooks/useBoolean';
 import useInput from '@hooks/useInput';
+import client from '@lib/api/client';
 import uploadImage from '@lib/api/comments/uploadImage';
 import createPost from '@lib/api/posts/createPost';
+import fetchPosts from '@lib/api/posts/fetchPosts';
+import { Pagination } from '@mantine/core';
 import { Editor } from '@tinymce/tinymce-react';
 import { GetStaticProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useMutation, useQuery } from 'react-query';
 
 const Community = () => {
   const [title, onChangeTitle] = useInput('');
@@ -24,11 +28,48 @@ const Community = () => {
   const { page } = router.query;
   const editorRef = useRef<Editor>(null);
 
+  const { isLoading, isError, data, error } = useQuery('todos', fetchPosts, {
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
+
+  const mutation = useMutation((newPost) => {
+    return client.post('/api/posts', newPost);
+  });
+
+  useEffect(() => {
+    mutation.mutate({ content: 'test content', title: ' test title' });
+  }, []);
+
+  // export default async function createPost({
+  //   content,
+  //   title,
+  // }: {
+  //   content: string;
+  //   title: string;
+  // }): Promise<Post> {
+  //   const response = await client.post('/api/posts', {
+  //     content,
+  //     title,
+  //   });
+  //   return response.data.payload;
+  // }
+
   const { data: userData, isLoading: isLoadingUserData } = useUserSWR();
 
-  const { data: postsData, links: linksData } = usePostsSWR({
+  const {
+    data: postsData,
+    links: linksData,
+    last_page,
+  } = usePostsSWR({
     page: page ? Number(page) : 1,
   });
+
+  useEffect(() => {
+    if (last_page) {
+      console.log({ last_page });
+    }
+  }, [last_page]);
 
   // for ux purpose only (pagination)
   usePostsSWR({ page: (page ? Number(page) : 1) + 1 });
@@ -71,7 +112,7 @@ const Community = () => {
   }
 
   return (
-    <div className="lg:w-[calc(768px-2rem)] w-md mx-auto md:w-full md:px-4 flex flex-col gap-4">
+    <div className="flex flex-col gap-4">
       <Head>
         <title>커뮤니티 - Re:zero</title>
       </Head>
@@ -106,7 +147,8 @@ const Community = () => {
         </StyledModal>
       </div>
       {postsData && <PostList posts={postsData} />}
-      <Pagination links={linksData} referrerUrl={currentUrl} />
+      {/* <Pagination links={linksData} referrerUrl={currentUrl} /> */}
+      <Pagination total={last_page} />
     </div>
   );
 };
@@ -116,7 +158,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
 
   return {
     props: {
-      ...(await serverSideTranslations(initialLocale, ['common'])),
+      ...(await serverSideTranslations(initialLocale, ['common', 'navbar'])),
     },
   };
 };

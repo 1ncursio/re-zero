@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ChevronRight, Login, Logout, Settings } from 'tabler-icons-react';
 import { UnstyledButton, Group, Avatar, Text, Box, useMantineTheme, Menu } from '@mantine/core';
 import useUserSWR from '@hooks/swr/useUserSWR';
@@ -6,7 +6,28 @@ import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import useLogout from '@hooks/useLogout';
 
-export function UserMenu() {
+type LabelItem = {
+  type: 'label';
+  label: string;
+};
+
+type LinkItem = {
+  type: 'link';
+  label: string;
+  href: string;
+  icon?: React.ReactNode;
+};
+
+type ButtonItem = {
+  type: 'item';
+  label: string;
+  onClick: () => void;
+  icon?: React.ReactNode;
+};
+
+type MenuItem = LabelItem | LinkItem | ButtonItem;
+
+export function User() {
   const { t } = useTranslation(['common', 'navbar']);
   const theme = useMantineTheme();
   const { data: userData } = useUserSWR();
@@ -14,6 +35,32 @@ export function UserMenu() {
 
   const userName = userData?.name ?? t('guest', { ns: 'navbar' });
   const userEmail = userData?.email ?? t('email', { ns: 'common' });
+
+  const authenticatedItems: MenuItem[] = useMemo(
+    () => [
+      { type: 'label', label: t('application', { ns: 'navbar' }) },
+      { type: 'item', icon: <Logout size={14} />, label: t('logout', { ns: 'navbar' }), onClick: logout },
+      {
+        type: 'link',
+        icon: <Settings size={14} />,
+        label: t('settings', { ns: 'navbar' }),
+        href: '/account/profile',
+      },
+    ],
+    [t, logout],
+  );
+
+  const guestItems: MenuItem[] = useMemo(
+    () => [
+      {
+        type: 'link',
+        icon: <Login size={14} />,
+        label: t('login', { ns: 'navbar' }),
+        href: process.env.NEXT_PUBLIC_AUTH_URL ?? '',
+      },
+    ],
+    [t],
+  );
 
   return (
     <Menu
@@ -62,20 +109,26 @@ export function UserMenu() {
         </Box>
       }
     >
-      <Menu.Label>Application</Menu.Label>
-      <Menu.Item icon={<Login size={14} />}>
-        <Link href={process.env.NEXT_PUBLIC_AUTH_URL ?? ''}>
-          <a>로그인</a>
-        </Link>
-      </Menu.Item>
-      <Menu.Item icon={<Logout size={14} />} onClick={logout}>
-        로그아웃
-      </Menu.Item>
-      <Menu.Item icon={<Settings size={14} />}>
-        <Link href="/account/profile">
-          <a>설정</a>
-        </Link>
-      </Menu.Item>
+      {(userData ? authenticatedItems : guestItems).map((item) => {
+        switch (item.type) {
+          case 'label':
+            return <Menu.Label key={item.label}>{item.label}</Menu.Label>;
+          case 'link':
+            return (
+              <Menu.Item icon={item.icon} key={item.label}>
+                <Link href={item.href}>
+                  <a>{item.label}</a>
+                </Link>
+              </Menu.Item>
+            );
+          case 'item':
+            return (
+              <Menu.Item icon={item.icon} onClick={item.onClick} key={item.label}>
+                {item.label}
+              </Menu.Item>
+            );
+        }
+      })}
     </Menu>
   );
 }

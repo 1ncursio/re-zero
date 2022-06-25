@@ -16,8 +16,8 @@ export interface PostsSWRResponse extends SWRResponse<Post[], Error> {
   // current_page: number;
   // first_page_url: string;
   // from: number;
-  // last_page: number;
-  // last_page_url: string;
+  last_page: number;
+  last_page_url: string;
   links: ILink[];
   // next_page_url: string;
   // path: string;

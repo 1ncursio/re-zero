@@ -2,5 +2,9 @@
     "play": "プレイ",
     "community": "コミュニティ",
     "my-games": "私のゲーム",
-    "guest": "ゲスト"
+    "guest": "ゲスト",
+    "application": "アプリケーション",
+    "login": "ログイン",
+    "logout": "ログアウト",
+    "settings": "設定"
 }

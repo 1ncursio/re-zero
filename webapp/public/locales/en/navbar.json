@@ -2,5 +2,9 @@
     "play": "Play",
     "community": "Community",
     "my-games": "My Games",
-    "guest": "Guest"
+    "guest": "Guest",
+    "application": "Application",
+    "login": "Login",
+    "logout": "Logout",
+    "settings": "Settings"
 }
