@@ -1,6 +1,4 @@
-import optimizeImage from './optimizeImage';
-
-// optimizeImage();
+import optimizeImage from '@lib/optimizeImage';
 
 describe('optimizeImage', () => {
   test('https URL 테스트', () => {

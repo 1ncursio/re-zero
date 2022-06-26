@@ -1,11 +1,10 @@
-import AI from '@components/AI';
-import { Button, Stack, Text, ThemeIcon, Title } from '@mantine/core';
+import { Stack, Text, ThemeIcon, Title } from '@mantine/core';
 import { useModals } from '@mantine/modals';
 import type { GetStaticProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import Head from 'next/head';
 import Link from 'next/link';
 import { Cpu, Network } from 'tabler-icons-react';
-// import StyledModal from '@components/StyledModal';
 
 const PlayPage = () => {
   const modals = useModals();
@@ -19,43 +18,33 @@ const PlayPage = () => {
 
   return (
     <>
-      <div>
-        <div className="mt-10 text-center">
-          <Title order={1}>리버시 플레이</Title>
-        </div>
-        <div className="my-28 flex gap-16 justify-center text-lg">
-          <Link href="/play/computer">
-            <a>
-              <Stack align="center">
-                <ThemeIcon variant="outline" size="xl" radius="xl">
-                  <Cpu />
-                </ThemeIcon>
-                <Text>컴퓨터</Text>
-              </Stack>
-            </a>
-          </Link>
-
-          <button type="button" onClick={openReadyModal} className="opacity-30 cursor-not-allowed">
+      <Head>
+        <title>플레이 - Re:zero</title>
+      </Head>
+      <Title order={1} align="center">
+        리버시 플레이
+      </Title>
+      <div className="my-28 flex gap-16 justify-center text-lg">
+        <Link href="/play/computer">
+          <a>
             <Stack align="center">
               <ThemeIcon variant="outline" size="xl" radius="xl">
-                <Network />
+                <Cpu />
               </ThemeIcon>
-              <Text>온라인</Text>
+              <Text>컴퓨터</Text>
             </Stack>
-          </button>
-        </div>
+          </a>
+        </Link>
+
+        <button type="button" onClick={openReadyModal} className="opacity-30 cursor-not-allowed">
+          <Stack align="center">
+            <ThemeIcon variant="outline" size="xl" radius="xl">
+              <Network />
+            </ThemeIcon>
+            <Text>온라인</Text>
+          </Stack>
+        </button>
       </div>
-      {/* <StyledModal
-        isOpen={isOpen}
-        onRequestClose={closeModal}
-        onRequestOk={closeModal}
-        title="준비 중"
-        showOkButton
-        okText="닫기"
-        width="480px"
-      >
-        준비 중입니다.
-      </StyledModal> */}
     </>
   );
 };

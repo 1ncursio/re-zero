@@ -1,4 +1,4 @@
-import Reversi from './Reversi';
+import Reversi from '@lib/othello/Reversi';
 
 const reversi = new Reversi();
 
@@ -9,10 +9,6 @@ describe('Reversi', () => {
 
   test('count enemy pieces', () => {
     expect(reversi.piecesCount(reversi.enemyPieces)).toEqual(2);
-  });
-
-  test('initialize histories', () => {
-    expect(reversi.histories).toEqual([]);
   });
 
   test('initialize depth', () => {

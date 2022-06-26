@@ -44,7 +44,7 @@ export function User() {
         type: 'link',
         icon: <Settings size={14} />,
         label: t('settings', { ns: 'navbar' }),
-        href: '/account/profile',
+        href: '/settings/profile',
       },
     ],
     [t, logout],

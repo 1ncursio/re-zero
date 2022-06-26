@@ -1,3 +1,5 @@
+/** @deprecated HeaderUserMenu */
+
 import useLogout from '@hooks/useLogout';
 import React from 'react';
 import OutsideClickHandler from 'react-outside-click-handler';

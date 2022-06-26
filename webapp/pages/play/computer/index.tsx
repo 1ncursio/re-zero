@@ -2,7 +2,7 @@ import { throttle } from 'lodash';
 import Head from 'next/head';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import useSound from 'use-sound';
-import HistoryTable from '@components/PlayController';
+import PlayController from '@components/PlayController';
 import RequireLogIn from '@components/RequireLogin/RequireLogin';
 import useAIHistoriesSWR from '@hooks/swr/useAIHistoriesSWR';
 import useUsersAIHistoriesSWR from '@hooks/swr/useUsersAIHistoriesSWR';
@@ -350,24 +350,15 @@ export default function PlayComputerPage() {
             )}
             {isDone && (
               <div className="absolute top-0 left-0 bg-black w-full h-full bg-opacity-30 backdrop-filter backdrop-blur-sm flex justify-center items-center z-40">
-                <div className="flex flex-col gap-8 items-center">
-                  {isDone && isLoss && (
-                    <div className="text-3xl text-white cursor-default user-select-none">아깝네요!</div>
-                  )}
-                  {isDone && !isLoss && !isDraw && (
-                    <div className="text-3xl text-white cursor-default user-select-none">이기셨네요!</div>
-                  )}
-                  {isDone && isDraw && (
-                    <div className="text-3xl text-white cursor-default user-select-none">무승부에요!</div>
-                  )}
-                  <button
-                    type="button"
-                    onClick={onRestart}
-                    className="text-lg border border-white hover:border-emerald-300 text-white hover:text-emerald-300 py-3 px-8 transition duration-200"
-                  >
-                    다시 시작
-                  </button>
-                </div>
+                {isDone && isLoss && (
+                  <div className="text-3xl text-white cursor-default user-select-none">아깝네요!</div>
+                )}
+                {isDone && !isLoss && !isDraw && (
+                  <div className="text-3xl text-white cursor-default user-select-none">이기셨네요!</div>
+                )}
+                {isDone && isDraw && (
+                  <div className="text-3xl text-white cursor-default user-select-none">무승부에요!</div>
+                )}
               </div>
             )}
             <canvas ref={bgRef} className="w-full h-full absolute z-10" />
@@ -381,7 +372,7 @@ export default function PlayComputerPage() {
             />
           </div>
         </div>
-        <HistoryTable onRestart={onRestart} isCalculating={isCalculating} />
+        <PlayController onRestart={onRestart} isCalculating={isCalculating} />
       </div>
       <Modal
         opened={openedSettingModal}
