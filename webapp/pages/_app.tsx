@@ -72,7 +72,7 @@ const App = (props: AppProps & { colorScheme: ColorScheme }) => {
                   fixed
                   navbar={<AppNavBar hidden={!opened} />}
                   header={
-                    <Header height={60} p="md">
+                    <Header height={60} py="md" px="lg">
                       <Group position="apart" sx={{ height: '100%' }}>
                         <Group sx={{ height: '100%' }}>
                           <MediaQuery largerThan="sm" styles={{ display: 'none' }}>

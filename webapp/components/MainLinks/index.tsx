@@ -2,16 +2,15 @@ import { Group, Text, ThemeIcon, UnstyledButton } from '@mantine/core';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import React, { useMemo } from 'react';
-import { DeviceGamepad2, History, Users } from 'tabler-icons-react';
+import { DeviceGamepad2, User, Users } from 'tabler-icons-react';
 
 interface MainLinkProps {
   icon: React.ReactNode;
-  color: string;
   label: string;
   href: string;
 }
 
-function MainLink({ icon, color, label, href }: MainLinkProps) {
+function MainLink({ icon, label, href }: MainLinkProps) {
   return (
     <Link href={href}>
       <a>
@@ -29,10 +28,7 @@ function MainLink({ icon, color, label, href }: MainLinkProps) {
           })}
         >
           <Group>
-            <ThemeIcon color={color} variant="light">
-              {icon}
-            </ThemeIcon>
-
+            {icon}
             <Text size="sm">{label}</Text>
           </Group>
         </UnstyledButton>
@@ -46,9 +42,9 @@ export function MainLinks() {
 
   const data = useMemo(
     () => [
-      { icon: <DeviceGamepad2 size={16} />, color: 'blue', label: t('play'), href: '/play' },
-      { icon: <Users size={16} />, color: 'teal', label: t('community'), href: '/community' },
-      { icon: <History size={16} />, color: 'violet', label: t('my-games'), href: '/games' },
+      { icon: <DeviceGamepad2 size={20} />, label: t('play'), href: '/play' },
+      { icon: <Users size={20} />, label: t('community'), href: '/community' },
+      { icon: <User size={20} />, label: t('my-games'), href: '/games' },
       //   { icon: <Messages size={16} />, color: 'violet', label: 'Discussions' },
       //   { icon: <Database size={16} />, color: 'grape', label: 'Databases' },
     ],

@@ -1,7 +1,3 @@
-import { throttle } from 'lodash';
-import Head from 'next/head';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import useSound from 'use-sound';
 import PlayController from '@components/PlayController';
 import RequireLogIn from '@components/RequireLogin/RequireLogin';
 import useAIHistoriesSWR from '@hooks/swr/useAIHistoriesSWR';
@@ -23,26 +19,22 @@ import {
   TOTAL_CELL_COUNT,
 } from '@lib/othelloConfig';
 import sleep from '@lib/utils/sleep';
-import { ActionIcon, Button, Checkbox, Group, Modal, Select, Stack, Text } from '@mantine/core';
-import { GetStaticProps } from 'next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { Check, Settings } from 'tabler-icons-react';
-import theme from '../../../config/theme';
-import { showNotification } from '@mantine/notifications';
-import { useTranslation } from 'next-i18next';
+import { ActionIcon, Text } from '@mantine/core';
 import changeTheme from '@store/config/changeTheme';
 import addHistory from '@store/reversi/addHistory';
 import clearHistory from '@store/reversi/clearHistory';
+import { throttle } from 'lodash';
+import { GetStaticProps } from 'next';
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import Head from 'next/head';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Settings } from 'tabler-icons-react';
+import useSound from 'use-sound';
 
 export default function PlayComputerPage() {
   // i18n
   const { t } = useTranslation(['common', 'navbar']);
-
-  // modal 내부 관련
-  const themeNames = Object.keys(theme);
-  const [selectedTheme, setSelectedTheme] = useState(themeNames[0]);
-  const [checkedSoundOn, setCheckedSoundOn] = useState(true);
-  const [openedSettingModal, setOpenedSettingModal] = useState(false);
 
   const { nextAction } = useModel();
 
@@ -327,9 +319,6 @@ export default function PlayComputerPage() {
       </Head>
       <div className="flex gap-4">
         <div className="flex flex-col gap-2">
-          <ActionIcon variant="default" onClick={() => setOpenedSettingModal(true)}>
-            <Settings size={18} />
-          </ActionIcon>
           <div className="flex justify-between px-2">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-[#404040] border border-blueGray-600 rounded-full" />
@@ -372,50 +361,8 @@ export default function PlayComputerPage() {
             />
           </div>
         </div>
-        <PlayController onRestart={onRestart} isCalculating={isCalculating} />
+        <PlayController onRestart={onRestart} isCalculating={isCalculating} onChangeTheme={onChangeTheme} />
       </div>
-      <Modal
-        opened={openedSettingModal}
-        centered
-        onClose={() => setOpenedSettingModal(false)}
-        title="게임 설정"
-      >
-        <Stack>
-          <Select
-            label="테마"
-            value={selectedTheme}
-            data={themeNames}
-            onChange={(value) => {
-              if (!value) return setSelectedTheme(themeNames[0]);
-              setSelectedTheme(value);
-              onChangeTheme(value);
-            }}
-          />
-          <Checkbox
-            label="소리 재생"
-            checked={checkedSoundOn}
-            onChange={(e) => setCheckedSoundOn(e.currentTarget.checked)}
-          />
-          <Group position="right">
-            <Button variant="default" onClick={() => setOpenedSettingModal(false)}>
-              취소
-            </Button>
-            <Button
-              onClick={() => {
-                setOpenedSettingModal(false);
-                showNotification({
-                  title: '설정 저장 완료',
-                  message: '설정이 저장되었습니다.',
-                  color: 'blue',
-                  icon: <Check size={16} />,
-                });
-              }}
-            >
-              저장
-            </Button>
-          </Group>
-        </Stack>
-      </Modal>
     </div>
   );
 }
