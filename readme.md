@@ -1,10 +1,10 @@
-# Lathello
+# Re:zero
 
 <img src="./images/gameplay.gif"></img>
 
-Lathello is a web application that can play Reversi against AI based on the AlphaZero (AZ) algorithm.
+Re:zero is a web application that can play Reversi against AI based on the AlphaZero (AZ) algorithm.
 
-> Note: Lathello is a work in progress. In the future, Lathello will be able to play against other players.
+> Note: Re:zero is a work in progress. In the future, Re:zero will be able to play against other players.
 
 ## Features
 
@@ -39,20 +39,19 @@ Lathello is a web application that can play Reversi against AI based on the Alph
 │
 ├── server                      # Laravel server
 │   └── ...
-├── webapp                      # React web application
+├── webapp                      # Next.js web application
 │   ├── public                  # Static files
-│   └── src
-│       ├── components          # React components
-│       ├── lib
-│       │   ├── api             # Ajax calls to the server
-│       │   ├── othello         # Reversi game logic for the webapp
-│       │   └── ...
-│       ├── pages               # React pages
-│       ├── store               # Zustand store (Does not used yet)
-│       ├── assets              # React assets
-│       ├── hooks               # React hooks
-│       ├── typings             # type definitions
-│       └── ...
+│   │   └── assets              # Next.js assets
+│   ├── components          # Next.js components
+│   ├── lib
+│   │   ├── api             # Ajax calls to the server
+│   │   ├── othello         # Reversi game logic for the webapp
+│   │   └── ...
+│   ├── pages               # Next.js pages
+│   ├── store               # Zustand store (Does not used yet)
+│   ├── hooks               # Next.js hooks
+│   ├── typings             # type definitions
+│   └── ...
 └── README.md
 ```
 
@@ -61,11 +60,12 @@ Lathello is a web application that can play Reversi against AI based on the Alph
 ### Frontend
 
 - [TypeScript](https://www.typescriptlang.org)
-- [React](https://reactjs.org)
+- [Next.js](https://nextjs.org/)
 - [axios](https://axios-http.com/)
+- [zustand](https://github.com/pmndrs/zustand)
 - [SWR](https://swr.vercel.app)
+- [Mantine](https://mantine.dev/)
 - [Tailwind CSS](https://tailwindcss.com)
-- [Emotion](https://emotion.sh)
 - [TensorFlow.js](https://www.tensorflow.org/js)
 
 ### Backend
@@ -83,7 +83,7 @@ Lathello is a web application that can play Reversi against AI based on the Alph
 
 ## Getting Started
 
-This is an example of how you may give instructions on setting up Lathello locally. To get a local copy up and running follow these simple example steps.
+This is an example of how you may give instructions on setting up Re:zero locally. To get a local copy up and running follow these simple example steps.
 
 ### Prerequisites
 
@@ -110,7 +110,7 @@ yarn
 3. Run the frontend server
 
 ```bash
-yarn start
+yarn dev
 ```
 
 4. Install Composer dependencies for the backend
