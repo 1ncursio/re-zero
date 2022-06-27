@@ -1,11 +1,12 @@
 import CommentContainer from '@components/CommentContainer';
-import EditPostForm from '@components/EditPostForm';
 import PostLikeButton from '@components/PostLikeButton';
 import PostViews from '@components/PostViews';
 import RequireLogIn from '@components/RequireLogin/RequireLogin';
+import RichTextEditor from '@components/RichText';
 import usePostSWR from '@hooks/swr/usePostSWR';
 import useUserSWR from '@hooks/swr/useUserSWR';
-import useInput from '@hooks/useInput';
+import useBoolean from '@hooks/useBoolean';
+import uploadImage from '@lib/api/comments/uploadImage';
 import deletePost from '@lib/api/posts/deletePost';
 import toggleLikePost from '@lib/api/posts/toggleLikePost';
 import updatePost from '@lib/api/posts/updatePost';
@@ -19,51 +20,84 @@ import {
   Modal,
   Stack,
   Text,
+  TextInput,
   TypographyStylesProvider,
   UnstyledButton,
 } from '@mantine/core';
+import { useForm, zodResolver } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
 import { useModals } from '@mantine/modals';
-import { Editor } from '@tinymce/tinymce-react';
 import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect } from 'react';
+import { z } from 'zod';
+
+interface FormValues {
+  title: string;
+  content: string;
+}
+
+const schema = z.object({
+  title: z.string().max(50, { message: '제목은 최대 200자입니다.' }),
+  content: z.string(),
+});
 
 const CommunityPost = () => {
+  // form 관련
+  const form = useForm<FormValues>({
+    schema: zodResolver(schema),
+    initialValues: {
+      title: '',
+      content: '',
+    },
+  });
+
   const [opened, handlers] = useDisclosure(false);
+  const [loadingEditPost, onLoadingEditPost, offLoadingEditPost] = useBoolean(false);
+  const [loadingDeletePost, onLoadingDeletePost, offLoadingDeletePost] = useBoolean(false);
   const modals = useModals();
-  const [title, onChangeTitle, setTitle] = useInput('');
 
   const router = useRouter();
   const { postId } = router.query;
-  const editorRef = useRef<Editor>(null);
 
   const { data: postData, mutate: mutatePost } = usePostSWR(postId as string);
   const { data: userData, isLoading: isLoadingUserData } = useUserSWR();
 
-  const onUpdatePost = useCallback(async () => {
-    if (!editorRef.current || !title || !postData) return;
-    // @ts-ignore
-    const content = editorRef.current.getContent();
+  const onUpdatePost = useCallback(
+    async ({ title, content }: FormValues) => {
+      if (!title || !content || !userData || !postData) return;
 
-    try {
-      await updatePost({
-        content,
-        postId: postData.id,
-        title,
-        mutatePost,
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  }, [title, editorRef, postData, mutatePost]);
+      try {
+        onLoadingEditPost();
+        await updatePost({
+          content,
+          postId: postData.id,
+          title,
+          mutatePost,
+        });
+        handlers.close();
+      } catch (error) {
+        console.error(error);
+      } finally {
+        offLoadingEditPost();
+      }
+    },
+    [postData, userData, mutatePost, handlers, onLoadingEditPost, offLoadingEditPost],
+  );
 
   const onDeletePost = useCallback(async () => {
-    await deletePost({ postId: postId as string });
-    router.push('/community');
-  }, [postId, router]);
+    try {
+      onLoadingDeletePost();
+      await deletePost({ postId: postId as string });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      offLoadingDeletePost();
+      router.push('/community');
+    }
+  }, [postId, router, onLoadingDeletePost, offLoadingDeletePost]);
 
   const onToggleLikePost = useCallback(async () => {
     if (!postData || !userData) return;
@@ -94,6 +128,21 @@ const CommunityPost = () => {
     }
   }, [postData, userData, mutatePost]);
 
+  const handleImageUpload = useCallback(
+    (file: File): Promise<string> =>
+      new Promise((resolve, reject) => {
+        const formData = new FormData();
+        formData.append('image', file);
+
+        uploadImage(formData)
+          .then((imageName) =>
+            resolve(`${process.env.NEXT_PUBLIC_DEV_BACKEND_URL}/storage/images/${imageName}`),
+          )
+          .catch(() => reject(new Error('Image upload failed')));
+      }),
+    [],
+  );
+
   const openDeletePostModal = useCallback(() => {
     modals.openConfirmModal({
       title: '포스트 삭제',
@@ -104,10 +153,11 @@ const CommunityPost = () => {
       },
       confirmProps: {
         color: 'red',
+        loading: loadingDeletePost,
       },
       onConfirm: onDeletePost,
     });
-  }, [modals, onDeletePost]);
+  }, [modals, onDeletePost, loadingDeletePost]);
 
   if (!postData) {
     return null;
@@ -136,32 +186,39 @@ const CommunityPost = () => {
             </div>
             {postData.isMine && (
               <Group spacing="xs">
-                <UnstyledButton onClick={() => handlers.open()}>
+                <UnstyledButton
+                  onClick={() => {
+                    form.setValues({
+                      title: postData.title,
+                      content: postData.content,
+                    });
+                    handlers.open();
+                  }}
+                >
                   <Text size="xs">수정</Text>
                 </UnstyledButton>
                 <Modal opened={opened} onClose={() => handlers.close()} title="포스트 수정" size="60%">
-                  <Stack spacing="sm">
-                    <EditPostForm
-                      ref={editorRef}
-                      title={title}
-                      onChangeTitle={onChangeTitle}
-                      setTitle={setTitle}
-                    />
-                    <Group position="right">
-                      <Button type="button" variant="default" onClick={() => handlers.close()}>
-                        취소
-                      </Button>
-                      <Button
-                        type="button"
-                        onClick={() => {
-                          onUpdatePost();
-                          handlers.close();
-                        }}
-                      >
-                        수정
-                      </Button>
-                    </Group>
-                  </Stack>
+                  <form onSubmit={form.onSubmit(onUpdatePost)}>
+                    <Stack spacing="sm">
+                      <TextInput required type="text" {...form.getInputProps('title')} placeholder="제목" />
+                      <RichTextEditor
+                        controls={[
+                          ['bold', 'italic', 'underline', 'image'],
+                          ['unorderedList', 'h1', 'h2', 'h3'],
+                        ]}
+                        {...form.getInputProps('content')}
+                        onImageUpload={handleImageUpload}
+                      />
+                      <Group position="right">
+                        <Button type="button" variant="default" onClick={() => handlers.close()}>
+                          취소
+                        </Button>
+                        <Button type="submit" loading={loadingEditPost}>
+                          수정
+                        </Button>
+                      </Group>
+                    </Stack>
+                  </form>
                 </Modal>
                 <UnstyledButton onClick={openDeletePostModal}>
                   <Text size="xs" color="red">

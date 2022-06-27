@@ -1,31 +1,50 @@
 // import Pagination from '@components/Pagination';
 import PostList from '@components/PostList/PostList';
 import RequireLogIn from '@components/RequireLogin/RequireLogin';
-import TinyEditor from '@components/TinyEditor';
+import RichTextEditor from '@components/RichText';
 import usePostsSWR from '@hooks/swr/usePostsSWR';
 import useUserSWR from '@hooks/swr/useUserSWR';
-import useInput from '@hooks/useInput';
+import useBoolean from '@hooks/useBoolean';
 import client from '@lib/api/client';
 import uploadImage from '@lib/api/comments/uploadImage';
 import createPost from '@lib/api/posts/createPost';
 import fetchPosts from '@lib/api/posts/fetchPosts';
 import { Button, Group, Modal, Pagination, Stack, TextInput } from '@mantine/core';
+import { useForm, zodResolver } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
-import { Editor } from '@tinymce/tinymce-react';
 import { GetStaticProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
+import { z } from 'zod';
+
+interface FormValues {
+  title: string;
+  content: string;
+}
+
+const schema = z.object({
+  title: z.string().max(50, { message: '제목은 최대 200자입니다.' }),
+  content: z.string(),
+});
 
 const Community = () => {
+  // form 관련
+  const form = useForm<FormValues>({
+    schema: zodResolver(schema),
+    initialValues: {
+      title: '',
+      content: '',
+    },
+  });
+
   const [opened, handlers] = useDisclosure(false);
-  const [title, onChangeTitle] = useInput('');
+  const [loading, onLoading, offLoading] = useBoolean(false);
   const [currentUrl, setCurrentUrl] = useState('');
   const router = useRouter();
   const { page } = router.query;
-  const editorRef = useRef<Editor>(null);
 
   const { isLoading, isError, data, error } = useQuery('todos', fetchPosts, {
     refetchOnWindowFocus: false,
@@ -73,34 +92,42 @@ const Community = () => {
   // for ux purpose only (pagination)
   usePostsSWR({ page: (page ? Number(page) : 1) + 1 });
 
-  const onUploadImage = useCallback(async (blobInfo, success, failure) => {
-    try {
-      const formData = new FormData();
-      formData.append('image', blobInfo.blob());
-      const imageName = await uploadImage(formData);
-      success(`http://localhost:8000/storage/images/${imageName}`);
-      // console.log(data);
-    } catch (error) {
-      console.error(error);
-      failure();
-    }
-  }, []);
+  const handleImageUpload = useCallback(
+    (file: File): Promise<string> =>
+      new Promise((resolve, reject) => {
+        const formData = new FormData();
+        formData.append('image', file);
 
-  const onCreatePost = useCallback(async () => {
-    if (!editorRef.current || !title) return;
-    // @ts-ignore
-    const content = editorRef.current.getContent();
+        uploadImage(formData)
+          .then((imageName) =>
+            resolve(`${process.env.NEXT_PUBLIC_DEV_BACKEND_URL}/storage/images/${imageName}`),
+          )
+          .catch(() => reject(new Error('Image upload failed')));
+      }),
+    [],
+  );
 
-    try {
-      const data = await createPost({
-        content,
-        title,
-      });
-      router.push(`/community/${data.id}`);
-    } catch (error) {
-      console.error(error);
-    }
-  }, [router, title, editorRef]);
+  const onCreatePost = useCallback(
+    async ({ title, content }: FormValues) => {
+      if (!title || !content || !userData) return;
+
+      try {
+        onLoading();
+        const data = await createPost({
+          content,
+          title,
+        });
+        router.push('/community', {
+          pathname: data.id.toString(),
+        });
+      } catch (error) {
+        console.error(error);
+      } finally {
+        offLoading();
+      }
+    },
+    [router, onLoading, offLoading, userData],
+  );
 
   useEffect(() => {
     setCurrentUrl(new URL(window.location.href));
@@ -116,44 +143,32 @@ const Community = () => {
         <title>커뮤니티 - Re:zero</title>
       </Head>
       <div className="flex justify-end">
-        <Button type="button" onClick={() => handlers.open()} variant="default">
+        <Button type="button" onClick={() => handlers.open()} variant="filled">
           포스트 작성
         </Button>
         <Modal opened={opened} onClose={() => handlers.close()} title="포스트 작성" size="60%">
-          <Stack spacing="sm">
-            <TextInput type="text" value={title} onChange={onChangeTitle} placeholder="제목" />
-            <TinyEditor onUploadImage={onUploadImage} ref={editorRef} />
-            <Group position="right">
-              <Button type="button" variant="default" onClick={() => handlers.close()}>
-                취소
-              </Button>
-              <Button type="button" onClick={onCreatePost}>
-                작성
-              </Button>
-            </Group>
-          </Stack>
+          <form onSubmit={form.onSubmit(onCreatePost)}>
+            <Stack spacing="sm">
+              <TextInput required type="text" {...form.getInputProps('title')} placeholder="제목" />
+              <RichTextEditor
+                controls={[
+                  ['bold', 'italic', 'underline', 'image'],
+                  ['unorderedList', 'h1', 'h2', 'h3'],
+                ]}
+                {...form.getInputProps('content')}
+                onImageUpload={handleImageUpload}
+              />
+              <Group position="right">
+                <Button type="button" variant="default" onClick={() => handlers.close()}>
+                  취소
+                </Button>
+                <Button type="submit" loading={loading}>
+                  작성
+                </Button>
+              </Group>
+            </Stack>
+          </form>
         </Modal>
-        {/* <StyledModal
-          isOpen={isOpen}
-          onRequestClose={closeModal}
-          onRequestOk={onCreatePost}
-          title="포스트 작성"
-          showCloseButton
-          showOkButton
-          width="1024px"
-          okText="작성"
-        >
-          <div className="flex flex-col gap-4">
-            <input
-              type="text"
-              value={title}
-              onChange={onChangeTitle}
-              placeholder="제목"
-              className="focus:outline-none focus:shadow-outline border border-gray-300 py-2 px-4"
-            />
-            <TinyEditor onUploadImage={onUploadImage} ref={editorRef} />
-          </div>
-        </StyledModal> */}
       </div>
       {postsData && <PostList posts={postsData} />}
       {/* <Pagination links={linksData} referrerUrl={currentUrl} /> */}

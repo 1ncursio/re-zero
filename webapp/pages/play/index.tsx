@@ -36,14 +36,14 @@ const PlayPage = () => {
           </UnstyledButton>
         </Link>
 
-        <button type="button" onClick={openReadyModal} className="opacity-30 cursor-not-allowed">
+        <UnstyledButton type="button" onClick={openReadyModal} className="opacity-30 cursor-not-allowed">
           <Stack align="center">
             <ThemeIcon variant="outline" size="xl" radius="xl">
               <Network />
             </ThemeIcon>
             <Text>온라인</Text>
           </Stack>
-        </button>
+        </UnstyledButton>
       </div>
     </>
   );
