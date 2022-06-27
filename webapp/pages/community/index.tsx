@@ -9,15 +9,17 @@ import client from '@lib/api/client';
 import uploadImage from '@lib/api/comments/uploadImage';
 import createPost from '@lib/api/posts/createPost';
 import fetchPosts from '@lib/api/posts/fetchPosts';
-import { Button, Group, Modal, Pagination, Stack, TextInput } from '@mantine/core';
+import { ActionIcon, Button, Group, Modal, Pagination, Stack, TextInput } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
 import { GetStaticProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
+import { Search } from 'tabler-icons-react';
 import { z } from 'zod';
 
 interface FormValues {
@@ -149,9 +151,16 @@ const Community = () => {
         <title>커뮤니티 - Re:zero</title>
       </Head>
       <div className="flex justify-end">
-        <Button type="button" onClick={() => handlers.open()} variant="filled">
-          포스트 작성
-        </Button>
+        <Group>
+          <Link href="/search">
+            <ActionIcon component="a">
+              <Search size={18} />
+            </ActionIcon>
+          </Link>
+          <Button type="button" onClick={() => handlers.open()} variant="filled">
+            포스트 작성
+          </Button>
+        </Group>
         <Modal opened={opened} onClose={() => handlers.close()} title="포스트 작성" size="60%">
           <form onSubmit={form.onSubmit(onCreatePost)}>
             <Stack spacing="sm">

@@ -52,17 +52,14 @@ const SearchPostsPage = () => {
     ({ q }: FormValues) => {
       const encodedQ = encodeURIComponent(q);
       if (q)
-        router.push(
-          '/search',
-          {
-            query: {
-              q: encodedQ,
-              page: 1,
-            },
+        router.push({
+          pathname: '/search',
+          query: {
+            q: encodedQ,
+            page: 1,
           },
-          { shallow: true },
-        );
-      else router.push('/search', undefined, { shallow: true });
+        });
+      else router.push({ pathname: '/search', query: { page: 1 } });
     },
     [router],
   );
@@ -71,17 +68,18 @@ const SearchPostsPage = () => {
     console.log({ q });
   }, [q]);
 
-  // useEffect(() => {
-  //   if (q) {
-  //     // setPage(Number(page));
-  //     router.push('/search', {
-  //       query: {
-  //         // page,
-  //         q,
-  //       },
-  //     });
-  //   }
-  // }, [q]);
+  useEffect(() => {
+    if (page) {
+      setPage(Number(page));
+      router.push({
+        pathname: '/search',
+        query: {
+          q,
+          page,
+        },
+      });
+    }
+  }, [page]);
 
   return (
     <div className="lg:w-[calc(768px-2rem)] w-md mx-auto md:w-full md:px-4">
@@ -108,24 +106,23 @@ const SearchPostsPage = () => {
         </Text>
       )}
       {postsData && <SearchPostList posts={postsData} />}
-      <Pagination
-        position="center"
-        page={activePage}
-        onChange={(p) => {
-          setPage(p);
-          router.push(
-            '/search',
-            {
+      {q && (
+        <Pagination
+          position="center"
+          page={activePage}
+          onChange={(p) => {
+            setPage(p);
+            router.push({
+              pathname: '/search',
               query: {
                 q: q as string,
                 page: p,
               },
-            },
-            { shallow: true },
-          );
-        }}
-        total={last_page}
-      />
+            });
+          }}
+          total={last_page}
+        />
+      )}
     </div>
   );
 };

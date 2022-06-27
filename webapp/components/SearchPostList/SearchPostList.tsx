@@ -1,6 +1,6 @@
 import optimizeImage from '@lib/optimizeImage';
 import relativeCreatedAt from '@lib/relativeCreatedAt';
-import { Avatar, Highlight, Text, Title, UnstyledButton } from '@mantine/core';
+import { Avatar, Group, Highlight, Stack, Text, Title, UnstyledButton } from '@mantine/core';
 import { Post } from '@typings/post';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -26,11 +26,10 @@ const SearchPostList: FC<SearchPostListProps> = ({ posts }) => {
   };
 
   return (
-    <div className="flex flex-col gap-6 divide-y divide-blueGray-200">
+    <Stack>
       {posts?.map((post) => (
         <div key={post.id}>
           <div className="flex justify-between my-4">
-            {/* eslint-disable-next-line prefer-template */}
             <span className="flex items-center ml-2 gap-2">
               {hasImage(post.content) && <FiImage size={16} />}
               <Link href={`/community/${post.id}`}>
@@ -43,20 +42,22 @@ const SearchPostList: FC<SearchPostListProps> = ({ posts }) => {
                 </UnstyledButton>
               </Link>
             </span>
-            <span className="text-xs text-blueGray-500">{relativeCreatedAt(post.created_at)}</span>
+            <Text size="xs" color="dimmed">
+              {relativeCreatedAt(post.created_at)}
+            </Text>
           </div>
           <p
             className="m-2 text-sm text-blueGray-600 line-clamp-2"
             // eslint-disable-next-line react/no-danger
             dangerouslySetInnerHTML={{ __html: cleanContent(post.content) }}
           />
-          <div className="p-2 flex gap-1 items-center">
+          <Group p={8} spacing="xs">
             <Avatar src={optimizeImage(post.user?.image_url)} radius="xl" size="sm" />
             <Text size="sm">{post.user.name}</Text>
-          </div>
+          </Group>
         </div>
       ))}
-    </div>
+    </Stack>
   );
 };
 
