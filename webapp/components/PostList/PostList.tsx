@@ -1,6 +1,6 @@
 import optimizeImage from '@lib/optimizeImage';
 import relativeCreatedAt from '@lib/relativeCreatedAt';
-import { Avatar, Stack, Text, Title } from '@mantine/core';
+import { Avatar, Button, Stack, Text, Title, UnstyledButton } from '@mantine/core';
 import { Post } from '@typings/post';
 import Link from 'next/link';
 import { FC } from 'react';
@@ -30,9 +30,9 @@ const PostList: FC<PostListProps> = ({ posts }) => {
                 // <Icon name="outlinedImage" className="w-4 h-4" />
                 'outlinedImage'}
               <Link href={`/community/${post.id}`}>
-                <a>
+                <UnstyledButton component="a">
                   <Title order={4}>{post.title}</Title>
-                </a>
+                </UnstyledButton>
               </Link>
             </span>
             <Text size="xs" color="dimmed">

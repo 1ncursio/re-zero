@@ -99,9 +99,9 @@ export function User() {
                 <Text size="sm" weight={500}>
                   {userName}
                 </Text>
-                <Text color="dimmed" size="xs">
+                {/* <Text color="dimmed" size="xs">
                   {userEmail}
-                </Text>
+                </Text> */}
               </Box>
 
               <ChevronRight size={18} />
@@ -118,7 +118,7 @@ export function User() {
             return (
               <Menu.Item icon={item.icon} key={item.label}>
                 <Link href={item.href}>
-                  <a>{item.label}</a>
+                  <UnstyledButton component="a">{item.label}</UnstyledButton>
                 </Link>
               </Menu.Item>
             );

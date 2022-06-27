@@ -2,59 +2,57 @@ import useUserSWR from '@hooks/swr/useUserSWR';
 import useComment from '@hooks/useComment';
 import optimizeImage from '@lib/optimizeImage';
 import { Avatar, Group, TextInput } from '@mantine/core';
+import { useForm, zodResolver } from '@mantine/form';
 import { useRouter } from 'next/router';
-import { FC, useCallback, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { FC, useCallback } from 'react';
+import { z } from 'zod';
+
+interface FormValues {
+  content: string;
+}
+
+const schema = z.object({
+  content: z.string().max(200, { message: '댓글은 최대 200자입니다.' }),
+});
 
 const CommentForm: FC = () => {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    setFocus,
-    formState: { errors },
-  } = useForm();
+  const form = useForm<FormValues>({
+    schema: zodResolver(schema),
+    initialValues: {
+      content: '',
+    },
+  });
+
   const router = useRouter();
   const { postId } = router.query;
-  // const { postId } = useParams<{ postId: string }>();
 
   const { data: userData } = useUserSWR();
 
   const { submitComment } = useComment({ postId: postId as string });
 
   const onSubmitComment = useCallback(
-    async (content: string) => {
+    async ({ content }: FormValues) => {
       try {
         await submitComment(content);
-        reset({ content: '' });
+        form.setValues({ content: '' });
       } catch (error) {
         console.error(error);
       }
     },
-    [submitComment, postId, reset],
+    [submitComment, form],
   );
-
-  const onSubmit = useCallback(
-    async ({ content }: { content: string }) => {
-      onSubmitComment(content);
-    },
-    [onSubmitComment],
-  );
-
-  useEffect(() => {
-    setFocus('content');
-  }, []);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={form.onSubmit(onSubmitComment)}>
       <Group mb={16}>
         <Avatar src={optimizeImage(userData?.image_url)} alt="user" radius="xl" size="sm" />
         <TextInput
+          required
           placeholder="댓글 추가"
           variant="default"
-          {...register('content', { required: true, maxLength: 200 })}
           autoComplete="off"
-          sx={(theme) => ({ flexGrow: 1 })}
+          sx={{ flexGrow: 1 }}
+          {...form.getInputProps('content')}
         />
         <button type="submit" hidden />
       </Group>

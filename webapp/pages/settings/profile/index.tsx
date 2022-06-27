@@ -2,32 +2,47 @@ import useUserSWR from '@hooks/swr/useUserSWR';
 import updateUserImage from '@lib/api/users/updateUserImage';
 import updateUserProfile from '@lib/api/users/updateUserProfile';
 import optimizeImage from '@lib/optimizeImage';
-import { Avatar, Button, TextInput, Title } from '@mantine/core';
+import { Avatar, Button, Group, Stack, TextInput, Title } from '@mantine/core';
+import { useForm, zodResolver } from '@mantine/form';
 import { User } from '@typings/user';
 import produce from 'immer';
 import { GetStaticProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
-import { useCallback, useEffect, useRef } from 'react';
-import { useForm } from 'react-hook-form';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { z } from 'zod';
+
+interface FormValues {
+  name: string;
+}
+
+const schema = z.object({
+  name: z.string().max(20, { message: '닉네임은 최대 20자입니다.' }),
+});
 
 const SettingsProfilePage = () => {
   const { data: userData, mutate: mutateUser } = useUserSWR();
-  const {
-    register,
-    handleSubmit,
-    reset,
-    watch,
-    formState: { errors },
-  } = useForm();
+  const form = useForm<FormValues>({
+    schema: zodResolver(schema),
+    initialValues: {
+      name: '',
+    },
+  });
+
   const uploadRef = useRef<HTMLInputElement>(null);
 
-  const disabled = watch('name') === userData?.name;
+  const disabled = useMemo(() => {
+    if (!userData) return true;
+
+    return form.values.name === userData.name;
+  }, [userData, form.values.name]);
 
   useEffect(() => {
-    reset({
-      name: userData?.name ?? '',
-    });
+    if (userData) {
+      form.setValues({
+        name: userData.name,
+      });
+    }
   }, [userData]);
 
   const onClickUpload = useCallback(() => {
@@ -35,7 +50,7 @@ const SettingsProfilePage = () => {
   }, [uploadRef]);
 
   const onUpload = useCallback(
-    async (e) => {
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
       const formData = new FormData();
       formData.append('image', e.target.files[0]);
       const data = await updateUserImage(formData);
@@ -52,7 +67,7 @@ const SettingsProfilePage = () => {
   );
 
   const onSubmitProfile = useCallback(
-    async ({ name }: { name: string }) => {
+    async ({ name }: FormValues) => {
       const data = await updateUserProfile({
         name,
       });
@@ -85,29 +100,23 @@ const SettingsProfilePage = () => {
             이미지 변경
           </Button>
         </div>
-        <form
-          onSubmit={handleSubmit(onSubmitProfile)}
-          className="md:pl-0 pl-6 flex-1 flex flex-col gap-y-{name:string}5"
-        >
-          <div className="flex flex-col gap-2">
-            <div className="flex gap-4">
-              <TextInput
-                type="text"
-                {...register('name', { required: true, maxLength: 20 })}
-                id="name"
-                placeholder="닉네임 (최대 20자)"
-                autoComplete="off"
-                spellCheck={false}
-                label="닉네임"
-                required
-              />
-              {errors.name?.type === 'required' && <p className="text-red-500">닉네임은 필수 항목입니다.</p>}
-              {errors.name?.type === 'maxLength' && <p className="text-red-500">닉네임은 최대 20자입니다.</p>}
+        <form onSubmit={form.onSubmit(onSubmitProfile)}>
+          <Stack>
+            <TextInput
+              required
+              type="text"
+              placeholder="닉네임 (최대 20자)"
+              autoComplete="off"
+              spellCheck={false}
+              label="닉네임"
+              {...form.getInputProps('name')}
+            />
+            <Group position="right">
               <Button type="submit" variant="default" disabled={disabled}>
                 변경
               </Button>
-            </div>
-          </div>
+            </Group>
+          </Stack>
         </form>
       </div>
     </>

@@ -3,7 +3,9 @@ import {
   Box,
   Button,
   Checkbox,
+  CSSObject,
   Group,
+  MantineTheme,
   Modal,
   ScrollArea,
   Select,
@@ -19,6 +21,12 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { Check, ChevronLeft, ChevronRight, Refresh, Settings } from 'tabler-icons-react';
 import shallow from 'zustand/shallow';
 import theme from '~/config/theme';
+
+const controlButtonStyles = (theme: MantineTheme): CSSObject => ({
+  '&:hover': {
+    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[0],
+  },
+});
 
 type PlayControllerProps = {
   onRestart: () => void;
@@ -86,16 +94,39 @@ export default function PlayController({ onRestart, onChangeTheme, isCalculating
           </Table>
         </ScrollArea>
         <Group grow spacing="xs" position="right">
-          <ActionIcon variant="light" size="xl" onClick={() => setOpenedSettingModal(true)}>
+          <ActionIcon
+            variant="hover"
+            size="xl"
+            onClick={() => setOpenedSettingModal(true)}
+            sx={controlButtonStyles}
+          >
             <Settings size={18} />
           </ActionIcon>
-          <ActionIcon variant="light" size="xl" onClick={() => {}} disabled={isCalculating}>
+          <ActionIcon
+            variant="hover"
+            size="xl"
+            onClick={() => {}}
+            disabled={isCalculating}
+            sx={controlButtonStyles}
+          >
             <ChevronLeft size={18} />
           </ActionIcon>
-          <ActionIcon variant="light" size="xl" onClick={() => {}} disabled={isCalculating}>
+          <ActionIcon
+            variant="hover"
+            size="xl"
+            onClick={() => {}}
+            disabled={isCalculating}
+            sx={controlButtonStyles}
+          >
             <ChevronRight size={18} />
           </ActionIcon>
-          <ActionIcon variant="light" size="xl" onClick={onRestart} disabled={isCalculating}>
+          <ActionIcon
+            variant="hover"
+            size="xl"
+            onClick={onRestart}
+            disabled={isCalculating}
+            sx={controlButtonStyles}
+          >
             <Refresh size={16} />
           </ActionIcon>
         </Group>

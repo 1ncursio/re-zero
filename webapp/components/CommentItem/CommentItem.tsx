@@ -6,7 +6,7 @@ import useToggle from '@hooks/useToggle';
 import deleteComment from '@lib/api/comments/deleteComment';
 import optimizeImage from '@lib/optimizeImage';
 import relativeCreatedAt from '@lib/relativeCreatedAt';
-import { Avatar, Group, Text, UnstyledButton } from '@mantine/core';
+import { Avatar, Group, Stack, Text, UnstyledButton } from '@mantine/core';
 import { Comment } from '@typings/comment';
 import { useRouter } from 'next/router';
 import { FC, useCallback } from 'react';
@@ -56,16 +56,16 @@ const CommentItem: FC<CommentItemProps> = ({ comment }) => {
   }, [closeModal, comment.id, mutateComments, postId]);
 
   return (
-    <div key={comment.id} className="flex gap-2">
+    <Group key={comment.id} align="start" spacing="xs">
       <Avatar src={optimizeImage(comment.user?.image_url)} alt="user" radius="xl" size="sm" />
-      <div className="flex-1">
-        <div className="flex justify-between mb-1">
-          <div className="flex gap-2">
+      <Stack spacing="xs" sx={{ flexGrow: 1 }}>
+        <Group position="apart">
+          <Group spacing="xs">
             <Text size="xs">{comment.user.name}</Text>
             <Text size="xs" color="dimmed">
               {relativeCreatedAt(comment.created_at)}
             </Text>
-          </div>
+          </Group>
           {comment.isMine && (
             <Group spacing="xs">
               <UnstyledButton onClick={openEditCommentForm}>
@@ -89,22 +89,20 @@ const CommentItem: FC<CommentItemProps> = ({ comment }) => {
               </StyledModal>
             </Group>
           )}
-        </div>
+        </Group>
         {isOpenEditCommentForm ? (
           <EditCommentForm comment={comment} closeEditCommentForm={closeEditCommentForm} />
         ) : (
-          <Text size="sm" mb={8}>
-            {comment.content}
-          </Text>
+          <Text size="sm">{comment.content}</Text>
         )}
-        <div className="flex gap-4 items-center mb-2">
+        <Group>
           <CommentLikeButton toggleLikeComment={toggleLikeComment} comment={comment} />
           {!comment.reply_id && (
-            <button type="button" className="text-xs text-blueGray-600" onClick={openReplyForm}>
-              답글
-            </button>
+            <UnstyledButton onClick={openReplyForm}>
+              <Text size="xs">답글</Text>
+            </UnstyledButton>
           )}
-        </div>
+        </Group>
         {isOpenReplyForm && <ReplyForm commentId={comment.id} />}
         {comment.reply_count > 0 && (
           <UnstyledButton
@@ -122,22 +120,8 @@ const CommentItem: FC<CommentItemProps> = ({ comment }) => {
           </UnstyledButton>
         )}
         {isOpenReply && repliesData && <ReplyList replies={repliesData} commentId={comment.id} />}
-        {/* {isOpenReply && (
-          <button
-            type="button"
-            className="inline-flex gap-1 items-center text-emerald-500 hover:text-emerald-400 mb-2"
-          >
-            <Icon
-              name="subdirectoryArrowRight"
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-            />
-            <span className="text-sm">답글 더보기</span>
-          </button>
-        )} */}
-      </div>
-    </div>
+      </Stack>
+    </Group>
   );
 };
 

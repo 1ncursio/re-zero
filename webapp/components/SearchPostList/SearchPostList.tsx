@@ -1,5 +1,6 @@
 import optimizeImage from '@lib/optimizeImage';
 import relativeCreatedAt from '@lib/relativeCreatedAt';
+import { UnstyledButton } from '@mantine/core';
 import { Post } from '@typings/post';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -54,9 +55,9 @@ const SearchPostList: FC<SearchPostListProps> = ({ posts }) => {
                 // <Icon name="outlinedImage" className="w-4 h-4" />
                 'outlinedImage'}
               <Link href={`/community/${post.id}`}>
-                <a>
+                <UnstyledButton component="a">
                   <h1 className="text-blueGray-700">{getHighlightedText(post.title, q as string)}</h1>
-                </a>
+                </UnstyledButton>
               </Link>
             </span>
             <span className="text-xs text-blueGray-500">{relativeCreatedAt(post.created_at)}</span>

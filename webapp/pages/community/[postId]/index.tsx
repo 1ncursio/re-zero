@@ -25,9 +25,7 @@ const CommunityPost = () => {
   const [title, onChangeTitle, setTitle] = useInput('');
   const [isOpenEditModal, openEditModal, closeEditModal] = useBoolean(false);
   const [isOpenDeleteModal, openDeleteModal, closeDeleteModal] = useBoolean(false);
-  // extract postId from url using react router
-  // const { postId } = useParams<{ postId: string }>();
-  // const history = useHistory();
+
   const router = useRouter();
   const { postId } = router.query;
   const editorRef = useRef<Editor>(null);
@@ -155,19 +153,16 @@ const CommunityPost = () => {
             )}
           </div>
         </Stack>
-        <Divider />
-        <section className="p-4 mb-24">
+        <Divider size="xs" />
+        <Stack p="sm">
           <TypographyStylesProvider>
-            <p
-              dangerouslySetInnerHTML={{ __html: postData.content }}
-              //  css={contentStyle}
-            />
+            <div dangerouslySetInnerHTML={{ __html: postData.content }} />
           </TypographyStylesProvider>
-          <div className="flex gap-2 my-6 py-4">
+          <Group spacing="xs" py={16} my={24}>
             <PostLikeButton toggleLikePost={onToggleLikePost} />
             <PostViews views={postData.views} />
-          </div>
-        </section>
+          </Group>
+        </Stack>
         <footer className="p-4">
           <CommentContainer />
         </footer>
@@ -175,67 +170,6 @@ const CommunityPost = () => {
     </div>
   );
 };
-
-// const contentStyle = css`
-//   h1,
-//   h2,
-//   h3,
-//   h4,
-//   h5,
-//   h6,
-//   p,
-//   ul,
-//   ol {
-//     all: unset;
-//   }
-
-//   h1 {
-//     display: block;
-//     font-size: 2em;
-//     margin-block-start: 0.67em;
-//     margin-block-end: 0.67em;
-//     margin-inline-start: 0px;
-//     margin-inline-end: 0px;
-//     font-weight: bold;
-//   }
-
-//   h2 {
-//     display: block;
-//     font-size: 1.5em;
-//     margin-block-start: 0.83em;
-//     margin-block-end: 0.83em;
-//     margin-inline-start: 0px;
-//     margin-inline-end: 0px;
-//     font-weight: bold;
-//   }
-
-//   h3 {
-//     display: block;
-//     font-size: 1.17em;
-//     margin-block-start: 1em;
-//     margin-block-end: 1em;
-//     margin-inline-start: 0px;
-//     margin-inline-end: 0px;
-//     font-weight: bold;
-//   }
-
-//   h4 {
-//     display: block;
-//     margin-block-start: 1.33em;
-//     margin-block-end: 1.33em;
-//     margin-inline-start: 0px;
-//     margin-inline-end: 0px;
-//     font-weight: bold;
-//   }
-
-//   p {
-//     display: block;
-//     margin-block-start: 1em;
-//     margin-block-end: 1em;
-//     margin-inline-start: 0px;
-//     margin-inline-end: 0px;
-//   }
-// `;
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   const initialLocale = locale || 'ko';

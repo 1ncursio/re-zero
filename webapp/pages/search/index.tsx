@@ -2,13 +2,22 @@ import Pagination from '@components/Pagination';
 import SearchPostList from '@components/SearchPostList';
 import useSearchPostsSWR from '@hooks/swr/useSearchPostsSWR';
 import useBoolean from '@hooks/useBoolean';
+import { useForm, zodResolver } from '@mantine/form';
 import { GetStaticProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useCallback, useEffect, useRef } from 'react';
 import { Search } from 'tabler-icons-react';
+import { z } from 'zod';
+
+interface FormValues {
+  q: string;
+}
+
+const schema = z.object({
+  q: z.string().max(50, { message: '검색어는 최대 50자입니다.' }),
+});
 
 const SearchPostsPage = () => {
   const router = useRouter();
@@ -17,32 +26,38 @@ const SearchPostsPage = () => {
   // const history = useHistory();
   // const q = query.get('q') !== null ? query.get('q') : '';
   const [isFocus, focus, blur] = useBoolean(false);
-  const {
-    register,
-    handleSubmit,
-    reset,
-    setFocus,
-    formState: { errors },
-  } = useForm();
+  const form = useForm<FormValues>({
+    schema: zodResolver(schema),
+    initialValues: {
+      q: '',
+    },
+  });
+
+  const searchRef = useRef<HTMLInputElement>(null);
   const { data: postsData, links: linksData, total } = useSearchPostsSWR({ page, q });
 
   // for ux purpose only (pagination)
   useSearchPostsSWR({ page: (page ? Number(page) : 1) + 1, q: (q as string) ?? '' });
 
   useEffect(() => {
-    setFocus('q');
-    if (q) {
-      reset({ q });
+    searchRef.current?.focus();
+    if (q && typeof q === 'string') {
+      form.setValues({ q });
     }
-  }, []);
+  }, [q]);
 
   const onSearch = useCallback(
-    ({ q }: { q: string }) => {
+    ({ q }: FormValues) => {
       const encodedQ = encodeURIComponent(q);
-      if (q) router.push(`/search?q=${encodedQ}`);
+      if (q)
+        router.push('/search', {
+          query: {
+            q: encodedQ,
+          },
+        });
       else router.push('/search');
     },
-    [q, router],
+    [router],
   );
 
   const currentUrl = new URL((window as Window).location.href);
@@ -53,7 +68,7 @@ const SearchPostsPage = () => {
         <title>{q ? `"${q}" 검색결과 - Re:zero` : 'Re:zero'}</title>
       </Head>
       <form
-        onSubmit={handleSubmit(onSearch)}
+        onSubmit={form.onSubmit(onSearch)}
         className={
           isFocus
             ? 'text-blueGray-600 flex items-center border-b border-blueGray-400 bg-white p-2 w-full justify-center'
@@ -63,13 +78,14 @@ const SearchPostsPage = () => {
         <Search />
         <input
           type="search"
-          {...register('q', { required: true })}
           placeholder="검색어를 입력하세요"
           // eslint-disable-next-line no-use-before-define
           // css={searchStyle}
           onFocus={focus}
           onBlur={blur}
           className="focus:outline-none flex-1"
+          {...form.getInputProps('q')}
+          ref={searchRef}
         />
         <button type="submit" hidden />
       </form>

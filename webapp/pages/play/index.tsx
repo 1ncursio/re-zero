@@ -1,4 +1,4 @@
-import { Stack, Text, ThemeIcon, Title } from '@mantine/core';
+import { Stack, Text, ThemeIcon, Title, UnstyledButton } from '@mantine/core';
 import { useModals } from '@mantine/modals';
 import type { GetStaticProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -26,14 +26,14 @@ const PlayPage = () => {
       </Title>
       <div className="my-28 flex gap-16 justify-center text-lg">
         <Link href="/play/computer">
-          <a>
+          <UnstyledButton component="a">
             <Stack align="center">
               <ThemeIcon variant="outline" size="xl" radius="xl">
                 <Cpu />
               </ThemeIcon>
               <Text>컴퓨터</Text>
             </Stack>
-          </a>
+          </UnstyledButton>
         </Link>
 
         <button type="button" onClick={openReadyModal} className="opacity-30 cursor-not-allowed">

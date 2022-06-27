@@ -1,9 +1,15 @@
 import useRepliesSWR from '@hooks/swr/useRepliesSWR';
 import updateReply from '@lib/api/replies/updateReply';
+import { Box, TextInput } from '@mantine/core';
+import { useForm, zodResolver } from '@mantine/form';
 import { Comment } from '@typings/comment';
 import { useRouter } from 'next/router';
-import { FC, useCallback, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { FC, useCallback, useEffect, useRef } from 'react';
+import { z } from 'zod';
+
+interface FormValues {
+  content: string;
+}
 
 type EditReplyFormProps = {
   reply: Comment;
@@ -11,14 +17,20 @@ type EditReplyFormProps = {
   closeEditReplyForm: () => void;
 };
 
+const schema = z.object({
+  content: z.string().max(200, { message: '댓글은 최대 200자입니다.' }),
+});
+
 const EditReplyForm: FC<EditReplyFormProps> = ({ reply, commentId, closeEditReplyForm }) => {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    setFocus,
-    formState: { errors },
-  } = useForm();
+  const form = useForm<FormValues>({
+    schema: zodResolver(schema),
+    initialValues: {
+      content: '',
+    },
+  });
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const router = useRouter();
   const { postId } = router.query;
 
@@ -29,7 +41,7 @@ const EditReplyForm: FC<EditReplyFormProps> = ({ reply, commentId, closeEditRepl
   });
 
   const onSubmitComment = useCallback(
-    async (content: string) => {
+    async ({ content }: FormValues) => {
       try {
         await updateReply({
           content,
@@ -37,36 +49,34 @@ const EditReplyForm: FC<EditReplyFormProps> = ({ reply, commentId, closeEditRepl
           commentId: reply.id,
           mutateReplies,
         });
-        reset({ content: '' });
+        form.setValues({ content: '' });
         closeEditReplyForm();
       } catch (error) {
         console.error(error);
       }
     },
-    [updateReply, postId],
-  );
-
-  const onSubmit = useCallback(
-    async ({ content }: { content: string }) => {
-      onSubmitComment(content);
-    },
-    [onSubmitComment],
+    [postId, form, closeEditReplyForm, reply.id, mutateReplies],
   );
 
   useEffect(() => {
-    setFocus('content');
-    reset({ content: reply.content });
+    inputRef.current?.focus();
+    form.setValues({ content: reply.content });
   }, []);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="mb-2">
-      <input
-        placeholder="댓글 수정"
-        autoComplete="off"
-        {...register('content', { required: true, maxLength: 200 })}
-        className="w-full border-b border-blueGray-200 text-sm focus:outline-none focus:border-blueGray-400"
-      />
-      <button type="submit" hidden />
+    <form onSubmit={form.onSubmit(onSubmitComment)}>
+      <Box mb="xs">
+        <TextInput
+          required
+          placeholder="댓글 수정"
+          variant="default"
+          autoComplete="off"
+          sx={{ flexGrow: 1 }}
+          {...form.getInputProps('content')}
+          ref={inputRef}
+        />
+        <button type="submit" hidden />
+      </Box>
     </form>
   );
 };

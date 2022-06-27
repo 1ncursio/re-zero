@@ -1,31 +1,42 @@
 import { useRouter } from 'next/router';
-import { FC, useCallback, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { FC, useCallback, useEffect, useRef } from 'react';
 import useCommentsSWR from '@hooks/swr/useCommentsSWR';
 import updateComment from '@lib/api/comments/updateComment';
 import { Comment } from '@typings/comment';
+import { z } from 'zod';
+import { useForm, zodResolver } from '@mantine/form';
+import { Box, TextInput } from '@mantine/core';
+
+interface FormValues {
+  content: string;
+}
 
 type EditCommentFormProps = {
   comment: Comment;
   closeEditCommentForm: () => void;
 };
 
+const schema = z.object({
+  content: z.string().max(200, { message: '댓글은 최대 200자입니다.' }),
+});
+
 const EditCommentForm: FC<EditCommentFormProps> = ({ comment, closeEditCommentForm }) => {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    setFocus,
-    formState: { errors },
-  } = useForm();
+  const form = useForm<FormValues>({
+    schema: zodResolver(schema),
+    initialValues: {
+      content: '',
+    },
+  });
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const router = useRouter();
   const { postId } = router.query;
 
-  // const { data: userData } = useUserSWR();
   const { mutate: mutateComments } = useCommentsSWR({ postId: postId as string });
 
   const onSubmitComment = useCallback(
-    async (content: string) => {
+    async ({ content }: FormValues) => {
       try {
         await updateComment({
           content,
@@ -33,36 +44,34 @@ const EditCommentForm: FC<EditCommentFormProps> = ({ comment, closeEditCommentFo
           commentId: comment.id,
           mutateComments,
         });
-        reset({ content: '' });
+        form.setValues({ content: '' });
         closeEditCommentForm();
       } catch (error) {
         console.error(error);
       }
     },
-    [updateComment, postId],
-  );
-
-  const onSubmit = useCallback(
-    async ({ content }: { content: string }) => {
-      onSubmitComment(content);
-    },
-    [onSubmitComment],
+    [postId, closeEditCommentForm, comment.id, mutateComments, form],
   );
 
   useEffect(() => {
-    setFocus('content');
-    reset({ content: comment.content });
+    inputRef.current?.focus();
+    form.setValues({ content: comment.content });
   }, []);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="mb-2">
-      <input
-        placeholder="댓글 수정"
-        autoComplete="off"
-        {...register('content', { required: true, maxLength: 200 })}
-        className="w-full border-b border-blueGray-200 text-sm focus:outline-none focus:border-blueGray-400"
-      />
-      <button type="submit" hidden />
+    <form onSubmit={form.onSubmit(onSubmitComment)}>
+      <Box mb="xs">
+        <TextInput
+          required
+          placeholder="댓글 수정"
+          variant="default"
+          autoComplete="off"
+          sx={{ flexGrow: 1 }}
+          {...form.getInputProps('content')}
+          ref={inputRef}
+        />
+        <button type="submit" hidden />
+      </Box>
     </form>
   );
 };

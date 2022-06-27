@@ -4,23 +4,32 @@ import useUserSWR from '@hooks/swr/useUserSWR';
 import createReply from '@lib/api/replies/createReply';
 import optimizeImage from '@lib/optimizeImage';
 import { Avatar, Group, TextInput } from '@mantine/core';
+import { useForm, zodResolver } from '@mantine/form';
 import { useRouter } from 'next/router';
-import { FC, useCallback, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { FC, useCallback } from 'react';
+import { z } from 'zod';
+
+interface FormValues {
+  content: string;
+}
 
 type ReplyFormProps = {
   commentId: number;
 };
 
+const schema = z.object({
+  content: z.string().max(200, { message: '댓글은 최대 200자입니다.' }),
+});
+
 // eslint-disable-next-line no-undef
 const ReplyForm: FC<ReplyFormProps> = ({ commentId }) => {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    setFocus,
-    formState: { errors },
-  } = useForm();
+  const form = useForm<FormValues>({
+    schema: zodResolver(schema),
+    initialValues: {
+      content: '',
+    },
+  });
+
   const router = useRouter();
   const { postId } = router.query;
 
@@ -34,8 +43,8 @@ const ReplyForm: FC<ReplyFormProps> = ({ commentId }) => {
     shouldFetch: true,
   });
 
-  const onSubmit = useCallback(
-    async ({ content }: { content: string }) => {
+  const onSubmitReply = useCallback(
+    async ({ content }: FormValues) => {
       if (!userData || !content.trim()) return;
 
       try {
@@ -47,30 +56,27 @@ const ReplyForm: FC<ReplyFormProps> = ({ commentId }) => {
           mutateComments,
           user: userData,
         });
-        reset({ content: '' });
+        form.setValues({ content: '' });
       } catch (error) {
         console.error(error);
       } finally {
         mutateReplies();
       }
     },
-    [commentId, postId, mutateReplies, userData, reset],
+    [commentId, postId, mutateReplies, userData, form, mutateComments],
   );
 
-  useEffect(() => {
-    setFocus('content');
-  }, []);
-
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={form.onSubmit(onSubmitReply)}>
       <Group mb={16}>
         <Avatar src={optimizeImage(userData?.image_url)} alt="user" radius="xl" size="sm" />
         <TextInput
+          required
           placeholder="답글 추가"
           variant="default"
           autoComplete="off"
-          sx={(theme) => ({ flexGrow: 1 })}
-          {...register('content', { required: true, maxLength: 200 })}
+          sx={{ flexGrow: 1 }}
+          {...form.getInputProps('content')}
         />
         <button type="submit" hidden />
       </Group>
