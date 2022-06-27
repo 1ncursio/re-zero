@@ -105,7 +105,7 @@ export default function PlayController({ onRestart, onChangeTheme, isCalculating
           <ActionIcon
             variant="hover"
             size="xl"
-            onClick={() => {}}
+            // onClick={() => {}}
             disabled={isCalculating}
             sx={controlButtonStyles}
           >
@@ -114,7 +114,7 @@ export default function PlayController({ onRestart, onChangeTheme, isCalculating
           <ActionIcon
             variant="hover"
             size="xl"
-            onClick={() => {}}
+            // onClick={() => {}}
             disabled={isCalculating}
             sx={controlButtonStyles}
           >

@@ -19,7 +19,7 @@ import {
   TOTAL_CELL_COUNT,
 } from '@lib/othelloConfig';
 import sleep from '@lib/utils/sleep';
-import { ActionIcon, Text } from '@mantine/core';
+import { Text } from '@mantine/core';
 import changeTheme from '@store/config/changeTheme';
 import addHistory from '@store/reversi/addHistory';
 import clearHistory from '@store/reversi/clearHistory';
@@ -29,7 +29,6 @@ import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Settings } from 'tabler-icons-react';
 import useSound from 'use-sound';
 import { ThemeName } from '~/config/theme';
 

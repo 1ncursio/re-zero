@@ -1,4 +1,4 @@
-export default function optimizeImage(url?: string | null, width?: number) {
+export default function optimizeImage(url?: string | null) {
   if (!url) return url;
   // if (/^https?:\/\/.+/.test(url)) return url;
 
