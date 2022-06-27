@@ -12,10 +12,11 @@
     }
   },
   "extends": [
-    "airbnb",
-    "prettier",
     "plugin:@typescript-eslint/recommended",
-    "plugin:prettier/recommended"
+    "plugin:prettier/recommended",
+    "next",
+    "plugin:@next/next/recommended",
+    "prettier"
   ],
   "globals": {
     "Atomics": "readonly",
@@ -24,6 +25,7 @@
   "plugins": ["@typescript-eslint", "react", "jsx-a11y", "import"],
   "rules": {
     "react/jsx-filename-extension": 0,
+    "react/function-component-definition": 0,
     "linebreak-style": 0,
     "import/no-unresolved": 0,
     "import/extensions": 0,
