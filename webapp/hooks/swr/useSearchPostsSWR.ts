@@ -12,7 +12,7 @@ export interface ILink {
 export default function useSearchPostsSWR(
   { q, page }: { q: string | null; page: number | string },
   options: SWRConfiguration = {},
-): SWRResponse<Post[], Error> & { links: ILink[]; total: number } {
+): SWRResponse<Post[], Error> & { links: ILink[]; total: number; last_page: number } {
   const response = useSWR<any>(q ? `/api/search?q=${q}&page=${page}` : null, fetcher, {
     ...options,
   });
@@ -28,5 +28,6 @@ export default function useSearchPostsSWR(
       })) ?? [],
     links: response?.data?.links ?? [],
     total: response?.data?.total ?? 0,
+    last_page: response?.data?.last_page ?? 1,
   };
 }

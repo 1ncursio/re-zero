@@ -42,9 +42,10 @@ const Community = () => {
 
   const [opened, handlers] = useDisclosure(false);
   const [loading, onLoading, offLoading] = useBoolean(false);
-  const [currentUrl, setCurrentUrl] = useState('');
+
   const router = useRouter();
   const { page } = router.query;
+  const [activePage, setPage] = useState(1);
 
   const { isLoading, isError, data, error } = useQuery('todos', fetchPosts, {
     refetchOnWindowFocus: false,
@@ -80,17 +81,22 @@ const Community = () => {
     links: linksData,
     last_page,
   } = usePostsSWR({
-    page: page ? Number(page) : 1,
+    page: activePage,
   });
 
   useEffect(() => {
-    if (last_page) {
-      console.log({ last_page });
+    if (page) {
+      setPage(Number(page));
+      router.push('/community', {
+        query: {
+          page,
+        },
+      });
     }
-  }, [last_page]);
+  }, [page]);
 
   // for ux purpose only (pagination)
-  usePostsSWR({ page: (page ? Number(page) : 1) + 1 });
+  usePostsSWR({ page: activePage + 1 });
 
   const handleImageUpload = useCallback(
     (file: File): Promise<string> =>
@@ -129,9 +135,9 @@ const Community = () => {
     [router, onLoading, offLoading, userData],
   );
 
-  useEffect(() => {
-    setCurrentUrl(new URL(window.location.href));
-  }, []);
+  // useEffect(() => {
+  //   setCurrentUrl(new URL(window.location.href));
+  // }, []);
 
   if (!userData && !isLoadingUserData) {
     return <RequireLogIn />;
@@ -171,8 +177,19 @@ const Community = () => {
         </Modal>
       </div>
       {postsData && <PostList posts={postsData} />}
-      {/* <Pagination links={linksData} referrerUrl={currentUrl} /> */}
-      <Pagination total={last_page} />
+      <Pagination
+        position="center"
+        page={activePage}
+        onChange={(p) => {
+          setPage(p);
+          router.push('/community', {
+            query: {
+              page: p,
+            },
+          });
+        }}
+        total={last_page}
+      />
     </div>
   );
 };

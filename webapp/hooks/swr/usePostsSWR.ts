@@ -30,7 +30,7 @@ export interface PostsSWRResponse extends SWRResponse<Post[], Error> {
 export default function usePostsSWR(
   { page }: { page: number | string },
   options: SWRConfiguration = {},
-): SWRResponse<Post[], Error> & { links: ILink[] } {
+): SWRResponse<Post[], Error> & { links: ILink[]; last_page: number } {
   const response = useSWR<any>(
     `/api/posts?page=${page ?? 1}`,
     // (url) => fetcher(url, true),
@@ -50,5 +50,6 @@ export default function usePostsSWR(
         isMine: post.user.id === userData?.id,
       })) ?? [],
     links: response?.data?.links ?? [],
+    last_page: response?.data?.last_page ?? 1,
   };
 }

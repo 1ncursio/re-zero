@@ -1,13 +1,12 @@
-import Pagination from '@components/Pagination';
 import SearchPostList from '@components/SearchPostList';
 import useSearchPostsSWR from '@hooks/swr/useSearchPostsSWR';
-import useBoolean from '@hooks/useBoolean';
+import { Pagination, Text, TextInput } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { GetStaticProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Search } from 'tabler-icons-react';
 import { z } from 'zod';
 
@@ -22,10 +21,8 @@ const schema = z.object({
 const SearchPostsPage = () => {
   const router = useRouter();
   const { page, q } = router.query;
-  // const page = Number(query.get('page')) || 1;
-  // const history = useHistory();
-  // const q = query.get('q') !== null ? query.get('q') : '';
-  const [isFocus, focus, blur] = useBoolean(false);
+  const [activePage, setPage] = useState(1);
+
   const form = useForm<FormValues>({
     schema: zodResolver(schema),
     initialValues: {
@@ -34,10 +31,15 @@ const SearchPostsPage = () => {
   });
 
   const searchRef = useRef<HTMLInputElement>(null);
-  const { data: postsData, links: linksData, total } = useSearchPostsSWR({ page, q });
+  const {
+    data: postsData,
+    links: linksData,
+    total,
+    last_page,
+  } = useSearchPostsSWR({ page: activePage, q: q as string });
 
   // for ux purpose only (pagination)
-  useSearchPostsSWR({ page: (page ? Number(page) : 1) + 1, q: (q as string) ?? '' });
+  useSearchPostsSWR({ page: activePage + 1, q: (q as string) ?? '' });
 
   useEffect(() => {
     searchRef.current?.focus();
@@ -50,54 +52,80 @@ const SearchPostsPage = () => {
     ({ q }: FormValues) => {
       const encodedQ = encodeURIComponent(q);
       if (q)
-        router.push('/search', {
-          query: {
-            q: encodedQ,
+        router.push(
+          '/search',
+          {
+            query: {
+              q: encodedQ,
+              page: 1,
+            },
           },
-        });
-      else router.push('/search');
+          { shallow: true },
+        );
+      else router.push('/search', undefined, { shallow: true });
     },
     [router],
   );
 
-  const currentUrl = new URL((window as Window).location.href);
+  useEffect(() => {
+    console.log({ q });
+  }, [q]);
+
+  // useEffect(() => {
+  //   if (q) {
+  //     // setPage(Number(page));
+  //     router.push('/search', {
+  //       query: {
+  //         // page,
+  //         q,
+  //       },
+  //     });
+  //   }
+  // }, [q]);
 
   return (
     <div className="lg:w-[calc(768px-2rem)] w-md mx-auto md:w-full md:px-4">
       <Head>
         <title>{q ? `"${q}" 검색결과 - Re:zero` : 'Re:zero'}</title>
       </Head>
-      <form
-        onSubmit={form.onSubmit(onSearch)}
-        className={
-          isFocus
-            ? 'text-blueGray-600 flex items-center border-b border-blueGray-400 bg-white p-2 w-full justify-center'
-            : 'text-blueGray-600 flex items-center border-b border-blueGray-200 bg-white p-2 w-full justify-center'
-        }
-      >
-        <Search />
-        <input
+      <form onSubmit={form.onSubmit(onSearch)}>
+        <TextInput
           type="search"
           placeholder="검색어를 입력하세요"
-          // eslint-disable-next-line no-use-before-define
-          // css={searchStyle}
-          onFocus={focus}
-          onBlur={blur}
-          className="focus:outline-none flex-1"
           {...form.getInputProps('q')}
           ref={searchRef}
+          icon={<Search size={16} />}
         />
         <button type="submit" hidden />
       </form>
       {postsData && q && (
-        <div className="text-blueGray-600 my-4">
-          <span>총 </span>
-          <b className="font-bold text-emerald-500">{total}</b>
-          <span>개의 포스트를 찾았습니다.</span>
-        </div>
+        <Text my={16}>
+          <Text component="span">총 </Text>
+          <Text weight={500} color="green" component="span">
+            {total}
+          </Text>
+          <Text component="span">개의 포스트를 찾았습니다.</Text>
+        </Text>
       )}
       {postsData && <SearchPostList posts={postsData} />}
-      <Pagination links={linksData} referrerUrl={currentUrl} />
+      <Pagination
+        position="center"
+        page={activePage}
+        onChange={(p) => {
+          setPage(p);
+          router.push(
+            '/search',
+            {
+              query: {
+                q: q as string,
+                page: p,
+              },
+            },
+            { shallow: true },
+          );
+        }}
+        total={last_page}
+      />
     </div>
   );
 };

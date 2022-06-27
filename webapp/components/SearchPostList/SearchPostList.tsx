@@ -1,6 +1,6 @@
 import optimizeImage from '@lib/optimizeImage';
 import relativeCreatedAt from '@lib/relativeCreatedAt';
-import { Avatar, Text, UnstyledButton } from '@mantine/core';
+import { Avatar, Highlight, Text, Title, UnstyledButton } from '@mantine/core';
 import { Post } from '@typings/post';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -14,26 +14,6 @@ type SearchPostListProps = {
 const SearchPostList: FC<SearchPostListProps> = ({ posts }) => {
   const router = useRouter();
   const { q } = router.query;
-
-  const getHighlightedText = (text: string, highlight: string | null) => {
-    // Split on highlight term and include term into parts, ignore case
-    if (!highlight) return text;
-
-    const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
-    return (
-      <>
-        {parts.map((part, i) =>
-          part.toLowerCase() === highlight.toLowerCase() ? (
-            <mark key={i} className="bg-emerald-400 text-white">
-              {part}
-            </mark>
-          ) : (
-            part
-          ),
-        )}
-      </>
-    );
-  };
 
   // delete all the html tags from the post content
   const cleanContent = (content: string) => {
@@ -55,7 +35,11 @@ const SearchPostList: FC<SearchPostListProps> = ({ posts }) => {
               {hasImage(post.content) && <FiImage size={16} />}
               <Link href={`/community/${post.id}`}>
                 <UnstyledButton component="a">
-                  <h1 className="text-blueGray-700">{getHighlightedText(post.title, q as string)}</h1>
+                  <Title order={4}>
+                    <Highlight highlight={q ?? ''} highlightColor="green">
+                      {post.title}
+                    </Highlight>
+                  </Title>
                 </UnstyledButton>
               </Link>
             </span>
