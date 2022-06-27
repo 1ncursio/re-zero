@@ -20,7 +20,7 @@ import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { Check, ChevronLeft, ChevronRight, Refresh, Settings } from 'tabler-icons-react';
 import shallow from 'zustand/shallow';
-import theme from '~/config/theme';
+import theme, { ThemeName } from '~/config/theme';
 
 const controlButtonStyles = (theme: MantineTheme): CSSObject => ({
   '&:hover': {
@@ -30,7 +30,7 @@ const controlButtonStyles = (theme: MantineTheme): CSSObject => ({
 
 type PlayControllerProps = {
   onRestart: () => void;
-  onChangeTheme: (value: string) => void;
+  onChangeTheme: (value: ThemeName) => void;
   isCalculating: boolean;
 };
 
@@ -145,7 +145,7 @@ export default function PlayController({ onRestart, onChangeTheme, isCalculating
             onChange={(value) => {
               if (!value) return setSelectedTheme(themeNames[0]);
               setSelectedTheme(value);
-              onChangeTheme(value);
+              onChangeTheme(value as ThemeName);
             }}
           />
           <Checkbox

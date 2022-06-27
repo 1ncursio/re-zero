@@ -31,6 +31,7 @@ import Head from 'next/head';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Settings } from 'tabler-icons-react';
 import useSound from 'use-sound';
+import { ThemeName } from '~/config/theme';
 
 export default function PlayComputerPage() {
   // i18n
@@ -59,7 +60,7 @@ export default function PlayComputerPage() {
   const { mutate: mutateAIHistories } = useAIHistoriesSWR();
   const { mutate: mutateUsersAIHistories } = useUsersAIHistoriesSWR();
 
-  const onChangeTheme = useCallback((value: string) => {
+  const onChangeTheme = useCallback((value: ThemeName) => {
     if (!bgCanvas.current || !gameCanvas.current) return;
 
     changeTheme(value, bgCanvas.current, gameCanvas.current);
