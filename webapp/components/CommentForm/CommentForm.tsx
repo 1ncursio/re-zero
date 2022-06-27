@@ -1,6 +1,7 @@
 import useUserSWR from '@hooks/swr/useUserSWR';
 import useComment from '@hooks/useComment';
 import optimizeImage from '@lib/optimizeImage';
+import { Avatar, Group, TextInput } from '@mantine/core';
 import { useRouter } from 'next/router';
 import { FC, useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
@@ -45,19 +46,18 @@ const CommentForm: FC = () => {
   }, []);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex gap-2 mb-6">
-      <img
-        src={optimizeImage(userData?.image_url ?? '/assets/images/user_thumbnail.png')}
-        alt="user"
-        className="w-8 h-8 rounded-full mr-1"
-      />
-      <input
-        placeholder="댓글 추가"
-        {...register('content', { required: true, maxLength: 200 })}
-        autoComplete="off"
-        className="w-full border-b border-blueGray-200 text-sm focus:outline-none focus:border-blueGray-400"
-      />
-      <button type="submit" hidden />
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Group mb={16}>
+        <Avatar src={optimizeImage(userData?.image_url)} alt="user" radius="xl" size="sm" />
+        <TextInput
+          placeholder="댓글 추가"
+          variant="default"
+          {...register('content', { required: true, maxLength: 200 })}
+          autoComplete="off"
+          sx={(theme) => ({ flexGrow: 1 })}
+        />
+        <button type="submit" hidden />
+      </Group>
     </form>
   );
 };

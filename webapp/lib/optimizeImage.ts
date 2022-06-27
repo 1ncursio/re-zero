@@ -1,4 +1,5 @@
-export default function optimizeImage(url: string, width?: number) {
+export default function optimizeImage(url?: string | null, width?: number) {
+  if (!url) return url;
   // if (/^https?:\/\/.+/.test(url)) return url;
 
   // /assets 로 시작하면 그대로 리턴

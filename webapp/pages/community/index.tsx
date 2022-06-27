@@ -11,7 +11,7 @@ import client from '@lib/api/client';
 import uploadImage from '@lib/api/comments/uploadImage';
 import createPost from '@lib/api/posts/createPost';
 import fetchPosts from '@lib/api/posts/fetchPosts';
-import { Pagination } from '@mantine/core';
+import { Button, Pagination } from '@mantine/core';
 import { Editor } from '@tinymce/tinymce-react';
 import { GetStaticProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -37,9 +37,9 @@ const Community = () => {
     return client.post('/api/posts', newPost);
   });
 
-  useEffect(() => {
-    mutation.mutate({ content: 'test content', title: ' test title' });
-  }, []);
+  // useEffect(() => {
+  //   mutation.mutate({ content: 'test content', title: ' test title' });
+  // }, []);
 
   // export default async function createPost({
   //   content,
@@ -117,13 +117,14 @@ const Community = () => {
         <title>커뮤니티 - Re:zero</title>
       </Head>
       <div className="flex justify-end">
-        <button
+        <Button
           type="button"
           onClick={openModal}
-          className="bg-white border border-blueGray-500 hover:border-emerald-500 text-blueGray-500 hover:text-emerald-500 py-1 px-4 capitalize"
+          variant="default"
+          // className="bg-white border border-blueGray-500 hover:border-emerald-500 text-blueGray-500 hover:text-emerald-500 py-1 px-4 capitalize"
         >
           포스트 작성
-        </button>
+        </Button>
         <StyledModal
           isOpen={isOpen}
           onRequestClose={closeModal}

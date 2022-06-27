@@ -1,6 +1,6 @@
 import optimizeImage from '@lib/optimizeImage';
 import relativeCreatedAt from '@lib/relativeCreatedAt';
-import { Avatar, Text, Title } from '@mantine/core';
+import { Avatar, Stack, Text, Title } from '@mantine/core';
 import { Post } from '@typings/post';
 import Link from 'next/link';
 import { FC } from 'react';
@@ -21,7 +21,7 @@ const PostList: FC<PostListProps> = ({ posts }) => {
   };
 
   return (
-    <div className="flex flex-col gap-6 divide-y divide-blueGray-200">
+    <Stack>
       {posts?.map((post) => (
         <div key={post.id}>
           <div className="flex justify-between my-4">
@@ -31,11 +31,13 @@ const PostList: FC<PostListProps> = ({ posts }) => {
                 'outlinedImage'}
               <Link href={`/community/${post.id}`}>
                 <a>
-                  <Title order={3}>{post.title}</Title>
+                  <Title order={4}>{post.title}</Title>
                 </a>
               </Link>
             </span>
-            <span className="text-xs text-blueGray-500">{relativeCreatedAt(post.created_at)}</span>
+            <Text size="xs" color="dimmed">
+              {relativeCreatedAt(post.created_at)}
+            </Text>
           </div>
           <p
             className="m-2 text-sm text-blueGray-600 line-clamp-2"
@@ -43,17 +45,12 @@ const PostList: FC<PostListProps> = ({ posts }) => {
             dangerouslySetInnerHTML={{ __html: cleanContent(post.content) }}
           />
           <div className="p-2 flex gap-1 items-center">
-            {/* <img
-              src={optimizeImage(post.user?.image_url ?? '/assets/images/user_thumbnail.png')}
-              alt="user"
-              className="w-8 h-8 rounded-full"
-            /> */}
-            <Avatar src={post.user?.image_url} radius="xl" size="sm" />
+            <Avatar src={optimizeImage(post.user?.image_url)} radius="xl" size="sm" />
             <Text size="sm">{post.user.name}</Text>
           </div>
         </div>
       ))}
-    </div>
+    </Stack>
   );
 };
 

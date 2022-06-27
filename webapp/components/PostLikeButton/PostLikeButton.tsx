@@ -2,6 +2,7 @@ import usePostSWR from '@hooks/swr/usePostSWR';
 import useBoolean from '@hooks/useBoolean';
 import { useRouter } from 'next/router';
 import { FC, useCallback } from 'react';
+import { HiHeart, HiOutlineHeart } from 'react-icons/hi';
 import { usePopperTooltip } from 'react-popper-tooltip';
 import 'react-popper-tooltip/dist/styles.css';
 
@@ -37,11 +38,7 @@ const PostLikeButton: FC<PostLikeButtonProps> = ({ toggleLikePost }) => {
   return (
     <div className="flex gap-1 items-center">
       <button type="button" ref={setTriggerRef} onClick={handleClickLike}>
-        {postData.isLiked
-          ? // <Icon name="filledLike" className="w-4 h-4" />
-            'filledLike'
-          : // <Icon name="outlinedLike" className="w-4 h-4" />
-            'outlinedLike'}
+        {postData.isLiked ? <HiHeart size={16} /> : <HiOutlineHeart size={16} />}
         {visible && (
           <div ref={setTooltipRef} {...getTooltipProps({ className: 'tooltip-container' })}>
             <div {...getArrowProps({ className: 'tooltip-arrow' })} />

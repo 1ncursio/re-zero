@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { usePopperTooltip } from 'react-popper-tooltip';
 import 'react-popper-tooltip/dist/styles.css';
+import { Eye } from 'tabler-icons-react';
 // import Icon from '../Icon';
 
 type PostViewsProps = {
@@ -13,8 +14,7 @@ const PostViews: FC<PostViewsProps> = ({ views }) => {
   return (
     <>
       <div className="flex gap-1 items-center" ref={setTriggerRef}>
-        {/* <Icon name="eye" className="w-4 h-4" /> */}
-        eye
+        <Eye size={16} />
         <span className="text-xs text-blueGray-600">{views}</span>
       </div>
       {visible && (

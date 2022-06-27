@@ -2,6 +2,7 @@ import useBoolean from '@hooks/useBoolean';
 import { Comment } from '@typings/comment';
 import { FC, useCallback } from 'react';
 import { usePopperTooltip } from 'react-popper-tooltip';
+import { HiHeart, HiOutlineHeart } from 'react-icons/hi';
 
 type CommentLikeButtonProps = {
   toggleLikeComment: () => void;
@@ -29,11 +30,7 @@ const CommentLikeButton: FC<CommentLikeButtonProps> = ({ toggleLikeComment, comm
   return (
     <div className="flex gap-1 items-center">
       <button type="button" ref={setTriggerRef} onClick={handleClickLike}>
-        {comment.isLiked
-          ? // <Icon name="filledLike" className="w-4 h-4" />
-            'filledLike'
-          : // <Icon name="outlinedLike" className="w-4 h-4" />
-            'outlinedLike'}
+        {comment.isLiked ? <HiHeart size={16} /> : <HiOutlineHeart size={16} />}
         {visible && (
           <div ref={setTooltipRef} {...getTooltipProps({ className: 'tooltip-container' })}>
             <div {...getArrowProps({ className: 'tooltip-arrow' })} />

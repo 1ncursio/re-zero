@@ -5,6 +5,7 @@ import useUserSWR from '@hooks/swr/useUserSWR';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import useLogout from '@hooks/useLogout';
+import optimizeImage from '@lib/optimizeImage';
 
 type LabelItem = {
   type: 'label';
@@ -93,7 +94,7 @@ export function User() {
             }}
           >
             <Group>
-              <Avatar src={userData?.image_url} radius="xl" />
+              <Avatar src={optimizeImage(userData?.image_url)} radius="xl" />
               <Box sx={{ flex: 1 }}>
                 <Text size="sm" weight={500}>
                   {userName}

@@ -13,6 +13,7 @@ import toggleLikePost from '@lib/api/posts/toggleLikePost';
 import updatePost from '@lib/api/posts/updatePost';
 import optimizeImage from '@lib/optimizeImage';
 import relativeCreatedAt from '@lib/relativeCreatedAt';
+import { Avatar, Divider, Group, Stack, Text, TypographyStylesProvider, UnstyledButton } from '@mantine/core';
 import { Editor } from '@tinymce/tinymce-react';
 import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -96,31 +97,27 @@ const CommunityPost = () => {
   }
 
   return (
-    <div className="lg:w-[calc(768px-2rem)] w-md mx-auto md:w-full md:px-4">
+    <div className="">
       <Head>
         <title>{postData.title} - Re:zero </title>
       </Head>
-      <div className="min-h-[24rem]">
-        <header className="p-4 border-b border-blueGray-200">
-          <h1 className="text-lg text-blueGray-700 mb-2">{postData.title}</h1>
+      <Stack className="min-h-[24rem]" spacing="sm">
+        <Stack p="sm" spacing="sm">
+          <Text size="lg">{postData.title}</Text>
           <div className="flex justify-between">
             <div className="flex gap-1 items-center">
-              <img
-                src={optimizeImage(postData.user?.image_url ?? '/assets/images/user_thumbnail.png')}
-                alt="user"
-                className="w-8 h-8 rounded-full mr-1"
-              />
-              <span className="text-xs text-blueGray-600">{postData.user.name}</span>
-              <span className="text-xs text-blueGray-400">
+              <Avatar src={optimizeImage(postData.user?.image_url)} radius="xl" size="sm" />
+              <Text size="xs">{postData.user.name}</Text>
+              <Text size="xs" color="dimmed">
                 <span>· </span>
                 {relativeCreatedAt(postData.created_at)}
-              </span>
+              </Text>
             </div>
             {postData.isMine && (
-              <div className="flex gap-2">
-                <button type="button" className="text-xs text-blueGray-600" onClick={openEditModal}>
-                  수정
-                </button>
+              <Group spacing="xs">
+                <UnstyledButton onClick={openEditModal}>
+                  <Text size="xs">수정</Text>
+                </UnstyledButton>
                 <StyledModal
                   isOpen={isOpenEditModal}
                   onRequestClose={closeEditModal}
@@ -138,9 +135,11 @@ const CommunityPost = () => {
                     setTitle={setTitle}
                   />
                 </StyledModal>
-                <button type="button" className="text-xs text-red-400" onClick={openDeleteModal}>
-                  삭제
-                </button>
+                <UnstyledButton onClick={openDeleteModal}>
+                  <Text size="xs" color="red">
+                    삭제
+                  </Text>
+                </UnstyledButton>
                 <StyledModal
                   isOpen={isOpenDeleteModal}
                   onRequestClose={closeDeleteModal}
@@ -152,15 +151,18 @@ const CommunityPost = () => {
                 >
                   게시글을 정말로 삭제하시겠습니까?
                 </StyledModal>
-              </div>
+              </Group>
             )}
           </div>
-        </header>
+        </Stack>
+        <Divider />
         <section className="p-4 mb-24">
-          <p
-            dangerouslySetInnerHTML={{ __html: postData.content }}
-            //  css={contentStyle}
-          />
+          <TypographyStylesProvider>
+            <p
+              dangerouslySetInnerHTML={{ __html: postData.content }}
+              //  css={contentStyle}
+            />
+          </TypographyStylesProvider>
           <div className="flex gap-2 my-6 py-4">
             <PostLikeButton toggleLikePost={onToggleLikePost} />
             <PostViews views={postData.views} />
@@ -169,7 +171,7 @@ const CommunityPost = () => {
         <footer className="p-4">
           <CommentContainer />
         </footer>
-      </div>
+      </Stack>
     </div>
   );
 };

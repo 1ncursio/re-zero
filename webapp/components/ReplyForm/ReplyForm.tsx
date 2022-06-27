@@ -3,6 +3,7 @@ import useRepliesSWR from '@hooks/swr/useRepliesSWR';
 import useUserSWR from '@hooks/swr/useUserSWR';
 import createReply from '@lib/api/replies/createReply';
 import optimizeImage from '@lib/optimizeImage';
+import { Avatar, Group, TextInput } from '@mantine/core';
 import { useRouter } from 'next/router';
 import { FC, useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
@@ -61,19 +62,18 @@ const ReplyForm: FC<ReplyFormProps> = ({ commentId }) => {
   }, []);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex gap-2 mb-6">
-      <img
-        src={optimizeImage(userData?.image_url ?? '/assets/images/user_thumbnail.png')}
-        alt="user"
-        className="w-6 h-6 rounded-full"
-      />
-      <input
-        placeholder="답글 추가"
-        autoComplete="off"
-        {...register('content', { required: true, maxLength: 200 })}
-        className="w-full border-b border-blueGray-200 text-sm focus:outline-none focus:border-blueGray-400"
-      />
-      <button type="submit" hidden />
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Group mb={16}>
+        <Avatar src={optimizeImage(userData?.image_url)} alt="user" radius="xl" size="sm" />
+        <TextInput
+          placeholder="답글 추가"
+          variant="default"
+          autoComplete="off"
+          sx={(theme) => ({ flexGrow: 1 })}
+          {...register('content', { required: true, maxLength: 200 })}
+        />
+        <button type="submit" hidden />
+      </Group>
     </form>
   );
 };

@@ -1,6 +1,7 @@
 import useUserSWR from '@hooks/swr/useUserSWR';
 import updateUserImage from '@lib/api/users/updateUserImage';
 import updateUserProfile from '@lib/api/users/updateUserProfile';
+import optimizeImage from '@lib/optimizeImage';
 import { Avatar, Button, TextInput, Title } from '@mantine/core';
 import { User } from '@typings/user';
 import produce from 'immer';
@@ -75,7 +76,10 @@ const SettingsProfilePage = () => {
       <Title order={3}>내 프로필 설정</Title>
       <div className="flex md:flex-col">
         <div className="flex justify-center items-center md:inline-flex flex-col md:pr-0 pr-6">
-          <Avatar src={userData?.image_url} sx={{ width: 128, height: 128, borderRadius: 64 }} />
+          <Avatar
+            src={optimizeImage(userData?.image_url)}
+            sx={{ width: 128, height: 128, borderRadius: 64 }}
+          />
           <input type="file" hidden ref={uploadRef} onChange={onUpload} />
           <Button variant="outline" onClick={onClickUpload}>
             이미지 변경
