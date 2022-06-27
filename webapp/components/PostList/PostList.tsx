@@ -1,9 +1,10 @@
 import optimizeImage from '@lib/optimizeImage';
 import relativeCreatedAt from '@lib/relativeCreatedAt';
-import { Avatar, Button, Stack, Text, Title, UnstyledButton } from '@mantine/core';
+import { Avatar, Stack, Text, Title, UnstyledButton } from '@mantine/core';
 import { Post } from '@typings/post';
 import Link from 'next/link';
 import { FC } from 'react';
+import { FiImage } from 'react-icons/fi';
 
 type PostListProps = {
   posts: Post[];
@@ -26,9 +27,7 @@ const PostList: FC<PostListProps> = ({ posts }) => {
         <div key={post.id}>
           <div className="flex justify-between my-4">
             <span className="flex items-center ml-2 gap-2">
-              {hasImage(post.content) &&
-                // <Icon name="outlinedImage" className="w-4 h-4" />
-                'outlinedImage'}
+              {hasImage(post.content) && <FiImage size={16} />}
               <Link href={`/community/${post.id}`}>
                 <UnstyledButton component="a">
                   <Title order={4}>{post.title}</Title>

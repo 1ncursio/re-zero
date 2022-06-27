@@ -7,12 +7,11 @@ import deleteReply from '@lib/api/replies/deleteReply';
 import optimizeImage from '@lib/optimizeImage';
 import relativeCreatedAt from '@lib/relativeCreatedAt';
 import { Avatar, Group, Stack, Text, UnstyledButton } from '@mantine/core';
+import { useModals } from '@mantine/modals';
 import { Comment } from '@typings/comment';
 import { useRouter } from 'next/router';
 import { FC, useCallback } from 'react';
 import EditReplyForm from '../EditReplyForm';
-import ReplyLikeButton from '../ReplyLikeButton';
-import StyledModal from '../StyledModal';
 
 type ReplyItemProps = {
   reply: Comment;
@@ -20,9 +19,10 @@ type ReplyItemProps = {
 };
 
 const ReplyItem: FC<ReplyItemProps> = ({ reply, commentId }) => {
-  const [isOpen, openModal, closeModal] = useBoolean(false);
+  const modals = useModals();
+
   const [isOpenEditReplyForm, openEditReplyForm, closeEditReplyForm] = useBoolean(false);
-  useBoolean(false);
+
   const router = useRouter();
   const { postId } = router.query;
 
@@ -45,8 +45,22 @@ const ReplyItem: FC<ReplyItemProps> = ({ reply, commentId }) => {
       mutateReplies,
       mutateComments,
     });
-    closeModal();
-  }, [closeModal, reply.id, postId, mutateReplies, mutateComments]);
+  }, [reply.id, postId, mutateReplies, mutateComments]);
+
+  const openDeleteReplyModal = useCallback(() => {
+    modals.openConfirmModal({
+      title: '답글 삭제',
+      children: <Text size="sm">답글을 정말로 삭제하시겠습니까?</Text>,
+      labels: {
+        cancel: '취소',
+        confirm: '삭제',
+      },
+      confirmProps: {
+        color: 'red',
+      },
+      onConfirm: onDeleteReply,
+    });
+  }, [modals, onDeleteReply]);
 
   return (
     <Group key={reply.id} align="start" spacing="xs">
@@ -64,22 +78,11 @@ const ReplyItem: FC<ReplyItemProps> = ({ reply, commentId }) => {
               <UnstyledButton onClick={openEditReplyForm}>
                 <Text size="xs">수정</Text>
               </UnstyledButton>
-              <UnstyledButton onClick={openModal}>
+              <UnstyledButton onClick={openDeleteReplyModal}>
                 <Text size="xs" color="red">
                   삭제
                 </Text>
               </UnstyledButton>
-              <StyledModal
-                isOpen={isOpen}
-                onRequestClose={closeModal}
-                onRequestOk={onDeleteReply}
-                title="댓글 삭제"
-                showCloseButton
-                showOkButton
-                width="480px"
-              >
-                댓글을 정말로 삭제하시겠습니까?
-              </StyledModal>
             </Group>
           )}
         </Group>

@@ -1,15 +1,19 @@
 import useUserSWR from '@hooks/swr/useUserSWR';
+import useBoolean from '@hooks/useBoolean';
 import updateUserImage from '@lib/api/users/updateUserImage';
 import updateUserProfile from '@lib/api/users/updateUserProfile';
 import optimizeImage from '@lib/optimizeImage';
 import { Avatar, Button, Group, Stack, TextInput, Title } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
+import { showNotification } from '@mantine/notifications';
 import { User } from '@typings/user';
 import produce from 'immer';
 import { GetStaticProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { Check, X } from 'tabler-icons-react';
 import { z } from 'zod';
 
 interface FormValues {
@@ -21,6 +25,11 @@ const schema = z.object({
 });
 
 const SettingsProfilePage = () => {
+  // const [loading, handlers] = useDisclosure(false, {
+  //   onOpen: () => console.log('Opened'),
+  //   onClose: () => console.log('Closed'),
+  // });
+  const [loading, onLoading, offLoading] = useBoolean(false);
   const { data: userData, mutate: mutateUser } = useUserSWR();
   const form = useForm<FormValues>({
     schema: zodResolver(schema),
@@ -52,7 +61,7 @@ const SettingsProfilePage = () => {
   const onUpload = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       const formData = new FormData();
-      formData.append('image', e.target.files[0]);
+      formData.append('image', (e.target.files as FileList)[0]);
       const data = await updateUserImage(formData);
       mutateUser(
         produce((user?: User) => {
@@ -68,19 +77,39 @@ const SettingsProfilePage = () => {
 
   const onSubmitProfile = useCallback(
     async ({ name }: FormValues) => {
-      const data = await updateUserProfile({
-        name,
-      });
-      mutateUser(
-        produce((user?: User) => {
-          if (!user) return;
+      try {
+        // handlers.open();
+        onLoading();
+        const data = await updateUserProfile({
+          name,
+        });
+        mutateUser(
+          produce((user?: User) => {
+            if (!user) return;
 
-          user.name = data.name;
-        }),
-        false,
-      );
+            user.name = data.name;
+          }),
+          false,
+        );
+        showNotification({
+          title: '프로필 수정 완료',
+          message: '프로필이 수정되었습니다.',
+          color: 'blue',
+          icon: <Check size={16} />,
+        });
+      } catch (error) {
+        console.error(error);
+        showNotification({
+          title: '프로필 수정 실패',
+          message: '프로필 수정에 실패했어요.',
+          color: 'red',
+          icon: <X size={16} />,
+        });
+      } finally {
+        offLoading();
+      }
     },
-    [mutateUser],
+    [mutateUser, onLoading, offLoading],
   );
 
   return (
@@ -112,7 +141,7 @@ const SettingsProfilePage = () => {
               {...form.getInputProps('name')}
             />
             <Group position="right">
-              <Button type="submit" variant="default" disabled={disabled}>
+              <Button type="submit" variant="default" disabled={disabled} loading={loading}>
                 변경
               </Button>
             </Group>

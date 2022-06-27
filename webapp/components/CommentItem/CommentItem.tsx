@@ -7,6 +7,7 @@ import deleteComment from '@lib/api/comments/deleteComment';
 import optimizeImage from '@lib/optimizeImage';
 import relativeCreatedAt from '@lib/relativeCreatedAt';
 import { Avatar, Group, Stack, Text, UnstyledButton } from '@mantine/core';
+import { useModals } from '@mantine/modals';
 import { Comment } from '@typings/comment';
 import { useRouter } from 'next/router';
 import { FC, useCallback } from 'react';
@@ -15,19 +16,18 @@ import CommentLikeButton from '../CommentLikeButton';
 import EditCommentForm from '../EditCommentForm';
 import ReplyForm from '../ReplyForm';
 import ReplyList from '../ReplyList';
-import StyledModal from '../StyledModal';
 
 type CommentItemProps = {
   comment: Comment;
 };
 
 const CommentItem: FC<CommentItemProps> = ({ comment }) => {
+  const modals = useModals();
+
   const [isOpenReply, toggleReply] = useToggle(false);
-  const [isOpen, openModal, closeModal] = useBoolean(false);
   const [isOpenReplyForm, openReplyForm] = useBoolean(false);
-  // const [isOpenEditCommentForm, openEditCommentForm] = useBoolean(false);
   const [isOpenEditCommentForm, openEditCommentForm, closeEditCommentForm] = useBoolean(false);
-  // const { postId } = useParams<{ postId: string }>();
+
   const router = useRouter();
   const { postId } = router.query;
 
@@ -52,8 +52,22 @@ const CommentItem: FC<CommentItemProps> = ({ comment }) => {
       commentId: comment.id,
       mutateComments,
     });
-    closeModal();
-  }, [closeModal, comment.id, mutateComments, postId]);
+  }, [comment.id, mutateComments, postId]);
+
+  const openDeleteCommentModal = useCallback(() => {
+    modals.openConfirmModal({
+      title: '댓글 삭제',
+      children: <Text size="sm">댓글을 정말로 삭제하시겠습니까?</Text>,
+      labels: {
+        cancel: '취소',
+        confirm: '삭제',
+      },
+      confirmProps: {
+        color: 'red',
+      },
+      onConfirm: onDeleteComment,
+    });
+  }, [modals, onDeleteComment]);
 
   return (
     <Group key={comment.id} align="start" spacing="xs">
@@ -71,22 +85,11 @@ const CommentItem: FC<CommentItemProps> = ({ comment }) => {
               <UnstyledButton onClick={openEditCommentForm}>
                 <Text size="xs">수정</Text>
               </UnstyledButton>
-              <UnstyledButton onClick={openModal}>
+              <UnstyledButton onClick={openDeleteCommentModal}>
                 <Text size="xs" color="red">
                   삭제
                 </Text>
               </UnstyledButton>
-              <StyledModal
-                isOpen={isOpen}
-                onRequestClose={closeModal}
-                onRequestOk={onDeleteComment}
-                title="댓글 삭제"
-                showCloseButton
-                showOkButton
-                width="480px"
-              >
-                댓글을 정말로 삭제하시겠습니까?
-              </StyledModal>
             </Group>
           )}
         </Group>

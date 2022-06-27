@@ -1,17 +1,16 @@
 // import Pagination from '@components/Pagination';
 import PostList from '@components/PostList/PostList';
 import RequireLogIn from '@components/RequireLogin/RequireLogin';
-import StyledModal from '@components/StyledModal';
 import TinyEditor from '@components/TinyEditor';
 import usePostsSWR from '@hooks/swr/usePostsSWR';
 import useUserSWR from '@hooks/swr/useUserSWR';
-import useBoolean from '@hooks/useBoolean';
 import useInput from '@hooks/useInput';
 import client from '@lib/api/client';
 import uploadImage from '@lib/api/comments/uploadImage';
 import createPost from '@lib/api/posts/createPost';
 import fetchPosts from '@lib/api/posts/fetchPosts';
-import { Button, Pagination } from '@mantine/core';
+import { Button, Group, Modal, Pagination, Stack, TextInput } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { Editor } from '@tinymce/tinymce-react';
 import { GetStaticProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -21,9 +20,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
 
 const Community = () => {
+  const [opened, handlers] = useDisclosure(false);
   const [title, onChangeTitle] = useInput('');
   const [currentUrl, setCurrentUrl] = useState('');
-  const [isOpen, openModal, closeModal] = useBoolean(false);
   const router = useRouter();
   const { page } = router.query;
   const editorRef = useRef<Editor>(null);
@@ -117,15 +116,24 @@ const Community = () => {
         <title>커뮤니티 - Re:zero</title>
       </Head>
       <div className="flex justify-end">
-        <Button
-          type="button"
-          onClick={openModal}
-          variant="default"
-          // className="bg-white border border-blueGray-500 hover:border-emerald-500 text-blueGray-500 hover:text-emerald-500 py-1 px-4 capitalize"
-        >
+        <Button type="button" onClick={() => handlers.open()} variant="default">
           포스트 작성
         </Button>
-        <StyledModal
+        <Modal opened={opened} onClose={() => handlers.close()} title="포스트 작성" size="60%">
+          <Stack spacing="sm">
+            <TextInput type="text" value={title} onChange={onChangeTitle} placeholder="제목" />
+            <TinyEditor onUploadImage={onUploadImage} ref={editorRef} />
+            <Group position="right">
+              <Button type="button" variant="default" onClick={() => handlers.close()}>
+                취소
+              </Button>
+              <Button type="button" onClick={onCreatePost}>
+                작성
+              </Button>
+            </Group>
+          </Stack>
+        </Modal>
+        {/* <StyledModal
           isOpen={isOpen}
           onRequestClose={closeModal}
           onRequestOk={onCreatePost}
@@ -145,7 +153,7 @@ const Community = () => {
             />
             <TinyEditor onUploadImage={onUploadImage} ref={editorRef} />
           </div>
-        </StyledModal>
+        </StyledModal> */}
       </div>
       {postsData && <PostList posts={postsData} />}
       {/* <Pagination links={linksData} referrerUrl={currentUrl} /> */}

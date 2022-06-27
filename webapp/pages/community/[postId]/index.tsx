@@ -3,17 +3,27 @@ import EditPostForm from '@components/EditPostForm';
 import PostLikeButton from '@components/PostLikeButton';
 import PostViews from '@components/PostViews';
 import RequireLogIn from '@components/RequireLogin/RequireLogin';
-import StyledModal from '@components/StyledModal';
 import usePostSWR from '@hooks/swr/usePostSWR';
 import useUserSWR from '@hooks/swr/useUserSWR';
-import useBoolean from '@hooks/useBoolean';
 import useInput from '@hooks/useInput';
 import deletePost from '@lib/api/posts/deletePost';
 import toggleLikePost from '@lib/api/posts/toggleLikePost';
 import updatePost from '@lib/api/posts/updatePost';
 import optimizeImage from '@lib/optimizeImage';
 import relativeCreatedAt from '@lib/relativeCreatedAt';
-import { Avatar, Divider, Group, Stack, Text, TypographyStylesProvider, UnstyledButton } from '@mantine/core';
+import {
+  Avatar,
+  Button,
+  Divider,
+  Group,
+  Modal,
+  Stack,
+  Text,
+  TypographyStylesProvider,
+  UnstyledButton,
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { useModals } from '@mantine/modals';
 import { Editor } from '@tinymce/tinymce-react';
 import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -22,9 +32,9 @@ import { useRouter } from 'next/router';
 import { useCallback, useRef } from 'react';
 
 const CommunityPost = () => {
+  const [opened, handlers] = useDisclosure(false);
+  const modals = useModals();
   const [title, onChangeTitle, setTitle] = useInput('');
-  const [isOpenEditModal, openEditModal, closeEditModal] = useBoolean(false);
-  const [isOpenDeleteModal, openDeleteModal, closeDeleteModal] = useBoolean(false);
 
   const router = useRouter();
   const { postId } = router.query;
@@ -45,17 +55,15 @@ const CommunityPost = () => {
         title,
         mutatePost,
       });
-      closeEditModal();
     } catch (error) {
       console.error(error);
     }
-  }, [title, editorRef, postData, closeEditModal, mutatePost]);
+  }, [title, editorRef, postData, mutatePost]);
 
   const onDeletePost = useCallback(async () => {
     await deletePost({ postId: postId as string });
-    closeDeleteModal();
     router.push('/community');
-  }, [closeDeleteModal, postId, router]);
+  }, [postId, router]);
 
   const onToggleLikePost = useCallback(async () => {
     if (!postData || !userData) return;
@@ -86,6 +94,21 @@ const CommunityPost = () => {
     }
   }, [postData, userData, mutatePost]);
 
+  const openDeletePostModal = useCallback(() => {
+    modals.openConfirmModal({
+      title: '포스트 삭제',
+      children: <Text size="sm">게시글을 정말로 삭제하시겠습니까?</Text>,
+      labels: {
+        cancel: '취소',
+        confirm: '삭제',
+      },
+      confirmProps: {
+        color: 'red',
+      },
+      onConfirm: onDeletePost,
+    });
+  }, [modals, onDeletePost]);
+
   if (!postData) {
     return null;
   }
@@ -113,42 +136,38 @@ const CommunityPost = () => {
             </div>
             {postData.isMine && (
               <Group spacing="xs">
-                <UnstyledButton onClick={openEditModal}>
+                <UnstyledButton onClick={() => handlers.open()}>
                   <Text size="xs">수정</Text>
                 </UnstyledButton>
-                <StyledModal
-                  isOpen={isOpenEditModal}
-                  onRequestClose={closeEditModal}
-                  onRequestOk={onUpdatePost}
-                  title="포스트 수정"
-                  showCloseButton
-                  showOkButton
-                  width="1024px"
-                  okText="수정"
-                >
-                  <EditPostForm
-                    ref={editorRef}
-                    title={title}
-                    onChangeTitle={onChangeTitle}
-                    setTitle={setTitle}
-                  />
-                </StyledModal>
-                <UnstyledButton onClick={openDeleteModal}>
+                <Modal opened={opened} onClose={() => handlers.close()} title="포스트 수정" size="60%">
+                  <Stack spacing="sm">
+                    <EditPostForm
+                      ref={editorRef}
+                      title={title}
+                      onChangeTitle={onChangeTitle}
+                      setTitle={setTitle}
+                    />
+                    <Group position="right">
+                      <Button type="button" variant="default" onClick={() => handlers.close()}>
+                        취소
+                      </Button>
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          onUpdatePost();
+                          handlers.close();
+                        }}
+                      >
+                        수정
+                      </Button>
+                    </Group>
+                  </Stack>
+                </Modal>
+                <UnstyledButton onClick={openDeletePostModal}>
                   <Text size="xs" color="red">
                     삭제
                   </Text>
                 </UnstyledButton>
-                <StyledModal
-                  isOpen={isOpenDeleteModal}
-                  onRequestClose={closeDeleteModal}
-                  onRequestOk={onDeletePost}
-                  title="게시글 삭제"
-                  showCloseButton
-                  showOkButton
-                  width="480px"
-                >
-                  게시글을 정말로 삭제하시겠습니까?
-                </StyledModal>
               </Group>
             )}
           </div>
