@@ -104,20 +104,69 @@ def mini_max_action(state: State):
     return best_action
 
 
+def alpha_beta(state: State, alpha: int, beta: int):
+    if state.is_lose():
+        return -1
+
+    if state.is_draw():
+        return 0
+
+    for action in state.legal_actions():
+        score = -alpha_beta(state.next(action), -beta, -alpha)
+        if score > alpha:
+            alpha = score
+
+        if alpha >= beta:
+            return alpha
+
+    return alpha
+
+
+def alpha_beta_action(state: State):
+    alpha = -float('inf')
+    best_action = 0
+    str = ['', '']
+    for action in state.legal_actions():
+        score = -alpha_beta(state.next(action), -float('inf'), -alpha)
+        if score > alpha:
+            best_action = action
+            alpha = score
+
+        str[0] = '{}{:2d},'.format(str[0], action)
+        str[1] = '{}{:2d},'.format(str[1], score)
+    print('action:', str[0], '\nscore: ', str[1], '\n')
+
+    return best_action
+
+
 if __name__ == '__main__':
     state = State()
 
+    # random ai vs random ai
+    # while True:
+    #     if state.is_done():
+    #         break
+
+    #     action = random_acion(state)
+
+    #     state = state.next(action)
+    #     print(state)
+    #     print()
+
+    start = time()
+    # mini max ai vs random ai
     while True:
         if state.is_done():
             break
 
         if state.is_first_player():
-            start = time()
-            action = mini_max_action(state)
-            print('time:', time() - start)
+            # start = time()
+            action = alpha_beta_action(state)
+            # print('time:', time() - start)
         else:
             action = random_acion(state)
 
         state = state.next(action)
         print(state)
         print()
+    print('time:', time() - start)
