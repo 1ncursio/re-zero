@@ -89,7 +89,8 @@ const Community = () => {
   useEffect(() => {
     if (page) {
       setPage(Number(page));
-      router.push('/community', {
+      router.push({
+        pathname: '/community',
         query: {
           page,
         },
@@ -125,8 +126,8 @@ const Community = () => {
           content,
           title,
         });
-        router.push('/community', {
-          pathname: data.id.toString(),
+        router.push({
+          pathname: `/community/${data.id}`,
         });
       } catch (error) {
         console.error(error);
@@ -191,7 +192,8 @@ const Community = () => {
         page={activePage}
         onChange={(p) => {
           setPage(p);
-          router.push('/community', {
+          router.push({
+            pathname: '/community',
             query: {
               page: p,
             },

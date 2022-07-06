@@ -95,7 +95,9 @@ const CommunityPost = () => {
       console.error(error);
     } finally {
       offLoadingDeletePost();
-      router.push('/community');
+      router.push({
+        pathname: '/community',
+      });
     }
   }, [postId, router, onLoadingDeletePost, offLoadingDeletePost]);
 

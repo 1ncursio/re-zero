@@ -53,7 +53,7 @@ const App = (props: AppProps & { colorScheme: ColorScheme }) => {
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
       </Head>
       <QueryClientProvider client={queryClient}>
-        <ReactQueryDevtools initialIsOpen />
+        {/* <ReactQueryDevtools initialIsOpen /> */}
         <SWRConfig
           value={{
             errorRetryCount: 3,

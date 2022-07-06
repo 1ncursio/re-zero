@@ -322,12 +322,12 @@ export default function PlayComputerPage() {
           <div className="flex justify-between px-2">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-[#404040] border border-blueGray-600 rounded-full" />
-              <Text size="sm">{userData?.name ?? t('guest')}</Text>
+              <Text size="sm">{userData?.name ?? t('guest', { ns: 'navbar' })}</Text>
               <Text weight={500}>{coloredPiecesCount(piecesCount, enemyPiecesCount)}</Text>
             </div>
             <div className="flex items-center gap-2 flex-row-reverse">
               <div className="w-8 h-8 bg-white border border-blueGray-600 rounded-full" />
-              <Text size="sm">알파제로</Text>
+              <Text size="sm">{t('alphazero', { ns: 'common' })}</Text>
               <Text weight={500}>{coloredPiecesCount(enemyPiecesCount, piecesCount)}</Text>
             </div>
           </div>

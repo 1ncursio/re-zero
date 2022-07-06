@@ -89,9 +89,7 @@ const ReplyItem: FC<ReplyItemProps> = ({ reply, commentId }) => {
         {isOpenEditReplyForm ? (
           <EditReplyForm reply={reply} closeEditReplyForm={closeEditReplyForm} commentId={commentId} />
         ) : (
-          <Text size="sm" mb={8}>
-            {reply.content}
-          </Text>
+          <Text size="sm">{reply.content}</Text>
         )}
         <CommentLikeButton toggleLikeComment={toggleLikeReply} comment={reply} />
       </Stack>

@@ -1,11 +1,11 @@
-import React, { useMemo } from 'react';
-import { ChevronRight, Login, Logout, Settings } from 'tabler-icons-react';
-import { UnstyledButton, Group, Avatar, Text, Box, useMantineTheme, Menu } from '@mantine/core';
 import useUserSWR from '@hooks/swr/useUserSWR';
-import { useTranslation } from 'next-i18next';
-import Link from 'next/link';
 import useLogout from '@hooks/useLogout';
 import optimizeImage from '@lib/optimizeImage';
+import { Avatar, Box, Group, Menu, Text, UnstyledButton, useMantineTheme } from '@mantine/core';
+import { useTranslation } from 'next-i18next';
+import Link from 'next/link';
+import React, { useMemo } from 'react';
+import { ChevronRight, Login, Logout, Settings } from 'tabler-icons-react';
 
 type LabelItem = {
   type: 'label';
@@ -13,7 +13,7 @@ type LabelItem = {
 };
 
 type LinkItem = {
-  type: 'link';
+  type: 'link' | 'outer_link';
   label: string;
   href: string;
   icon?: React.ReactNode;
@@ -54,7 +54,7 @@ export function User() {
   const guestItems: MenuItem[] = useMemo(
     () => [
       {
-        type: 'link',
+        type: 'outer_link',
         icon: <Login size={14} />,
         label: t('login', { ns: 'navbar' }),
         href: process.env.NEXT_PUBLIC_AUTH_URL ?? '',
@@ -120,6 +120,14 @@ export function User() {
                 <Link href={item.href}>
                   <UnstyledButton component="a">{item.label}</UnstyledButton>
                 </Link>
+              </Menu.Item>
+            );
+          case 'outer_link':
+            return (
+              <Menu.Item icon={item.icon} key={item.label}>
+                <UnstyledButton component="a" href={item.href}>
+                  {item.label}
+                </UnstyledButton>
               </Menu.Item>
             );
           case 'item':

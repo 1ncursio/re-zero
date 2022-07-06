@@ -1,6 +1,6 @@
 # Re:zero
 
-<img src="./images/gameplay.gif"></img>
+<img src="./images/gameplay.png"></img>
 
 Re:zero is a web application that can play Reversi against AI based on the AlphaZero (AZ) algorithm.
 
@@ -104,7 +104,7 @@ git clone https://github.com/1ncursio/laravel-othello.git
 
 ```bash
 cd laravel-othello/webapp
-yarn
+yarn install
 ```
 
 3. Run the frontend server
@@ -142,12 +142,12 @@ Then open your browser and navigate to http://localhost:3000/
 
 ## Future Plans
 
-- [ ] Refactor the code to use the Zustand
+- [x] Refactor the code to use the Zustand
 - [ ] Write tests
 - [ ] Deploy the project
 - [ ] Implement multi-player mode
 - [ ] Migrate Backend Framework (e.g. Nest.js, fastify, django, etc.)
-- [ ] Support i18n
+- [x] Support i18n
 - [ ] Support PWA
 - [ ] Implement Scalable Game Board (e.g. 6x6, 8x8, 10x10, etc.)
 

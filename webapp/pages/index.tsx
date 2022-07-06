@@ -1,8 +1,18 @@
 import type { GetStaticProps, NextPage } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 const Home: NextPage = () => {
-  return <div>메인 페이지입니다</div>;
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace({
+      pathname: '/play',
+    });
+  }, []);
+
+  return <div></div>;
 };
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
